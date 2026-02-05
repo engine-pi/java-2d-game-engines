@@ -12,6 +12,7 @@
 
     <artifactId>fxgl</artifactId>
     <packaging>jar</packaging>
+    <name>fxgl</name>
 
     <profiles>
         <profile>

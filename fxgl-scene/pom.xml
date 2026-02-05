@@ -16,6 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>fxgl-scene</artifactId>
+    <name>fxgl-scene</name>
 
     <dependencies>
         <dependency>
