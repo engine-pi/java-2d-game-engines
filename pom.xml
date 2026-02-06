@@ -24,7 +24,6 @@
         <module>fxgl-gameplay</module>
         <module>fxgl-samples</module>
         <module>fxgl-tools</module>
-        <module>fxgl-zdeploy</module>
     </modules>
 
     <licenses>
