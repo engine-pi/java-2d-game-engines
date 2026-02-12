@@ -26,13 +26,13 @@ All the work goes to your `dev` branch, then pull a request back to `dev`.
 ## Development
 
 Due to use of Kotlin, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is recommended.
-To start developing FXGL you can set up IDEA (2023.2+) as follows:
+To start developing FXGL you can set up IDEA (2025.3.2+) as follows:
 
 1. Fork FXGL into your GitHub repo, then clone your repo to your machine.
 2. Open IDEA -> File -> New -> Project from Existing Sources -> Select the cloned FXGL directory.
 3. Import project from external model -> Maven -> Finish.
 
-Ensure you are using [JDK 23](https://jdk.java.net/) (or higher). You can set this via File -> Project Structure -> Project.
+Ensure you are using [JDK 25](https://jdk.java.net/) (or higher). You can set this via File -> Project Structure -> Project.
 
 You should now see something like this:
 
