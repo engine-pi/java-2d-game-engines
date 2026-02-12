@@ -21,7 +21,6 @@
         <module>fxgl-test</module>
         <module>fxgl-controllerinput</module>
         <module>fxgl-intelligence</module>
-        <module>fxgl-gameplay</module>
         <module>fxgl-samples</module>
         <module>fxgl-tools</module>
     </modules>
