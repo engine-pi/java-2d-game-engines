@@ -94,7 +94,7 @@ Hence, the `:` character is banned from non-changelog commit messages.
 
 ## Community Roles
 
-Community developers may apply to any of these roles by opening an issue or discussing in the [community chat](https://gitter.im/AlmasB/FXGL). Each role is allocated based on discussions with the individual. The individual is expected to be **committed** to the role guidance. However, the role descriptions are merely a guidance and not binding in any way. The role may be revoked at the request of the individual or due to violation of the [Code of Conduct](CODE_OF_CONDUCT.md).
+Community developers may apply to any of these roles by opening a [discussion](https://github.com/AlmasB/FXGL/discussions). Each role is allocated based on discussions with the individual. The individual is expected to be **committed** to the role guidance. However, the role descriptions are merely a guidance and not binding in any way. The role may be revoked at the request of the individual or due to violation of the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 #### Maintainer (Collaborator):
 
