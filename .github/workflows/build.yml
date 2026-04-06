@@ -59,6 +59,8 @@ jobs:
          with:
             run: mvn clean deploy -U -B -Psign
          env:
+            MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+            MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
             MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_PASSPHRASE }}
 
       -  name: Prepare Editor Product
