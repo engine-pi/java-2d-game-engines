@@ -59,8 +59,15 @@ jobs:
       -  name: Settings
          uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788
          with:
-           servers: '[{"id": "ossrh", "username": "$MAVEN_USERNAME", "password": "$MAVEN_PASSWORD", "passphrase": "$MAVEN_GPG_PASSPHRASE"}]'
-
+           servers: |
+             [
+               {
+                 "id": "ossrh",
+                 "username": "${{ secrets.MAVEN_USERNAME }}",
+                 "password": "${{ secrets.MAVEN_PASSWORD }}",
+                 "passphrase": "${{ secrets.GPG_PASSPHRASE }}"
+               }
+             ]
       -  name: Maven
          run: mvn clean deploy -U -B -Psign
 
