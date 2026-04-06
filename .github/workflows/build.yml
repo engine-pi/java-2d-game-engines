@@ -33,7 +33,9 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
-          fetch-depth: 0
+          ref: master
+          fetch-depth: 1
+          tags: false
 
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
         with:
@@ -52,7 +54,7 @@ jobs:
       - name: Run Windows Tests & Coverage
         run: |
           Write-Host "[WINDOWS] Running Maven tests..."
-          mvn install -B -Dstyle.color=always
+          mvn install -B
           Write-Host "[WINDOWS] Running Gradle tests & Jacoco..."
           cd java/lionengine-core-android
           ./gradlew test jacocoTestReport --console=rich
@@ -82,7 +84,9 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
-          fetch-depth: 0
+          ref: master
+          fetch-depth: 1
+          tags: false
 
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
         with:
