@@ -76,8 +76,8 @@ afterEvaluate {
         repositories {
             maven {
                 credentials {
-                    username = MAVEN_USERNAME
-                    password = MAVEN_PASSWORD
+                    username = property("mavenUsername")
+                    password = property("mavenPassword")
                 }
 
                 def releasesRepoUrl = 'https://ossrh-staging-api.central.sonatype.com'
