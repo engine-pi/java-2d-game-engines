@@ -56,10 +56,10 @@ jobs:
             gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-      - name: Settings
-        uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788
-        with:
-          servers: '[{"id": "ossrh", "username": "$MAVEN_USERNAME", "password": "$MAVEN_PASSWORD"}]'
+      -  name: Settings
+         uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788
+         with:
+           servers: '[{"id": "ossrh", "username": "$MAVEN_USERNAME", "password": "$MAVEN_PASSWORD", "passphrase": "$MAVEN_GPG_PASSPHRASE"}]'
 
       -  name: Maven
          run: mvn clean deploy -U -B -Psign
