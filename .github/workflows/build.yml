@@ -12,6 +12,7 @@ env:
   MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
   MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
   MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+  FTP_SERVER: ftp.b3dgs.com
 
 jobs:
    windows:
@@ -68,6 +69,7 @@ jobs:
                  "passphrase": "${{ secrets.GPG_PASSPHRASE }}"
                }
              ]
+
       -  name: Maven
          run: mvn clean deploy -U -B -Psign
 
