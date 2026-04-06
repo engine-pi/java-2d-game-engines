@@ -63,18 +63,21 @@ jobs:
          with:
             run: mvn clean deploy -U -B -Psign
 
+      -  name: Prepare Editor Product
+         run: rmdir /s /q releng\com.b3dgs.lionengine.editor.product\target\products\com.b3dgs.lionengine.editor.product
+         shell: cmd
+
       -  name: Gradle
-         with:
-            run: |
-               cd java/lionengine-core-android
-               gradlew publish -Pkeystore=android.jks
-            shell: cmd
-            env:
-               ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.MAVEN_USERNAME }}
-               ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MAVEN_PASSWORD }}
-               ORG_GRADLE_PROJECT_keystore.alias: ${{ secrets.KEYSTORE_ALIAS }}
-               ORG_GRADLE_PROJECT_keystore.storepassword: ${{ secrets.KEYSTORE_STOREPASS }}
-               ORG_GRADLE_PROJECT_keystore.password: ${{ secrets.KEYSTORE_PASS }}
+         run: |
+           cd java/lionengine-core-android
+           gradlew publish -Pkeystore=android.jks
+         shell: cmd
+         env:
+           ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.MAVEN_USERNAME }}
+           ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MAVEN_PASSWORD }}
+           ORG_GRADLE_PROJECT_keystore.alias: ${{ secrets.KEYSTORE_ALIAS }}
+           ORG_GRADLE_PROJECT_keystore.storepassword: ${{ secrets.KEYSTORE_STOREPASS }}
+           ORG_GRADLE_PROJECT_keystore.password: ${{ secrets.KEYSTORE_PASS }}
 
       -  name: Repository
          uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
