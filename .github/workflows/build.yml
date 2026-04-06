@@ -56,23 +56,10 @@ jobs:
             gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-      - name: Maven settings
-        shell: pwsh
-        run: |
-          $m2Dir = "$env:USERPROFILE\.m2"
-          if (-not (Test-Path $m2Dir)) { New-Item -ItemType Directory -Path $m2Dir }
-          $settingsXml = @"
-      <settings>
-        <servers>
-          <server>
-            <id>ossrh</id>
-            <username>${env:MAVEN_USERNAME}</username>
-            <password>${env:MAVEN_PASSWORD}</password>
-          </server>
-        </servers>
-      </settings>
-      "@
-          $settingsXml | Set-Content -Path "$m2Dir\settings.xml" -Encoding UTF8
+      - name: Settings
+        uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788
+        with:
+          servers: '[{"id": "ossrh", "username": "$MAVEN_USERNAME", "password": "$MAVEN_PASSWORD"}]'
 
       -  name: Maven
          run: mvn clean deploy -U -B -Psign
