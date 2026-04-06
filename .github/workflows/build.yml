@@ -99,7 +99,7 @@ jobs:
 
      - name: Deploy Android
        run: |
-         cd lionengine-core-android
+         cd java/lionengine-core-android
          gradlew publishAllPublicationsToMavenRepository -PMAVEN_USERNAME=${{ secrets.MAVEN_USERNAME }} -PMAVEN_PASSWORD=${{ secrets.MAVEN_PASSWORD }} -Pkeystore=android.jks -Pkeystore.alias="$KEYSTORE_ALIAS" -Pkeystore.storepassword="$KEYSTORE_STOREPASS" -Pkeystore.password="$KEYSTORE_PASS"
        shell: cmd
        env:
