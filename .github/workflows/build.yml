@@ -39,7 +39,6 @@ jobs:
       MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
       MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
       MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_PASSPHRASE }}
-      CACHE_KEY: gradle-maven-cache-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle-wrapper.properties') }}-${{ hashFiles('**/pom.xml') }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with: { fetch-depth: 0 }
@@ -56,7 +55,7 @@ jobs:
             ~/.m2/repository
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ env.CACHE_KEY }}
+          key: gradle-maven-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle-wrapper.properties') }}-${{ hashFiles('**/pom.xml') }}
 
       - name: Run Windows Tests & Coverage
         run: |
@@ -104,7 +103,7 @@ jobs:
             ~/.m2/repository
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ env.CACHE_KEY }}
+          key: gradle-maven-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle-wrapper.properties') }}-${{ hashFiles('**/pom.xml') }}
 
       - name: Download Windows Coverage
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
