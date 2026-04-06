@@ -8,15 +8,6 @@ on:
       branches:
       - master
 
-env:
-   MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-   MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-   MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_PASSPHRASE }}
-   FTP_USER: ${{ secrets.FTP_USER }}
-   FTP_PASS: ${{ secrets.FTP_PASS }}
-   FTP_SERVER: ftp.b3dgs.com
-   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
 jobs:
    windows:
       runs-on: windows-latest
@@ -33,6 +24,11 @@ jobs:
          with:
             distribution: temurin
             java-version: 17
+            mvn-toolchain-id: |
+              JavaSE-17
+            server-id: ossrh
+            server-username: ${{ secrets.MAVEN_USERNAME }}
+            server-password: ${{ secrets.MAVEN_PASSWORD }}
 
       -  name: Cache
          uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
@@ -62,6 +58,8 @@ jobs:
          uses: coactions/setup-xvfb@b6b4fcfb9f5a895edadc3bc76318fae0ac17c8b3
          with:
             run: mvn clean deploy -U -B -Psign
+         env:
+            MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_PASSPHRASE }}
 
       -  name: Prepare Editor Product
          run: rmdir /s /q releng\com.b3dgs.lionengine.editor.product\target\products\com.b3dgs.lionengine.editor.product
@@ -118,6 +116,8 @@ jobs:
          with:
             distribution: temurin
             java-version: 17
+            mvn-toolchain-id: |
+              JavaSE-17
 
       -  name: Cache
          uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
@@ -152,3 +152,5 @@ jobs:
 
       -  name: Sonar
          run: mvn sonar:sonar -Dsonar.organization=b3dgs -Dsonar.projectKey=b3dgs_lionengine -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=coverage/merged/jacoco.xml
+         env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
