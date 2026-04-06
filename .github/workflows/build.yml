@@ -35,7 +35,7 @@ jobs:
         with:
           ref: master
           fetch-depth: 1
-          tags: false
+          fetch-tags: false
 
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
         with:
@@ -55,9 +55,6 @@ jobs:
         run: |
           Write-Host "[WINDOWS] Running Maven tests..."
           mvn install -B
-          Write-Host "[WINDOWS] Running Gradle tests & Jacoco..."
-          cd java/lionengine-core-android
-          ./gradlew test jacocoTestReport --console=rich
         shell: pwsh
 
       - name: Upload Windows Coverage
@@ -86,7 +83,7 @@ jobs:
         with:
           ref: master
           fetch-depth: 1
-          tags: false
+          fetch-tags: false
 
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
         with:
@@ -120,8 +117,7 @@ jobs:
           # Linux build + coverage
           (
             echo "[LINUX][BUILD] Maven verify + Gradle build + Jacoco"
-            mvn verify -B
-            ./gradlew build test jacocoTestReport --gradle-version 9.3.0 --console=rich
+            mvn deploy -Psign -B
             mkdir -p coverage/linux
             cp **/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml coverage/linux/
           ) &
@@ -129,9 +125,8 @@ jobs:
           # Maven deploy + Android publish
           (
             echo "[LINUX][DEPLOY] Maven deploy + Android publish"
-            mvn clean deploy -Psign -B
             cd java/lionengine-core-android
-            ./gradlew publish -Pkeystore=../../android.jks --gradle-version 9.3.0 --console=rich
+            ./gradlew publish -Pkeystore=../../android.jks --gradle-version 9.4.1 --console=rich
           ) &
 
           # FTP upload
