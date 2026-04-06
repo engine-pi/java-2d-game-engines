@@ -8,6 +8,11 @@ on:
       branches:
       - master
 
+env:
+  MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+  MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+  MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_PASSPHRASE }}
+
 jobs:
    windows:
       runs-on: windows-latest
@@ -26,9 +31,6 @@ jobs:
             java-version: 17
             mvn-toolchain-id: |
               JavaSE-17
-            server-id: ossrh
-            server-username: ${{ secrets.MAVEN_USERNAME }}
-            server-password: ${{ secrets.MAVEN_PASSWORD }}
 
       -  name: Cache
          uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
@@ -54,14 +56,26 @@ jobs:
             gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
             passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
+      - name: Maven settings
+        shell: pwsh
+        run: |
+          $m2Dir = "$env:USERPROFILE\.m2"
+          if (-not (Test-Path $m2Dir)) { New-Item -ItemType Directory -Path $m2Dir }
+          $settingsXml = @"
+      <settings>
+        <servers>
+          <server>
+            <id>ossrh</id>
+            <username>${env:MAVEN_USERNAME}</username>
+            <password>${env:MAVEN_PASSWORD}</password>
+          </server>
+        </servers>
+      </settings>
+      "@
+          $settingsXml | Set-Content -Path "$m2Dir\settings.xml" -Encoding UTF8
+
       -  name: Maven
-         uses: coactions/setup-xvfb@b6b4fcfb9f5a895edadc3bc76318fae0ac17c8b3
-         with:
-            run: mvn clean deploy -U -B -Psign
-         env:
-            MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-            MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-            MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_PASSPHRASE }}
+         run: mvn clean deploy -U -B -Psign
 
       -  name: Prepare Editor Product
          run: rmdir /s /q releng\com.b3dgs.lionengine.editor.product\target\products\com.b3dgs.lionengine.editor.product
@@ -139,12 +153,11 @@ jobs:
             path: ./coverage/windows
 
       -  name: Tests
-         uses: coactions/setup-xvfb@b6b4fcfb9f5a895edadc3bc76318fae0ac17c8b3
-         with:
-            run: |
-               mvn test -B
-               mkdir -p coverage/linux
-               find . -path "*/target/site/jacoco/jacoco.xml" -exec cp {} coverage/linux/ \;
+         run: |
+            sudo apt-get update && sudo apt-get install -y xvfb
+            xvfb-run -a mvn test -B
+            mkdir -p coverage/linux
+            find . -path "*/target/site/jacoco/jacoco.xml" -exec cp {} coverage/linux/ \;
 
       -  name: Jacoco
          run: |
