@@ -1,29 +1,20 @@
 name: Build
 description: |
   # Build Workflow Overview
-
   ## Windows
   - Checkout code.
   - Setup Java 17 + Maven/Gradle cache.
   - Run Maven and Gradle tests (including audio-specific tests).
   - Generate Jacoco coverage report and upload artifact.
-
   ## Linux
   - Checkout code + setup Java 17 + Maven/Gradle cache.
   - Download Windows coverage artifact.
   - Decode Android keystore.
-  - **Parallel tasks**:
-    - Linux build + Gradle tests + Jacoco.
-    - Maven deploy + Android publish.
-    - FTP upload of repositories and products.
+  - **Parallel tasks**: Linux build + Jacoco, Maven deploy + Android publish, FTP upload.
   - Merge Windows + Linux Jacoco reports.
   - SonarCloud analysis using merged coverage.
-
   ## Secrets & Configuration
   - All Maven, FTP, and keystore secrets are managed via `env:`.
-
-  ## Logs & Tracking
-  - Colorized logs and progress bars for long-running steps.
 
 on:
   push:
@@ -41,7 +32,8 @@ jobs:
       MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_PASSPHRASE }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-        with: { fetch-depth: 0 }
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
         with:
@@ -55,21 +47,21 @@ jobs:
             ~/.m2/repository
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-maven-cache-${{ runner.os }}-v1
+          key: gradle-maven-cache-windows-v1
 
       - name: Run Windows Tests & Coverage
         run: |
-          echo -e "\033[1;34m[WINDOWS] Running Maven tests...\033[0m"
-          mvn test -B -Dstyle.color=always
-          echo -e "\033[1;34m[WINDOWS] Running Gradle tests & Jacoco...\033[0m"
+          Write-Host "[WINDOWS] Running Maven tests..."
+          mvn test -B
+          Write-Host "[WINDOWS] Running Gradle tests & Jacoco..."
           ./gradlew test jacocoTestReport --console=rich
+        shell: pwsh
 
       - name: Upload Windows Coverage
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: coverage-windows
           path: '**/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
-
 
   linux-all-in-one:
     runs-on: ubuntu-latest
@@ -88,7 +80,8 @@ jobs:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-        with: { fetch-depth: 0 }
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
         with:
@@ -102,7 +95,7 @@ jobs:
             ~/.m2/repository
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-maven-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle-wrapper.properties') }}-${{ hashFiles('**/pom.xml') }}
+          key: gradle-maven-cache-linux-v1
 
       - name: Download Windows Coverage
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
@@ -112,17 +105,17 @@ jobs:
 
       - name: Decode Android Keystore
         run: |
-          echo -e "\033[1;33m[LINUX] Decoding Android Keystore...\033[0m"
+          echo "[LINUX] Decoding Android Keystore..."
           echo $KEYSTORE_BASE64 | base64 -d > android.jks
 
       - name: Build, Deploy & FTP with Progress
         run: |
-          echo -e "\033[1;32m[LINUX] Starting parallel tasks with progress...\033[0m"
+          echo "[LINUX] Starting parallel tasks with progress..."
 
           # Linux build + coverage
           (
-            echo -e "\033[1;36m[LINUX][BUILD] Maven verify + Gradle build + Jacoco\033[0m"
-            mvn verify -B -Dstyle.color=always
+            echo "[LINUX][BUILD] Maven verify + Gradle build + Jacoco"
+            mvn verify -B
             ./gradlew build test jacocoTestReport --gradle-version 9.3.0 --console=rich
             mkdir -p coverage/linux
             cp **/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml coverage/linux/
@@ -130,15 +123,15 @@ jobs:
 
           # Maven deploy + Android publish
           (
-            echo -e "\033[1;36m[LINUX][DEPLOY] Maven deploy + Android publish\033[0m"
-            mvn clean deploy -Psign -B -Dstyle.color=always
+            echo "[LINUX][DEPLOY] Maven deploy + Android publish"
+            mvn clean deploy -Psign -B
             cd java/lionengine-core-android
             ./gradlew publish -Pkeystore=../../android.jks --gradle-version 9.3.0 --console=rich
           ) &
 
-          # FTP upload with progress
+          # FTP upload
           (
-            echo -e "\033[1;36m[LINUX][FTP] Uploading repositories and products\033[0m"
+            echo "[LINUX][FTP] Uploading repositories and products"
             for dir in \
               "releng/com.b3dgs.lionengine.editor.repository/target/repository/" \
               "releng/com.b3dgs.lionengine.editor.product/target/products/"; do
@@ -153,11 +146,11 @@ jobs:
           ) &
 
           wait
-          echo -e "\033[1;32m[LINUX] All parallel tasks completed with progress.\033[0m"
+          echo "[LINUX] All parallel tasks completed."
 
       - name: Merge Jacoco Reports
         run: |
-          echo -e "\033[1;33m[MERGE] Merging Windows + Linux Jacoco reports...\033[0m"
+          echo "[MERGE] Merging Windows + Linux Jacoco reports..."
           mkdir -p coverage/merged
           java -jar jacococli.jar merge \
             coverage/windows/jacocoTestReport.xml \
@@ -166,7 +159,7 @@ jobs:
 
       - name: SonarCloud Analysis
         run: |
-          echo -e "\033[1;35m[SONAR] Running SonarCloud analysis with merged coverage...\033[0m"
+          echo "[SONAR] Running SonarCloud analysis with merged coverage..."
           mvn sonar:sonar \
             -Dsonar.organization=b3dgs \
             -Dsonar.projectKey=b3dgs_lionengine \
