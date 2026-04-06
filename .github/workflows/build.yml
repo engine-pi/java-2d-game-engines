@@ -1,8 +1,29 @@
-# This workflow will:
-# - compile, sign, sonar project on windows with JDK 17
-# - deploy snapshot on maven and upload on FTP
-
 name: Build
+description: |
+  # Build Workflow Overview
+
+  ## Windows
+  - Checkout code.
+  - Setup Java 17 + Maven/Gradle cache.
+  - Run Maven and Gradle tests (including audio-specific tests).
+  - Generate Jacoco coverage report and upload artifact.
+
+  ## Linux
+  - Checkout code + setup Java 17 + Maven/Gradle cache.
+  - Download Windows coverage artifact.
+  - Decode Android keystore.
+  - **Parallel tasks**:
+    - Linux build + Gradle tests + Jacoco.
+    - Maven deploy + Android publish.
+    - FTP upload of repositories and products.
+  - Merge Windows + Linux Jacoco reports.
+  - SonarCloud analysis using merged coverage.
+
+  ## Secrets & Configuration
+  - All Maven, FTP, and keystore secrets are managed via `env:`.
+
+  ## Logs & Tracking
+  - Colorized logs and progress bars for long-running steps.
 
 on:
   push:
@@ -11,101 +32,146 @@ on:
     branches: [ master ]
 
 jobs:
-  deploy:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest]
-        jdk: [17]
-    runs-on: ${{ matrix.os }}
+
+  windows-tests:
+    runs-on: windows-latest
     env:
-      JDK_VERSION: ${{ matrix.jdk }}
-
+      MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+      MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+      MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_PASSPHRASE }}
+      CACHE_KEY: gradle-maven-cache-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties','**/pom.xml') }}
     steps:
-     - name: Checkout
-       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-       with:
-        fetch-depth: 0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with: { fetch-depth: 0 }
 
-     - name: Cache
-       uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
-       with:
-          path: ~/.m2/repository
-          key: maven-${{ matrix.os }}-java${{ matrix.jdk }}-${{ hashFiles('**/pom.xml') }}-${{ hashFiles('**/app/build.gradle') }}
-          restore-keys: |
-            maven-${{ matrix.os }}-java${{ matrix.jdk }}-${{ hashFiles('**/pom.xml') }}-${{ hashFiles('**/app/build.gradle') }}
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
+        with:
+          distribution: temurin
+          java-version: 17
 
-     - name: Maven
-       uses: stCarolas/setup-maven@12eb41b233df95d49b0c11fc1b5bc8312e5d4ce0
-       with:
-         maven-version: 3.9.14
+      - name: Cache Maven & Gradle
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ env.CACHE_KEY }}
 
-     - name: JDK
-       uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
-       with:
-         java-version: |
-           ${{ matrix.jdk }}
-         distribution: 'temurin'
-         mvn-toolchain-id: |
-           JavaSE-17
-         server-id: ossrh
-         server-username: MAVEN_USERNAME
-         server-password: MAVEN_PASSWORD
+      - name: Run Windows Tests & Coverage
+        run: |
+          echo -e "\033[1;34m[WINDOWS] Running Maven tests...\033[0m"
+          mvn test -B -Dstyle.color=always
+          echo -e "\033[1;34m[WINDOWS] Running Gradle tests & Jacoco...\033[0m"
+          ./gradlew test jacocoTestReport --console=rich
 
-     - name: Decode Keystore
-       uses: timheuer/base64-to-file@784a1a4a994315802b7d8e2084e116e783d157be
-       with:
-         fileName: 'android.jks'
-         fileDir: 'app/'
-         encodedString: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Upload Windows Coverage
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+        with:
+          name: coverage-windows
+          path: '**/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
 
-     - name: GPG
-       uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd
-       with:
-         gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-         passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-     - name: Deploy
-       uses: coactions/setup-xvfb@b6b4fcfb9f5a895edadc3bc76318fae0ac17c8b3
-       with:
-         run: mvn clean deploy org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -U -Psign -Dsonar.organization=b3dgs -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=b3dgs_lionengine
-       env:
-         MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-         MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+  linux-all-in-one:
+    runs-on: ubuntu-latest
+    needs: windows-tests
+    env:
+      MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+      MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+      MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_PASSPHRASE }}
+      FTP_USER: ${{ secrets.FTP_USER }}
+      FTP_PASS: ${{ secrets.FTP_PASS }}
+      FTP_SERVER: ftp.b3dgs.com
+      KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+      KEYSTORE_STOREPASS: ${{ secrets.KEYSTORE_STOREPASS }}
+      KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      CACHE_KEY: gradle-maven-cache-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties','**/pom.xml') }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with: { fetch-depth: 0 }
 
-     - name: Upload Editor Repository
-       uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
-       with:
-         server: ftp.b3dgs.com
-         username: ${{ secrets.FTP_USER }}
-         password: ${{ secrets.FTP_PASS }}
-         local-dir: releng/com.b3dgs.lionengine.editor.repository/target/repository/
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
+        with:
+          distribution: temurin
+          java-version: 17
 
-     - name: Prepare Editor Product
-       run: |
-         rmdir /s /q releng\com.b3dgs.lionengine.editor.product\target\products\com.b3dgs.lionengine.editor.product
-       shell: cmd
+      - name: Restore Maven & Gradle Cache
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ env.CACHE_KEY }}
 
-     - name: Upload Editor Product
-       uses: dennisameling/ftp-upload-action@f87b6437536013699f24c8674f7246a1e09e8f3d
-       with:
-         server: ftp.b3dgs.com
-         username: ${{ secrets.FTP_USER }}
-         password: ${{ secrets.FTP_PASS }}
-         local_dir: releng/com.b3dgs.lionengine.editor.product/target/products/
-         server_dir: /product/
-         secure: false
+      - name: Download Windows Coverage
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: coverage-windows
+          path: ./coverage/windows
 
-     - name: Deploy Android
-       run: |
-         cd java/lionengine-core-android
-         gradlew publish -Pkeystore=android.jks
-       shell: cmd
-       env:
-         ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.MAVEN_USERNAME }}
-         ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MAVEN_PASSWORD }}
-         ORG_GRADLE_PROJECT_keystore.alias: ${{ secrets.KEYSTORE_ALIAS }}
-         ORG_GRADLE_PROJECT_keystore.storepassword: ${{ secrets.KEYSTORE_STOREPASS }}
-         ORG_GRADLE_PROJECT_keystore.password: ${{ secrets.KEYSTORE_PASS }}
-         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Decode Android Keystore
+        run: |
+          echo -e "\033[1;33m[LINUX] Decoding Android Keystore...\033[0m"
+          echo $KEYSTORE_BASE64 | base64 -d > android.jks
+
+      - name: Build, Deploy & FTP with Progress
+        run: |
+          echo -e "\033[1;32m[LINUX] Starting parallel tasks with progress...\033[0m"
+
+          # Linux build + coverage
+          (
+            echo -e "\033[1;36m[LINUX][BUILD] Maven verify + Gradle build + Jacoco\033[0m"
+            mvn verify -B -Dstyle.color=always
+            ./gradlew build test jacocoTestReport --gradle-version 9.3.0 --console=rich
+            mkdir -p coverage/linux
+            cp **/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml coverage/linux/
+          ) &
+
+          # Maven deploy + Android publish
+          (
+            echo -e "\033[1;36m[LINUX][DEPLOY] Maven deploy + Android publish\033[0m"
+            mvn clean deploy -Psign -B -Dstyle.color=always
+            cd java/lionengine-core-android
+            ./gradlew publish -Pkeystore=../../android.jks --gradle-version 9.3.0 --console=rich
+          ) &
+
+          # FTP upload with progress
+          (
+            echo -e "\033[1;36m[LINUX][FTP] Uploading repositories and products\033[0m"
+            for dir in \
+              "releng/com.b3dgs.lionengine.editor.repository/target/repository/" \
+              "releng/com.b3dgs.lionengine.editor.product/target/products/"; do
+              npx ftp-deploy \
+                --server $FTP_SERVER \
+                --user $FTP_USER \
+                --pass $FTP_PASS \
+                --local-dir $dir \
+                --dry-run=false \
+                --progress=true
+            done
+          ) &
+
+          wait
+          echo -e "\033[1;32m[LINUX] All parallel tasks completed with progress.\033[0m"
+
+      - name: Merge Jacoco Reports
+        run: |
+          echo -e "\033[1;33m[MERGE] Merging Windows + Linux Jacoco reports...\033[0m"
+          mkdir -p coverage/merged
+          java -jar jacococli.jar merge \
+            coverage/windows/jacocoTestReport.xml \
+            coverage/linux/jacocoTestReport.xml \
+            --destfile coverage/merged/jacocoTestReport.xml
+
+      - name: SonarCloud Analysis
+        run: |
+          echo -e "\033[1;35m[SONAR] Running SonarCloud analysis with merged coverage...\033[0m"
+          mvn sonar:sonar \
+            -Dsonar.organization=b3dgs \
+            -Dsonar.projectKey=b3dgs_lionengine \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.coverage.jacoco.xmlReportPaths=coverage/merged/jacocoTestReport.xml
