@@ -103,7 +103,7 @@ jobs:
             server: ${{ env.FTP_SERVER }}
             username: ${{ secrets.FTP_USER }}
             password: ${{ secrets.FTP_PASS }}
-            local_dir: releng/com.b3dgs.lionengine.editor.product/target/products/
+            local-dir: releng/com.b3dgs.lionengine.editor.product/target/products/
             server-dir: /product/
 
       -  name: Upload
