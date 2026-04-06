@@ -52,8 +52,9 @@ jobs:
       - name: Run Windows Tests & Coverage
         run: |
           Write-Host "[WINDOWS] Running Maven tests..."
-          mvn test -B
+          mvn install -B -Dstyle.color=always
           Write-Host "[WINDOWS] Running Gradle tests & Jacoco..."
+          cd java/lionengine-core-android
           ./gradlew test jacocoTestReport --console=rich
         shell: pwsh
 
