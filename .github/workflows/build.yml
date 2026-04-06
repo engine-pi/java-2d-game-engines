@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: coverage-windows
-          path: '**/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
+          path: '**/target/site/jacoco/jacoco.xml'
 
   linux-all-in-one:
     runs-on: ubuntu-latest
@@ -119,7 +119,7 @@ jobs:
             echo "[LINUX][BUILD] Maven verify + Gradle build + Jacoco"
             mvn deploy -Psign -B
             mkdir -p coverage/linux
-            cp **/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml coverage/linux/
+            find . -path "*/target/site/jacoco/jacoco.xml" -exec cp {} coverage/linux/ \;
           ) &
 
           # Maven deploy + Android publish
@@ -153,9 +153,9 @@ jobs:
           echo "[MERGE] Merging Windows + Linux Jacoco reports..."
           mkdir -p coverage/merged
           java -jar jacococli.jar merge \
-            coverage/windows/jacocoTestReport.xml \
-            coverage/linux/jacocoTestReport.xml \
-            --destfile coverage/merged/jacocoTestReport.xml
+            coverage/windows/jacoco.xml \
+            coverage/linux/jacoco.xml \
+            --destfile coverage/merged/jacoco.xml
 
       - name: SonarCloud Analysis
         run: |
@@ -165,4 +165,4 @@ jobs:
             -Dsonar.projectKey=b3dgs_lionengine \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.coverage.jacoco.xmlReportPaths=coverage/merged/jacocoTestReport.xml
+            -Dsonar.coverage.jacoco.xmlReportPaths=coverage/merged/jacoco.xml
