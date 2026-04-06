@@ -103,7 +103,7 @@ jobs:
             ~/.m2/repository
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-maven-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle-wrapper.properties') }}-${{ hashFiles('**/pom.xml') }}
+          key: gradle-maven-cache-${{ runner.os }}-v1
 
       - name: Download Windows Coverage
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
