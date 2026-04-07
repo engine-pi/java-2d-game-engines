@@ -91,7 +91,7 @@ jobs:
       -  name: Repository
          uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
          with:
-            server: ${{ env.FTP_SERVER }}
+            server: ${{ secrets.FTP_SERVER }}
             username: ${{ secrets.FTP_USER }}
             password: ${{ secrets.FTP_PASS }}
             local-dir: releng/com.b3dgs.lionengine.editor.repository/target/repository/
@@ -99,7 +99,7 @@ jobs:
       -  name: Product
          uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
          with:
-            server: ${{ env.FTP_SERVER }}
+            server: ${{ secrets.FTP_SERVER }}
             username: ${{ secrets.FTP_USER }}
             password: ${{ secrets.FTP_PASS }}
             local-dir: releng/com.b3dgs.lionengine.editor.product/target/products/
