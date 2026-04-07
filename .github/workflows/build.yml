@@ -181,7 +181,10 @@ jobs:
             EXEC_FILES=$(echo coverage/all/*.exec)
             echo "Merging: $EXEC_FILES"
             java -jar jacococli.jar merge $EXEC_FILES --destfile coverage/merged/jacoco.exec
-            java -jar jacococli.jar report coverage/merged/jacoco.exec --classfiles java/**/target/classes --classfiles plugins/**/target/classes --sourcefiles java --sourcefiles plugins --xml coverage/merged/jacoco.xml
+            
+            CLASSFILES=$(echo java/**/target/classes plugins/**/target/classes)
+            echo "Report: $CLASSFILES"
+            java -jar jacococli.jar report coverage/merged/jacoco.exec --classfiles $CLASSFILES --sourcefiles java --sourcefiles plugins --xml coverage/merged/jacoco.xml
 
       -  name: Sonar
          run: mvn sonar:sonar -Dsonar.organization=b3dgs -Dsonar.projectKey=b3dgs_lionengine -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=coverage/merged/jacoco.xml
