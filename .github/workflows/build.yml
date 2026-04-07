@@ -170,7 +170,9 @@ jobs:
          run: |
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
             mkdir -p coverage/merged
-            java -jar jacococli.jar merge coverage/all/*.exec --destfile coverage/merged/jacoco.exec
+            EXEC_FILES=$(echo coverage/all/*.exec)
+            echo "Merging: $EXEC_FILES"
+            java -jar jacococli.jar merge $EXEC_FILES --destfile coverage/merged/jacoco.exec
             java -jar jacococli.jar report coverage/merged/jacoco.exec --classfiles java/**/target/classes --classfiles plugins/**/target/classes --sourcefiles java --sourcefiles plugins --xml coverage/merged/jacoco.xml
 
       -  name: Sonar
