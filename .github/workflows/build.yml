@@ -169,7 +169,8 @@ jobs:
          run: |
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
             mkdir -p coverage/merged
-            java -jar jacococli.jar merge coverage/windows/jacoco.xml coverage/linux/jacoco.xml --destfile coverage/merged/jacoco.xml
+            XMLS=$(find coverage/windows -name jacoco.xml; find coverage/linux -name jacoco.xml)
+            java -jar jacococli.jar merge $XMLS --destfile coverage/merged/jacoco.xml
 
       -  name: Sonar
          run: mvn sonar:sonar -Dsonar.organization=b3dgs -Dsonar.projectKey=b3dgs_lionengine -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=coverage/merged/jacoco.xml
