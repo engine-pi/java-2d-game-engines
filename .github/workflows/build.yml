@@ -71,7 +71,7 @@ jobs:
              ]
 
       -  name: Maven
-         run: mvn clean deploy -U -B
+         run: mvn clean deploy -U -B -Pfull,sign
 
       -  name: Prepare Editor Product
          run: rmdir /s /q releng\com.b3dgs.lionengine.editor.product\target\products\com.b3dgs.lionengine.editor.product
@@ -162,7 +162,7 @@ jobs:
 
       -  name: Tests
          run: |
-            sudo apt-get update && sudo apt-get install -y xvfb libasound2 libasound2-dev
+            sudo apt-get update && sudo apt-get install -y xvfb libasound2-dev alsa-utils
             xvfb-run -a mvn test -B -Pcore
             mkdir -p coverage/linux
             find . -path "*/target/site/jacoco/jacoco.xml" -exec cp {} coverage/linux/ \;
