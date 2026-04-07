@@ -179,12 +179,15 @@ jobs:
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
             mkdir -p coverage/merged
             EXEC_FILES=$(echo coverage/all/*.exec)
-            echo "Merging: $EXEC_FILES"
             java -jar jacococli.jar merge $EXEC_FILES --destfile coverage/merged/jacoco.exec
             
-            CLASSFILES=$(echo java/**/target/classes plugins/**/target/classes)
-            echo "Report: $CLASSFILES"
-            java -jar jacococli.jar report coverage/merged/jacoco.exec --classfiles $CLASSFILES --sourcefiles java --sourcefiles plugins --xml coverage/merged/jacoco.xml
+            CLASS_ARGS=""
+            while read d; do
+                CLASS_ARGS="$CLASS_ARGS --classfiles $d"
+            done < <(find java plugins -type d -path "*/target/classes")
+            
+            echo "Report args: $CLASS_ARGS"
+            java -jar jacococli.jar report coverage/merged/jacoco.exec $CLASS_ARGS --sourcefiles java --sourcefiles plugins --xml coverage/merged/jacoco.xml
 
       -  name: Sonar
          run: mvn sonar:sonar -Dsonar.organization=b3dgs -Dsonar.projectKey=b3dgs_lionengine -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=coverage/merged/jacoco.xml
