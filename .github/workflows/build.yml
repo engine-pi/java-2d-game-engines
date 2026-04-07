@@ -12,7 +12,6 @@ env:
   MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
   MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
   MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-  FTP_SERVER: ftp.b3dgs.com
 
 jobs:
    windows:
@@ -40,8 +39,6 @@ jobs:
                ~/.m2/repository
                ~/.gradle/wrapper
             key: maven-gradle-${{ hashFiles('**/pom.xml') }}
-            exclude: |
-               **/*.lock
             restore-keys: |
                maven-gradle-
 
@@ -94,7 +91,9 @@ jobs:
       -  name: FTP
          run: |
             choco install lftp -y
-            lftp -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} $FTP_SERVER <<EOF
+            $lftpUser = '${{ secrets.FTP_USER }}'
+            $lftpPass = '${{ secrets.FTP_PASS }}'
+            lftp -u "$lftpUser","$lftpPass" ftp.b3dgs.com <<EOF
             mirror -R releng/com.b3dgs.lionengine.editor.repository/target/repository/ /
             mirror -R releng/com.b3dgs.lionengine.editor.product/target/products/ /product/
             quit
@@ -137,8 +136,6 @@ jobs:
                ~/.m2/repository
                ~/.gradle/wrapper
             key: maven-gradle-${{ hashFiles('**/pom.xml') }}
-            exclude: |
-               **/*.lock
             restore-keys: |
                maven-gradle-
 
