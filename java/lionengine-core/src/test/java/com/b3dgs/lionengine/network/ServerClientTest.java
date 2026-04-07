@@ -39,6 +39,9 @@ import com.b3dgs.lionengine.network.server.ServerUdp;
  */
 final class ServerClientTest
 {
+    private static final String IP = "127.0.0.1";
+    private static final int PORT = 9999;
+
     /**
      * Test server start stop.
      * 
@@ -51,7 +54,7 @@ final class ServerClientTest
         final ServerUdp server = new ServerUdp(channel);
         final AtomicBoolean started = new AtomicBoolean();
         server.addListener((ip, port) -> started.set(true));
-        server.start("127.0.0.1", 1000);
+        server.start(IP, 9999);
 
         assertTimeout(1000L, () ->
         {
@@ -64,7 +67,7 @@ final class ServerClientTest
         final ClientUdp client = new ClientUdp(channel);
         final AtomicBoolean connected = new AtomicBoolean();
         client.addListener((ip, port, id) -> connected.set(true));
-        client.connect("127.0.0.1", 1000);
+        client.connect(IP, PORT);
         client.setName("name");
 
         assertTimeout(1000L, () ->
@@ -106,7 +109,7 @@ final class ServerClientTest
             return buffer;
         });
         server.addListener((ip, port) -> started.set(true));
-        server.start("127.0.0.1", 1000);
+        server.start(IP, PORT);
 
         assertTimeout(1000L, () ->
         {
@@ -116,7 +119,7 @@ final class ServerClientTest
             }
         });
 
-        final ByteBuffer info = UtilNetwork.getInfo("127.0.0.1", 1000);
+        final ByteBuffer info = UtilNetwork.getInfo(IP, PORT);
 
         assertEquals(1, info.get());
 
@@ -174,10 +177,10 @@ final class ServerClientTest
                 startedPort.set(0);
             }
         });
-        server.start("127.0.0.1", 1000);
+        server.start(IP, PORT);
 
-        assertEquals("127.0.0.1", startedIp.get());
-        assertEquals(1000, startedPort.get());
+        assertEquals(IP, startedIp.get());
+        assertEquals(PORT, startedPort.get());
 
         final ClientUdp client = new ClientUdp(channel);
         final AtomicReference<Integer> clientId = new AtomicReference<>();
@@ -196,10 +199,10 @@ final class ServerClientTest
                 other.set(id);
             }
         });
-        client.connect("127.0.0.1", 1000);
+        client.connect(IP, PORT);
         client.setName("name");
 
-        assertEquals("/127.0.0.1", clientIp.get());
+        assertEquals("/" + IP, clientIp.get());
         assertTimeout(1000L, () ->
         {
             while (!"name".equals(clientName.get()))
@@ -226,7 +229,7 @@ final class ServerClientTest
                 disconnected.set(id);
             }
         });
-        client2.connect("127.0.0.1", 1000);
+        client2.connect(IP, PORT);
         client2.setName("name2");
 
         assertTimeout(1000L, () ->
@@ -320,9 +323,9 @@ final class ServerClientTest
         final AtomicReference<Integer> connected = new AtomicReference<>();
         client.addListener((ip, port, id) -> connected.set(id));
 
-        server.start("127.0.0.1", 1000);
+        server.start(IP, PORT);
 
-        assertTimeout(1000, () ->
+        assertTimeout(1000L, () ->
         {
             while (!started.get())
             {
@@ -330,9 +333,9 @@ final class ServerClientTest
             }
         });
 
-        client.connect("127.0.0.1", 1000);
+        client.connect(IP, PORT);
 
-        assertTimeout(1000, () ->
+        assertTimeout(1000L, () ->
         {
             while (connected.get() == null)
             {
@@ -344,7 +347,7 @@ final class ServerClientTest
 
         server.stop();
 
-        assertTimeout(1000, () ->
+        assertTimeout(1000L, () ->
         {
             while (started.get())
             {
@@ -369,9 +372,9 @@ final class ServerClientTest
         final AtomicReference<Integer> connected = new AtomicReference<>();
         client.addListener((ip, port, id) -> connected.set(id));
 
-        server.start("127.0.0.1", 1000);
+        server.start(IP, PORT);
 
-        assertTimeout(1000, () ->
+        assertTimeout(1000L, () ->
         {
             while (!started.get())
             {
@@ -379,9 +382,9 @@ final class ServerClientTest
             }
         });
 
-        client.connect("127.0.0.1", 1000);
+        client.connect(IP, PORT);
 
-        assertTimeout(1000, () ->
+        assertTimeout(1000L, () ->
         {
             while (connected.get() == null)
             {
@@ -389,7 +392,7 @@ final class ServerClientTest
             }
         });
 
-        UtilTests.pause(5000);
+        UtilTests.pause(5000L);
 
         server.stop();
     }
