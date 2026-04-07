@@ -71,7 +71,8 @@ jobs:
              ]
 
       -  name: Maven
-         run: mvn clean deploy -U -B -Pfull,sign
+         run: mvn clean deploy -U -B -P "full,sign"
+         shell: pwsh
 
       -  name: Prepare Editor Product
          run: rmdir /s /q releng\com.b3dgs.lionengine.editor.product\target\products\com.b3dgs.lionengine.editor.product
