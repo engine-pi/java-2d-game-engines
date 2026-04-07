@@ -173,7 +173,6 @@ jobs:
                 MODULE=$(basename $(dirname $(dirname "$f")))
                 cp "$f" "coverage/all/linux_${MODULE}.exec"
             done
-            find . -name "jacoco.exec" -exec bash -c 'cp "$0" "coverage/all/linux_$(basename $(dirname $(dirname $0))).exec"' {} \;
 
       -  name: Jacoco
          run: |
