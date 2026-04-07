@@ -88,12 +88,22 @@ jobs:
            ORG_GRADLE_PROJECT_keystore.storepassword: ${{ secrets.KEYSTORE_STOREPASS }}
            ORG_GRADLE_PROJECT_keystore.password: ${{ secrets.KEYSTORE_PASS }}
 
-      -  name: FTP
-         uses: ./.github/actions/ftp-mirror
+      -  name: Repository
+         uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
          with:
-           server: ${{ secrets.FTP_SERVER }}
-           username: ${{ secrets.FTP_USER }}
-           password: ${{ secrets.FTP_PASS }}
+            server: ${{ env.FTP_SERVER }}
+            username: ${{ secrets.FTP_USER }}
+            password: ${{ secrets.FTP_PASS }}
+            local-dir: releng/com.b3dgs.lionengine.editor.repository/target/repository/
+
+      -  name: Product
+         uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
+         with:
+            server: ${{ env.FTP_SERVER }}
+            username: ${{ secrets.FTP_USER }}
+            password: ${{ secrets.FTP_PASS }}
+            local-dir: releng/com.b3dgs.lionengine.editor.product/target/products/
+            server-dir: /product/
 
       -  name: Upload Repo
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
