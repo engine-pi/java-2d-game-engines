@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.b3dgs.lionengine</groupId>
@@ -58,76 +58,6 @@
             <artifactId>lionengine-audio-wav</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.core.swt</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.core.swt.test</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor.test</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor.object</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor.object.test</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor.map</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor.map.test</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor.animation</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor.animation.test</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor.collision</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor.collision.test</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor.pathfinding</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine.editor</groupId>
-            <artifactId>com.b3dgs.lionengine.editor.pathfinding.test</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -146,4 +76,84 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.core.swt</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.core.swt.test</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor.test</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor.object</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor.object.test</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor.map</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor.map.test</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor.animation</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor.animation.test</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor.collision</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor.collision.test</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor.pathfinding</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine.editor</groupId>
+                    <artifactId>com.b3dgs.lionengine.editor.pathfinding.test</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>
