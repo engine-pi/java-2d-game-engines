@@ -162,8 +162,8 @@ jobs:
 
       -  name: Tests
          run: |
-            sudo apt-get update && sudo apt-get install -y xvfb
-            xvfb-run -a mvn test -B
+            sudo apt-get update && sudo apt-get install -y xvfb libasound2 libasound2-dev
+            xvfb-run -a mvn test -B -Pcore
             mkdir -p coverage/linux
             find . -path "*/target/site/jacoco/jacoco.xml" -exec cp {} coverage/linux/ \;
 

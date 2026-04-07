@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.b3dgs</groupId>
@@ -25,13 +25,6 @@
         <module>java/lionengine-audio-adlmidi</module>
         <module>java/lionengine-audio-adplug</module>
         <module>java/lionengine-audio-sc68</module>
-        
-        <module>java/lionengine-examples</module>
-        <module>java/lionengine-tutorials</module>
-        
-        <module>releng/aggregator</module>
-        
-        <module>coverage</module>
     </modules>
     <scm>
         <url>https://github.com/b3dgs/lionengine</url>
@@ -41,7 +34,8 @@
     </scm>
     <properties>
         <radial.base-package>com.b3dgs.lionengine</radial.base-package>
-        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/../lionengine-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${basedir}/../lionengine-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
     <repositories>
         <repository>
@@ -67,6 +61,27 @@
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>full</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>java/lionengine-examples</module>
+                <module>java/lionengine-tutorials</module>
+                <module>releng/aggregator</module>
+                <module>coverage</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>core</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>coverage</module>
+            </modules>
+        </profile>
         <profile>
             <id>sign</id>
             <build>
