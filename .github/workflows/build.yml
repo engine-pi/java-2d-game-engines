@@ -89,32 +89,11 @@ jobs:
            ORG_GRADLE_PROJECT_keystore.password: ${{ secrets.KEYSTORE_PASS }}
 
       -  name: FTP
-         shell: pwsh
-         run: |
-            $ftpServer = "ftp.b3dgs.com"
-            $ftpUser   = "${{ secrets.FTP_USER }}"
-            $ftpPass   = "${{ secrets.FTP_PASS }}"
-      
-            $webclient = New-Object System.Net.WebClient
-            $webclient.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
-      
-            function Upload-Folder($localPath, $remotePath) {
-                Get-ChildItem -Path $localPath -Recurse | ForEach-Object {
-                    if (-not $_.PSIsContainer) {
-                        $relativePath = $_.FullName.Substring($localPath.Length).TrimStart('\')
-                        $ftpFilePath = "$remotePath/$relativePath" -replace '\\','/'
-                        $dirs = ($ftpFilePath -split '/')[0..($ftpFilePath.Split('/').Length-2)]
-                        $currentPath = ""
-                        foreach ($dir in $dirs) {
-                            $currentPath += "/$dir"
-                            try { $webclient.UploadString("ftp://$ftpServer$currentPath/", "") } catch {}
-                        }
-                        $webclient.UploadFile("ftp://$ftpServer$ftpFilePath", $_.FullName)
-                    }
-                }
-            }
-            Upload-Folder "releng/com.b3dgs.lionengine.editor.repository/target/repository" "/"
-            Upload-Folder "releng/com.b3dgs.lionengine.editor.product/target/products" "/product"
+         uses: ./.github/actions/ftp-mirror
+         with:
+           server: ${{ secrets.FTP_SERVER }}
+           username: ${{ secrets.FTP_USER }}
+           password: ${{ secrets.FTP_PASS }}
 
       -  name: Upload Repo
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
