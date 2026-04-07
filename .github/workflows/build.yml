@@ -115,7 +115,7 @@ jobs:
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
          with:
             name: coverage-windows
-            path: '**/target/site/jacoco/jacoco.xml'
+            path: '**/target/jacoco.exec'
 
    linux:
       runs-on: ubuntu-latest
@@ -163,14 +163,15 @@ jobs:
             sudo apt-get update && sudo apt-get install -y xvfb libasound2-dev alsa-utils
             xvfb-run -a mvn test -B -Pcore
             mkdir -p coverage/linux
-            find . -path "*/target/site/jacoco/jacoco.xml" -exec cp {} coverage/linux/ \;
+            find coverage/windows -name "jacoco.exec" -exec bash -c 'cp "$0" "coverage/all/windows_$(basename $(dirname $(dirname $0))).exec"' {} \;
+            find . -name "jacoco.exec" -exec bash -c 'cp "$0" "coverage/all/linux_$(basename $(dirname $(dirname $0))).exec"' {} \;
 
       -  name: Jacoco
          run: |
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
             mkdir -p coverage/merged
-            XMLS=$(find coverage/windows -name jacoco.xml; find coverage/linux -name jacoco.xml)
-            java -jar jacococli.jar merge $XMLS --destfile coverage/merged/jacoco.xml
+            java -jar jacococli.jar merge coverage/all/*.exec --destfile coverage/merged/jacoco.exec
+            java -jar jacococli.jar report coverage/merged/jacoco.exec --classfiles java/**/target/classes --classfiles plugins/**/target/classes --sourcefiles java --sourcefiles plugins --xml coverage/merged/jacoco.xml
 
       -  name: Sonar
          run: mvn sonar:sonar -Dsonar.organization=b3dgs -Dsonar.projectKey=b3dgs_lionengine -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=coverage/merged/jacoco.xml
