@@ -89,14 +89,15 @@ jobs:
            ORG_GRADLE_PROJECT_keystore.password: ${{ secrets.KEYSTORE_PASS }}
 
       -  name: FTP
+         shell: pwsh
          run: |
             choco install lftp -y
             $lftpUser = '${{ secrets.FTP_USER }}'
             $lftpPass = '${{ secrets.FTP_PASS }}'
-            lftp -u "$lftpUser","$lftpPass" ftp.b3dgs.com <<EOF
-            mirror -R releng/com.b3dgs.lionengine.editor.repository/target/repository/ /
-            mirror -R releng/com.b3dgs.lionengine.editor.product/target/products/ /product/
-            quit
+            lftp -u "$lftpUser","$lftpPass" ftp.b3dgs.com -e `
+                "mirror -R releng/com.b3dgs.lionengine.editor.repository/target/repository/ /; `
+                 mirror -R releng/com.b3dgs.lionengine.editor.product/target/products/ /product/; `
+                 quit"
 
       -  name: Upload Repo
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
