@@ -62,23 +62,20 @@
     </build>
     <profiles>
         <profile>
-            <id>full</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>java/lionengine-examples</module>
-                <module>java/lionengine-tutorials</module>
-                <module>releng/aggregator</module>
-                <module>coverage</module>
-            </modules>
-        </profile>
-        <profile>
             <id>core</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>coverage</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>full</id>
+            <modules>
+                <module>java/lionengine-examples</module>
+                <module>java/lionengine-tutorials</module>
+                <module>releng/aggregator</module>
                 <module>coverage</module>
             </modules>
         </profile>

@@ -79,9 +79,6 @@
     <profiles>
         <profile>
             <id>full</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <dependencies>
                 <dependency>
                     <groupId>com.b3dgs.lionengine.editor</groupId>

@@ -38,18 +38,19 @@ jobs:
          with:
             path: |
                ~/.m2/repository
-               ~/.gradle/caches
                ~/.gradle/wrapper
             key: maven-gradle-${{ hashFiles('**/pom.xml') }}
+            exclude: |
+               **/*.lock
             restore-keys: |
                maven-gradle-
 
       -  name: Keystore
-         uses: timheuer/base64-to-file@784a1a4a994315802b7d8e2084e116e783d157be
-         with:
-            fileName: android.jks
-            fileDir: app/
-            encodedString: ${{ secrets.KEYSTORE_BASE64 }}
+         shell: pwsh
+         run: |
+            New-Item -ItemType Directory -Force -Path app
+            $decoded = [System.Convert]::FromBase64String("${{ secrets.KEYSTORE_BASE64 }}")
+            [IO.File]::WriteAllBytes("app/android.jks", $decoded)
 
       -  name: GPG
          uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd
@@ -90,7 +91,13 @@ jobs:
            ORG_GRADLE_PROJECT_keystore.storepassword: ${{ secrets.KEYSTORE_STOREPASS }}
            ORG_GRADLE_PROJECT_keystore.password: ${{ secrets.KEYSTORE_PASS }}
 
-      -  name: Repository
+      -  name: FTP
+         run: |
+            choco install lftp -y
+            lftp -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASS }} $FTP_SERVER <<EOF
+            mirror -R releng/com.b3dgs.lionengine.editor.repository/target/repository/ /
+            mirror -R releng/com.b3dgs.lionengine.editor.product/target/products/ /product/
+            quit
          uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
          with:
             server: ${{ env.FTP_SERVER }}
@@ -143,9 +150,10 @@ jobs:
          with:
             path: |
                ~/.m2/repository
-               ~/.gradle/caches
                ~/.gradle/wrapper
             key: maven-gradle-${{ hashFiles('**/pom.xml') }}
+            exclude: |
+               **/*.lock
             restore-keys: |
                maven-gradle-
 
