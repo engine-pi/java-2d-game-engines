@@ -383,7 +383,7 @@ jobs:
                --sourcefiles plugins \
                --sourcefiles tests \
                --sourcefiles releng \
-               --xml target/site/jacoco/jacoco.xml \
+               --xml target/site/jacoco/jacoco.xml
 
       -  name: Sonar
          run: |
