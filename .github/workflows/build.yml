@@ -63,7 +63,9 @@ jobs:
       -  name: Maven
          run: |
             mvn clean deploy -U -B -P "core,sign"
-            Compress-Archive -Path java/*/target/jacoco.exec -DestinationPath coverage-windows.zip
+            $files = Get-ChildItem -Path plugins, tests -Recurse -Filter jacoco.exec
+            $relPaths = $files | ForEach-Object { $_.FullName.Substring($PWD.Path.Length+1) }
+            Compress-Archive -Path $relPaths -DestinationPath jacoco-editor.zip
 
       -  name: Upload projects
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
@@ -81,8 +83,8 @@ jobs:
       -  name: Upload
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
          with:
-            name: coverage-windows
-            path: coverage-windows.zip
+            name: jacoco-windows
+            path: jacoco-windows.zip
 
    core-test:
       runs-on: ubuntu-latest
@@ -115,13 +117,13 @@ jobs:
          run: |
             sudo apt-get update && sudo apt-get install -y xvfb libasound2-dev alsa-utils
             xvfb-run -a mvn clean test -U -B -Pcore
-            zip -r coverage-linux.zip java/*/target/jacoco.exec
+            zip -r jacoco-linux.zip java/*/target -i "*/jacoco.exec"
 
       -  name: Upload
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
          with:
-            name: coverage-linux
-            path: coverage-linux.zip
+            name: jacoco-linux
+            path: jacoco-linux.zip
 
    android:
       runs-on: ubuntu-latest
@@ -237,7 +239,7 @@ jobs:
       -  name: Maven
          run: |
             mvn clean install -U -B -P "editor,sign"
-            Compress-Archive -Path plugins\*\target\jacoco.exec,tests\*\target\jacoco.exec -DestinationPath coverage-editor.zip
+            Compress-Archive -Path plugins\*\target\jacoco.exec,tests\*\target\jacoco.exec -DestinationPath jacoco-editor.zip -Update
             Remove-Item -Recurse -Force releng\com.b3dgs.lionengine.editor.product\target\products\com.b3dgs.lionengine.editor.product
 
       -  name: Repository
@@ -275,8 +277,8 @@ jobs:
       -  name: Upload
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
          with:
-            name: coverage-editor
-            path: coverage-editor.zip
+            name: jacoco-editor
+            path: jacoco-editor.zip
 
    sonar:
       runs-on: ubuntu-latest
@@ -301,51 +303,50 @@ jobs:
       -  name: Windows
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
-            name: coverage-windows
-            path: ./coverage/windows
+            name: jacoco-windows
+            path: ./jacoco/windows
 
       -  name: Linux
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
-            name: coverage-linux
-            path: ./coverage/linux
+            name: jacoco-linux
+            path: ./jacoco/linux
 
       -  name: Editor
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
-            name: coverage-editor
-            path: ./coverage/editor
+            name: jacoco-editor
+            path: ./jacoco/editor
 
       -  name: Jacoco
          run: |
+            mkdir -p jacoco/merged/html
             shopt -s dotglob
             mv src-java/* .
             mv src-editor/* .
-            unzip -o ./coverage/windows/coverage-windows.zip -d coverage/windows
-            unzip -o ./coverage/linux/coverage-linux.zip -d coverage/linux
-            unzip -o ./coverage/editor/coverage-editor.zip -d coverage/editor
+            unzip -o ./jacoco/windows/jacoco-windows.zip -d jacoco/windows
+            unzip -o ./jacoco/linux/jacoco-linux.zip -d jacoco/linux
+            unzip -o ./jacoco/editor/jacoco-editor.zip -d jacoco/editor
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
-            mkdir -p coverage/merged
-            mkdir -p coverage/merged/html
             echo "ls"
             ls
-            EXEC_FILES=$(find coverage -name "*.exec")
+            EXEC_FILES=$(find jacoco -name "*.exec")
             echo "exec files:"
             echo "$EXEC_FILES"
-            java -jar jacococli.jar merge $EXEC_FILES --destfile coverage/merged/jacoco.exec
+            java -jar jacococli.jar merge $EXEC_FILES --destfile jacoco/merged/jacoco.exec
             CLASS_DIRS=$(find java plugins -type d -path "*/target/classes" 2>/dev/null || true)
             echo "class dir:"
             echo "$CLASS_DIRS"
             CLASS_ARGS=$(printf " --classfiles %s" $CLASS_DIRS)
-            java -jar jacococli.jar report coverage/merged/jacoco.exec \
+            java -jar jacococli.jar report jacoco/merged/jacoco.exec \
                $CLASS_ARGS \
                --sourcefiles java \
                --sourcefiles plugins \
                --sourcefiles releng \
-               --xml coverage/merged/jacoco.xml \
-               --html coverage/merged/html
+               --xml jacoco/merged/jacoco.xml \
+               --html jacoco/merged/html
 
       -  name: Sonar
-         run: mvn sonar:sonar -Dsonar.organization=b3dgs -Dsonar.projectKey=b3dgs_lionengine -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=coverage/merged/jacoco.xml
+         run: mvn sonar:sonar -Dsonar.organization=b3dgs -Dsonar.projectKey=b3dgs_lionengine -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=jacoco/merged/jacoco.xml
          env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
