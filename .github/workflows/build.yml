@@ -335,12 +335,15 @@ jobs:
             unzip -o ./jacoco/linux/jacoco-linux.zip -d jacoco/linux
             unzip -o ./jacoco/editor/jacoco-editor.zip -d jacoco/editor
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
-            EXEC_FILES=$(find jacoco -name "*.exec")
-            java -jar jacococli.jar merge $EXEC_FILES --destfile jacoco/merged/jacoco.exec
-            CLASS_DIRS=$(find java plugins -type d -path "*/target/classes" 2>/dev/null || true)
-            CLASS_ARGS=$(printf " --classfiles %s" $CLASS_DIRS)
+            mapfile -t EXEC_FILES < <(find jacoco -type f -name "*.exec")
+            java -jar jacococli.jar merge "${EXEC_FILES[@]}" --destfile jacoco/merged/jacoco.exec
+            mapfile -t CLASS_DIRS < <(find java plugins -type d -path "*/target/classes" 2>/dev/null)
+            CLASS_ARGS=()
+            for d in "${CLASS_DIRS[@]}"; do
+               CLASS_ARGS+=(--classfiles "$d")
+            done
             java -jar jacococli.jar report jacoco/merged/jacoco.exec \
-               $CLASS_ARGS \
+               "${CLASS_ARGS[@]}" \
                --sourcefiles java \
                --sourcefiles plugins \
                --sourcefiles releng \
