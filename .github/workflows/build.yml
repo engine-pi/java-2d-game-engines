@@ -385,16 +385,21 @@ jobs:
 
       -  name: Sonar
          run: |
+            echo "JAVA_HOME is $JAVA_HOME"
+            export PATH="$JAVA_HOME/bin:$PATH"
             rm -rf class-java
             rm -rf class-editor
             rm -rf jacoco
             rm -f jacococli.jar
+            mapfile -t CLASS_DIRS < <(find java plugins -type d -path "*/target/classes" 2>/dev/null)
+            BINARIES=$(IFS=, ; echo "${CLASS_DIRS[*]}")
+            echo "Binaries: $BINARIES"
             mvn sonar:sonar \
                -Dsonar.host.url=https://sonarcloud.io \
                -Dsonar.organization=b3dgs \
                -Dsonar.token=$SONAR_TOKEN \
                -Dsonar.projectKey=b3dgs_lionengine \
-               -Dsonar.java.binaries=java,plugins,releng \
+               -Dsonar.java.binaries="$BINARIES" \
                -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml
          env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
