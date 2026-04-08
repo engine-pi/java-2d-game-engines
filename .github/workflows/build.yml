@@ -385,17 +385,11 @@ jobs:
 
       -  name: Sonar
          run: |
-            sudo apt install tree
-            echo "JAVA_HOME is $JAVA_HOME"
-            export PATH="$JAVA_HOME/bin:$PATH"
             rm -rf class-java
             rm -rf class-editor
             rm -rf jacoco
             rm -f jacococli.jar
-            tree ~
-            ls java/
-            ls java/lionengine-audio-wav/target
-            ls java/lionengine-audio-wav/target/classes
+            tree /home/runner/work/lionengine/lionengine -a
             mapfile -t CLASS_DIRS < <(find java plugins -type d -path "*/target/classes" 2>/dev/null)
             BINARIES=$(IFS=, ; echo "${CLASS_DIRS[*]}")
             echo "Binaries: $BINARIES"
