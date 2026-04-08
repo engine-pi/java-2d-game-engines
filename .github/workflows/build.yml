@@ -292,13 +292,13 @@ jobs:
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
             name: src-java
-            path: .
+            path: src-java
 
       -  name: Sources Editor
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
             name: src-editor
-            path: .
+            path: src-editor
 
       -  name: Windows
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
@@ -320,15 +320,21 @@ jobs:
 
       -  name: Jacoco
          run: |
+            shopt -s dotglob
+            mv src-java/* .
+            mv src-editor/* .
             unzip -o ./coverage/windows/coverage-windows.zip -d coverage/windows
             unzip -o ./coverage/linux/coverage-linux.zip -d coverage/linux
             unzip -o ./coverage/editor/coverage-editor.zip -d coverage/editor
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
             mkdir -p coverage/merged
             mkdir -p coverage/merged/html
+            ls
             EXEC_FILES=$(find coverage -name "*.exec")
+            echo "$EXEC_FILES"
             java -jar jacococli.jar merge $EXEC_FILES --destfile coverage/merged/jacoco.exec
-            CLASS_DIRS=$(find java plugins -type d -path "*/target/classes")
+            CLASS_DIRS=$(find java plugins -type d -path "*/target/classes" 2>/dev/null || true)
+            echo "$CLASS_DIRS"
             CLASS_ARGS=$(printf " --classfiles %s" $CLASS_DIRS)
             java -jar jacococli.jar report coverage/merged/jacoco.exec \
                $CLASS_ARGS \
