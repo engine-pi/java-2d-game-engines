@@ -314,7 +314,24 @@ jobs:
             ref: master
             fetch-depth: 1
             fetch-tags: false
-      
+
+      -  name: Java
+         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
+         with:
+            distribution: temurin
+            java-version: 25
+            mvn-toolchain-id: |
+               JavaSE-25
+
+      -  name: Cache
+         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
+         with:
+            path: |
+               ~/.m2/repository
+            key: maven-${{ hashFiles('**/pom.xml') }}
+            restore-keys: |
+               maven-
+
       -  name: Sources Java
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
@@ -377,8 +394,8 @@ jobs:
          run: |
             CLASS_DIRS=$(find java plugins -type d -path "*/target/classes" 2>/dev/null || true)
             BINARIES=$(echo $CLASS_DIRS | tr ' ' ',')
-            mvn sonar:sonar
-               -Dsonar.organization=b3dgs \ 
+            mvn sonar:sonar \
+               -Dsonar.organization=b3dgs \
                -Dsonar.projectKey=b3dgs_lionengine \
                -Dsonar.host.url=https://sonarcloud.io \
                -Dsonar.token=$SONAR_TOKEN \
