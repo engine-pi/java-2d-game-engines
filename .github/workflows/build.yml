@@ -109,7 +109,8 @@ jobs:
          with:
             name: src-java
             path: |
-               java/*
+               java\**\*.java
+               java\**\*.class
 
       -  name: Upload
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
@@ -256,10 +257,14 @@ jobs:
          with:
             name: src-editor
             path: |
-               plugins/*
-               tests/*
-               releng/lionengine-editor-parent/*
-               releng/lionengine-editor-test-parent/*
+               plugins\**\*.pom
+               plugins\**\*.java
+               plugins\**\*.class
+               tests\**\*.pom
+               tests\**\*.java
+               tests\**\*.class
+               releng\**\*.pom
+               releng\**\*.pom
 
       -  name: Upload
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
@@ -315,11 +320,13 @@ jobs:
             mkdir -p coverage/merged/html
             EXEC_FILES=$(find coverage -name "*.exec")
             java -jar jacococli.jar merge $EXEC_FILES --destfile coverage/merged/jacoco.exec
+            CLASS_DIRS=$(find java plugins -type d -path "*/target/classes")
+            CLASS_ARGS=$(printf " --classfiles %s" $CLASS_DIRS)
             java -jar jacococli.jar report coverage/merged/jacoco.exec \
-               --classfiles java/*/target/classes \
-               --classfiles plugins/*/target/classes \
+               $CLASS_ARGS \
                --sourcefiles java \
                --sourcefiles plugins \
+               --sourcefiles releng \
                --xml coverage/merged/jacoco.xml \
                --html coverage/merged/html
 
