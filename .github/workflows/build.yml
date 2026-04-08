@@ -230,7 +230,8 @@ jobs:
 
       -  name: Maven
          run: |
-            mvn clean install -U -B -P "editor,sign"
+            sudo apt-get update && sudo apt-get install -y xvfb libasound2-dev alsa-utils
+            xvfb-run -a mvn clean install -U -B -P "editor,sign"
             zip -r coverage-editor.zip plugins/*/target/jacoco.exec tests/*/target/jacoco.exec
             rm -rf releng/com.b3dgs.lionengine.editor.product/target/products/com.b3dgs.lionengine.editor.product
 
