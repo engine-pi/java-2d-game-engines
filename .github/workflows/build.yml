@@ -61,8 +61,10 @@ jobs:
                ]
 
       -  name: Maven
+         run: mvn clean deploy -U -B -P "core,sign"
+
+      -  name: Zip
          run: |
-            mvn clean deploy -U -B -P "core,sign"
             $files = Get-ChildItem -Path java -Recurse -Filter jacoco.exec
             if ($files.Count -eq 0) {
                 Write-Host "No jacoco.exec files found, skipping zip"
@@ -119,11 +121,14 @@ jobs:
             restore-keys: |
                maven-
 
+      -  name: Install
+         run: sudo apt-get update && sudo apt-get install -y xvfb libasound2-dev alsa-utils
+
       -  name: Tests
-         run: |
-            sudo apt-get update && sudo apt-get install -y xvfb libasound2-dev alsa-utils
-            xvfb-run -a mvn clean test -U -B -Pcore
-            zip -r jacoco-linux.zip java/*/target -i "*/jacoco.exec"
+         run: xvfb-run -a mvn clean test -U -B -Pcore
+
+      -  name: Zip
+         run: zip -r jacoco-linux.zip java/*/target -i "*/jacoco.exec"
 
       -  name: Upload
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
@@ -243,8 +248,10 @@ jobs:
                ]
 
       -  name: Maven
+         run: mvn clean install -U -B -P "editor,sign"
+
+      -  name: Zip
          run: |
-            mvn clean install -U -B -P "editor,sign"
             Remove-Item -Recurse -Force releng\com.b3dgs.lionengine.editor.product\target\products\com.b3dgs.lionengine.editor.product
             $files = Get-ChildItem -Path plugins, tests -Recurse -Filter jacoco.exec
             if ($files.Count -eq 0) {
