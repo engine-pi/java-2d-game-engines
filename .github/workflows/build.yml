@@ -65,15 +65,17 @@ jobs:
 
       -  name: Zip
          run: |
+            $zipDir = "tmp_zip"
+            New-Item -ItemType Directory -Force -Path $zipDir
             $files = Get-ChildItem -Path java -Recurse -Filter jacoco.exec
-            if ($files.Count -eq 0) {
-                Write-Host "No jacoco.exec files found, skipping zip"
-            } else {
-                $relPaths = $files | ForEach-Object { $_.FullName.Replace("$PWD\", "") }
-                Compress-Archive -Path $relPaths -DestinationPath jacoco-windows.zip
-                Write-Host "Created jacoco-windows.zip with the following files:"
-                $relPaths | ForEach-Object { Write-Host $_ }
+            foreach ($f in $files) {
+                $relPath = $f.FullName.Substring($PWD.Path.Length+1)
+                $dest = Join-Path $zipDir $relPath
+                New-Item -ItemType Directory -Force -Path (Split-Path $dest)
+                Copy-Item $f.FullName $dest
             }
+            Compress-Archive -Path "$zipDir\*" -DestinationPath jacoco-windows.zip -Force
+            Remove-Item -Recurse -Force $zipDir
 
       -  name: Upload projects
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
@@ -253,32 +255,17 @@ jobs:
       -  name: Zip
          run: |
             Remove-Item -Recurse -Force releng\com.b3dgs.lionengine.editor.product\target\products\com.b3dgs.lionengine.editor.product
+            $zipDir = "tmp_zip"
+            New-Item -ItemType Directory -Force -Path $zipDir
             $files = Get-ChildItem -Path plugins, tests -Recurse -Filter jacoco.exec
-            if ($files.Count -eq 0) {
-                Write-Host "No jacoco.exec files found, skipping zip"
-            } else {
-                $relPaths = $files | ForEach-Object { $_.FullName.Replace("$PWD\", "") }
-                Compress-Archive -Path $relPaths -DestinationPath jacoco-editor.zip
-                Write-Host "Created jacoco-editor.zip with the following files:"
-                $relPaths | ForEach-Object { Write-Host $_ }
+            foreach ($f in $files) {
+                $relPath = $f.FullName.Substring($PWD.Path.Length+1)
+                $dest = Join-Path $zipDir $relPath
+                New-Item -ItemType Directory -Force -Path (Split-Path $dest)
+                Copy-Item $f.FullName $dest
             }
-
-      -  name: Repository
-         uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
-         with:
-            server: ${{ secrets.FTP_SERVER }}
-            username: ${{ secrets.FTP_USER }}
-            password: ${{ secrets.FTP_PASS }}
-            local-dir: releng/com.b3dgs.lionengine.editor.repository/target/repository/
-
-      -  name: Product
-         uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
-         with:
-            server: ${{ secrets.FTP_SERVER }}
-            username: ${{ secrets.FTP_USER }}
-            password: ${{ secrets.FTP_PASS }}
-            local-dir: releng/com.b3dgs.lionengine.editor.product/target/products/
-            server-dir: /product/
+            Compress-Archive -Path "$zipDir\*" -DestinationPath jacoco-editor.zip -Force
+            Remove-Item -Recurse -Force $zipDir
 
       -  name: Upload projects
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
@@ -300,6 +287,23 @@ jobs:
          with:
             name: jacoco-editor
             path: jacoco-editor.zip
+
+      -  name: Repository
+         uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
+         with:
+            server: ${{ secrets.FTP_SERVER }}
+            username: ${{ secrets.FTP_USER }}
+            password: ${{ secrets.FTP_PASS }}
+            local-dir: releng/com.b3dgs.lionengine.editor.repository/target/repository/
+
+      -  name: Product
+         uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
+         with:
+            server: ${{ secrets.FTP_SERVER }}
+            username: ${{ secrets.FTP_USER }}
+            password: ${{ secrets.FTP_PASS }}
+            local-dir: releng/com.b3dgs.lionengine.editor.product/target/products/
+            server-dir: /product/
 
    sonar:
       runs-on: ubuntu-latest
