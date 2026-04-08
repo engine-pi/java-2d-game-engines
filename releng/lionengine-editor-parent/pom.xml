@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
     <name>LionEngine Editor Parent</name>
     <properties>
-        <tycho.target.jre>JavaSE-17</tycho.target.jre>
+        <tycho.target.jre>JavaSE-${jdk.version}</tycho.target.jre>
         <tycho.target>
             ../com.b3dgs.lionengine.editor.target/com.b3dgs.lionengine.editor.target.target</tycho.target>
         <tycho.forceContextQualifier>true</tycho.forceContextQualifier>

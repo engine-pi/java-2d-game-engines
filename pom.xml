@@ -17,14 +17,6 @@
     <url>https://github.com/b3dgs/lionengine</url>
     <modules>
         <module>java/lionengine-core</module>
-        <module>java/lionengine-core-headless</module>
-        <module>java/lionengine-core-awt</module>
-        <module>java/lionengine-game</module>
-        <module>java/lionengine-helper</module>
-        <module>java/lionengine-audio-wav</module>
-        <module>java/lionengine-audio-adlmidi</module>
-        <module>java/lionengine-audio-adplug</module>
-        <module>java/lionengine-audio-sc68</module>
     </modules>
     <scm>
         <url>https://github.com/b3dgs/lionengine</url>
@@ -34,8 +26,6 @@
     </scm>
     <properties>
         <radial.base-package>com.b3dgs.lionengine</radial.base-package>
-        <sonar.coverage.jacoco.xmlReportPaths>
-            ${basedir}/../lionengine-coverage/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
     <repositories>
         <repository>
@@ -67,28 +57,60 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
+                <module>java/lionengine-game</module>
+                <module>java/lionengine-helper</module>
+                <module>java/lionengine-core-headless</module>
+                <module>java/lionengine-core-awt</module>
+                <module>java/lionengine-audio-wav</module>
+                <module>java/lionengine-audio-adlmidi</module>
+                <module>java/lionengine-audio-adplug</module>
+                <module>java/lionengine-audio-sc68</module>
                 <module>coverage</module>
             </modules>
         </profile>
         <profile>
-            <id>full</id>
+            <id>android</id>
+            <properties>
+                <jdk.version>17</jdk.version>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>editor</id>
+            <properties>
+                <jdk.version>17</jdk.version>
+            </properties>
             <modules>
-                <module>java/lionengine-examples</module>
-                <module>java/lionengine-tutorials</module>
+                <module>java/lionengine-game</module>
+                <module>java/lionengine-helper</module>
                 <module>releng/aggregator</module>
                 <module>coverage</module>
             </modules>
-        </profile>
-        <profile>
-            <id>sign</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>extra</id>
+            <modules>
+                <module>java/lionengine-examples</module>
+                <module>java/lionengine-tutorials</module>
+            </modules>
         </profile>
     </profiles>
 </project>

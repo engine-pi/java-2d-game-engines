@@ -18,46 +18,6 @@
             <artifactId>lionengine-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine</groupId>
-            <artifactId>lionengine-core-headless</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine</groupId>
-            <artifactId>lionengine-core-awt</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine</groupId>
-            <artifactId>lionengine-game</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine</groupId>
-            <artifactId>lionengine-helper</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine</groupId>
-            <artifactId>lionengine-audio-adlmidi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine</groupId>
-            <artifactId>lionengine-audio-adplug</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine</groupId>
-            <artifactId>lionengine-audio-sc68</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.b3dgs.lionengine</groupId>
-            <artifactId>lionengine-audio-wav</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -78,7 +38,55 @@
     </build>
     <profiles>
         <profile>
-            <id>full</id>
+            <id>core</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine</groupId>
+                    <artifactId>lionengine-game</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine</groupId>
+                    <artifactId>lionengine-helper</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine</groupId>
+                    <artifactId>lionengine-core-headless</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine</groupId>
+                    <artifactId>lionengine-core-awt</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine</groupId>
+                    <artifactId>lionengine-audio-adlmidi</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine</groupId>
+                    <artifactId>lionengine-audio-adplug</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine</groupId>
+                    <artifactId>lionengine-audio-sc68</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.b3dgs.lionengine</groupId>
+                    <artifactId>lionengine-audio-wav</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>editor</id>
             <dependencies>
                 <dependency>
                     <groupId>com.b3dgs.lionengine.editor</groupId>
