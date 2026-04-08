@@ -403,7 +403,7 @@ jobs:
             rm -f jacococli.jar
             ls
             CLASS_DIRS=$(find java plugins -type d -path "*/target/classes" 2>/dev/null || true)
-            BINARIES=$(echo $CLASS_DIRS | tr ' ' ',')
+            BINARIES=$(echo $CLASS_DIRS | tr ' ' ':')
             echo "binaries:"
             echo "$BINARIES"
             mvn sonar:sonar \
