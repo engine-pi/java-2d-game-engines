@@ -26,25 +26,13 @@
 
         <module>../com.b3dgs.lionengine.editor.repository</module>
         <module>../com.b3dgs.lionengine.editor.product</module>
+
+        <module>../../tests/com.b3dgs.lionengine.core.swt.test</module>
+        <module>../../tests/com.b3dgs.lionengine.editor.test</module>
+        <module>../../tests/com.b3dgs.lionengine.editor.object.test</module>
+        <module>../../tests/com.b3dgs.lionengine.editor.map.test</module>
+        <module>../../tests/com.b3dgs.lionengine.editor.animation.test</module>
+        <module>../../tests/com.b3dgs.lionengine.editor.collision.test</module>
+        <module>../../tests/com.b3dgs.lionengine.editor.pathfinding.test</module>
     </modules>
-    <profiles>
-        <profile>
-            <id>tests</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>../../tests/com.b3dgs.lionengine.core.swt.test</module>
-                <module>../../tests/com.b3dgs.lionengine.editor.test</module>
-                <module>../../tests/com.b3dgs.lionengine.editor.object.test</module>
-                <module>../../tests/com.b3dgs.lionengine.editor.map.test</module>
-                <module>../../tests/com.b3dgs.lionengine.editor.animation.test</module>
-                <module>../../tests/com.b3dgs.lionengine.editor.collision.test</module>
-                <module>../../tests/com.b3dgs.lionengine.editor.pathfinding.test</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>sonar</id>
-        </profile>
-    </profiles>
 </project>

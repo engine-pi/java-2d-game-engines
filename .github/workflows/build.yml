@@ -365,6 +365,7 @@ jobs:
       -  name: Jacoco
          run: |
             mkdir -p jacoco/merged
+            mkdir -p target/site/jacoco
             shopt -s dotglob
             cp -r class-java/* java/
             cp -r class-editor/* .
@@ -374,14 +375,15 @@ jobs:
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
             EXEC_FILES=$(find jacoco -name "*.exec")
             java -jar jacococli.jar merge $EXEC_FILES --destfile jacoco/merged/jacoco.exec
-            CLASS_DIRS=$(find java plugins -type d -path "*/target/classes" 2>/dev/null || true)
+            CLASS_DIRS=$(find java plugins tests -type d -path "*/target/classes" 2>/dev/null || true)
             CLASS_ARGS=$(printf " --classfiles %s" $CLASS_DIRS)
             java -jar jacococli.jar report jacoco/merged/jacoco.exec \
                $CLASS_ARGS \
                --sourcefiles java \
                --sourcefiles plugins \
+               --sourcefiles tests \
                --sourcefiles releng \
-               --xml jacoco.xml \
+               --xml target/site/jacoco/jacoco.xml \
 
       -  name: Sonar
          run: |
@@ -389,11 +391,11 @@ jobs:
             rm -rf class-editor
             rm -rf jacoco
             rm -f jacococli.jar
+            tree /home/runner/work/lionengine/lionengine -a
             mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Psonar \
                -Dsonar.host.url=https://sonarcloud.io \
                -Dsonar.organization=b3dgs \
                -Dsonar.token=$SONAR_TOKEN \
-               -Dsonar.projectKey=b3dgs_lionengine \
-               -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml
+               -Dsonar.projectKey=b3dgs_lionengine
          env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
