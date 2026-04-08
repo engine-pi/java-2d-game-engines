@@ -80,10 +80,8 @@ jobs:
       -  name: Upload projects
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
          with:
-            name: src-java
+            name: class-java
             path: |
-               **/pom.xml
-               java/**/*.java
                java/**/*.class
                !**/target/generated-sources/**
                !**/target/maven-status/**
@@ -270,12 +268,9 @@ jobs:
       -  name: Upload projects
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
          with:
-            name: src-editor
+            name: class-editor
             path: |
-               **/pom.xml
-               plugins/**/*.java
                plugins/**/*.class
-               tests/**/*.java
                tests/**/*.class
                !**/target/generated-sources/**
                !**/target/maven-status/**
@@ -313,17 +308,24 @@ jobs:
       - editor
 
       steps:
+      -  name: Checkout
+         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+         with:
+            ref: master
+            fetch-depth: 1
+            fetch-tags: false
+      
       -  name: Sources Java
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
-            name: src-java
-            path: src-java
+            name: class-java
+            path: class-java
 
       -  name: Sources Editor
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
-            name: src-editor
-            path: src-editor
+            name: class-editor
+            path: class-editor
 
       -  name: Windows
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
@@ -347,8 +349,8 @@ jobs:
          run: |
             mkdir -p jacoco/merged/html
             shopt -s dotglob
-            cp -r src-java/* .
-            cp -r src-editor/* .
+            cp -r class-java/* .
+            cp -r class-editor/* .
             unzip -o ./jacoco/windows/jacoco-windows.zip -d jacoco/windows
             unzip -o ./jacoco/linux/jacoco-linux.zip -d jacoco/linux
             unzip -o ./jacoco/editor/jacoco-editor.zip -d jacoco/editor
@@ -372,6 +374,6 @@ jobs:
                --html jacoco/merged/html
 
       -  name: Sonar
-         run: mvn sonar:sonar -Dsonar.organization=b3dgs -Dsonar.projectKey=b3dgs_lionengine -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=jacoco/merged/jacoco.xml
+         run: mvn sonar:sonar -Dsonar.organization=b3dgs -Dsonar.projectKey=b3dgs_lionengine -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=jacoco/merged/jacoco.xml
          env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
