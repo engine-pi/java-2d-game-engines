@@ -65,6 +65,19 @@ jobs:
             mvn clean deploy -U -B -P "core,sign"
             Compress-Archive -Path java/*/target/jacoco.exec -DestinationPath coverage-windows.zip
 
+      -  name: Upload projects
+         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+         with:
+            name: src-java
+            path: |
+               **/pom.xml
+               java/**/*.java
+               java/**/*.class
+               !**/target/generated-sources/**
+               !**/target/maven-status/**
+               !**/target/test-classes/**
+               !**/.git/**
+
       -  name: Upload
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
          with:
@@ -103,18 +116,6 @@ jobs:
             sudo apt-get update && sudo apt-get install -y xvfb libasound2-dev alsa-utils
             xvfb-run -a mvn clean test -U -B -Pcore
             zip -r coverage-linux.zip java/*/target/jacoco.exec
-
-      -  name: Upload projects
-         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
-         with:
-            name: src-java
-            path: |
-               java/**/*.java
-               java/**/*.class
-               !**/target/generated-sources/**
-               !**/target/maven-status/**
-               !**/target/test-classes/**
-               !**/.git/**
 
       -  name: Upload
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
@@ -261,14 +262,11 @@ jobs:
          with:
             name: src-editor
             path: |
-               plugins/**/*.pom
+               **/pom.xml
                plugins/**/*.java
                plugins/**/*.class
-               tests/**/*.pom
                tests/**/*.java
                tests/**/*.class
-               releng/**/*.pom
-               releng/**/*.pom
                !**/target/generated-sources/**
                !**/target/maven-status/**
                !**/target/test-classes/**
@@ -329,11 +327,14 @@ jobs:
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
             mkdir -p coverage/merged
             mkdir -p coverage/merged/html
+            echo "ls"
             ls
             EXEC_FILES=$(find coverage -name "*.exec")
+            echo "exec files:"
             echo "$EXEC_FILES"
             java -jar jacococli.jar merge $EXEC_FILES --destfile coverage/merged/jacoco.exec
             CLASS_DIRS=$(find java plugins -type d -path "*/target/classes" 2>/dev/null || true)
+            echo "class dir:"
             echo "$CLASS_DIRS"
             CLASS_ARGS=$(printf " --classfiles %s" $CLASS_DIRS)
             java -jar jacococli.jar report coverage/merged/jacoco.exec \
