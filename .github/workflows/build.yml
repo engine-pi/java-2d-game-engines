@@ -344,7 +344,7 @@ jobs:
                --sourcefiles java \
                --sourcefiles plugins \
                --sourcefiles releng \
-               --xml jacoco.xml \
+               --xml jacoco.xml
             rm -rf jacoco
             rm -f jacococli.jar
 
