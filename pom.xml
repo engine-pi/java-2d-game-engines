@@ -116,5 +116,19 @@
                 <module>java/lionengine-tutorials</module>
             </modules>
         </profile>
+        <profile>
+            <id>sonar</id>
+            <modules>
+                <module>java/lionengine-core-headless</module>
+                <module>java/lionengine-core-awt</module>
+                <module>java/lionengine-game</module>
+                <module>java/lionengine-helper</module>
+                <module>java/lionengine-audio-wav</module>
+                <module>java/lionengine-audio-adlmidi</module>
+                <module>java/lionengine-audio-adplug</module>
+                <module>java/lionengine-audio-sc68</module>
+                <module>releng/aggregator</module>
+            </modules>
+        </profile>
     </profiles>
 </project>
