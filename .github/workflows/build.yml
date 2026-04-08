@@ -347,8 +347,8 @@ jobs:
          run: |
             mkdir -p jacoco/merged/html
             shopt -s dotglob
-            mv src-java/* .
-            mv src-editor/* .
+            cp -r src-java/* .
+            cp -r src-editor/* .
             unzip -o ./jacoco/windows/jacoco-windows.zip -d jacoco/windows
             unzip -o ./jacoco/linux/jacoco-linux.zip -d jacoco/linux
             unzip -o ./jacoco/editor/jacoco-editor.zip -d jacoco/editor
