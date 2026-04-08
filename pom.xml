@@ -57,10 +57,10 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>java/lionengine-game</module>
-                <module>java/lionengine-helper</module>
                 <module>java/lionengine-core-headless</module>
                 <module>java/lionengine-core-awt</module>
+                <module>java/lionengine-game</module>
+                <module>java/lionengine-helper</module>
                 <module>java/lionengine-audio-wav</module>
                 <module>java/lionengine-audio-adlmidi</module>
                 <module>java/lionengine-audio-adplug</module>
@@ -72,6 +72,8 @@
             <id>android</id>
             <properties>
                 <jdk.version>17</jdk.version>
+                <maven.source.skip>true</maven.source.skip>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
                 <maven.test.skip>true</maven.test.skip>
             </properties>
         </profile>
@@ -79,6 +81,8 @@
             <id>editor</id>
             <properties>
                 <jdk.version>17</jdk.version>
+                <maven.source.skip>true</maven.source.skip>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
             </properties>
             <modules>
                 <module>java/lionengine-game</module>
