@@ -64,8 +64,14 @@ jobs:
          run: |
             mvn clean deploy -U -B -P "core,sign"
             $files = Get-ChildItem -Path plugins, tests -Recurse -Filter jacoco.exec
-            $relPaths = $files | ForEach-Object { $_.FullName.Substring($PWD.Path.Length+1) }
-            Compress-Archive -Path $relPaths -DestinationPath jacoco-editor.zip
+            if ($files.Count -eq 0) {
+                Write-Host "No jacoco.exec files found, skipping zip"
+            } else {
+                $relPaths = $files | ForEach-Object { $_.FullName.Replace("$PWD\", "") }
+                Compress-Archive -Path $relPaths -DestinationPath jacoco-editor.zip
+                Write-Host "Created jacoco-editor.zip with the following files:"
+                $relPaths | ForEach-Object { Write-Host $_ }
+            }
 
       -  name: Upload projects
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
