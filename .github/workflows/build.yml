@@ -364,7 +364,7 @@ jobs:
 
       -  name: Jacoco
          run: |
-            mkdir -p jacoco/merged/html
+            mkdir -p jacoco/merged
             shopt -s dotglob
             cp -r class-java/* java/
             cp -r class-editor/* .
@@ -374,6 +374,12 @@ jobs:
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
             echo "ls"
             ls
+            echo "java"
+            ls java
+            echo "plugins"
+            ls plugins
+            echo "releng"
+            ls releng
             EXEC_FILES=$(find jacoco -name "*.exec")
             echo "exec files:"
             echo "$EXEC_FILES"
@@ -387,20 +393,25 @@ jobs:
                --sourcefiles java \
                --sourcefiles plugins \
                --sourcefiles releng \
-               --xml jacoco/merged/jacoco.xml \
-               --html jacoco/merged/html
+               --xml jacoco.xml \
 
       -  name: Sonar
          run: |
+            rm -rf class-java
+            rm -rf class-editor
+            rm -rf jacoco
+            rm -f jacococli.jar
+            ls
             CLASS_DIRS=$(find java plugins -type d -path "*/target/classes" 2>/dev/null || true)
             BINARIES=$(echo $CLASS_DIRS | tr ' ' ',')
+            echo "binaries:"
+            echo "$BINARIES"
             mvn sonar:sonar \
                -Dsonar.organization=b3dgs \
                -Dsonar.projectKey=b3dgs_lionengine \
                -Dsonar.host.url=https://sonarcloud.io \
                -Dsonar.token=$SONAR_TOKEN \
-               -Dsonar.sources="java,plugins,releng" \
                -Dsonar.java.binaries="$BINARIES" \
-               -Dsonar.coverage.jacoco.xmlReportPaths=jacoco/merged/jacoco.xml
+               -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml
          env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
