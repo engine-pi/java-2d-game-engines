@@ -77,6 +77,17 @@ jobs:
             Compress-Archive -Path "$zipDir\*" -DestinationPath jacoco-windows.zip -Force
             Remove-Item -Recurse -Force $zipDir
 
+      -  name: Upload projects
+         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+         with:
+            name: class-java
+            path: |
+               java/**/*.class
+               !**/target/generated-sources/**
+               !**/target/maven-status/**
+               !**/target/test-classes/**
+               !**/.git/**
+
       -  name: Upload
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
          with:
@@ -254,6 +265,18 @@ jobs:
             Compress-Archive -Path "$zipDir\*" -DestinationPath jacoco-editor.zip -Force
             Remove-Item -Recurse -Force $zipDir
 
+      -  name: Upload projects
+         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+         with:
+            name: class-editor
+            path: |
+               plugins/**/*.class
+               tests/**/*.class
+               !**/target/generated-sources/**
+               !**/target/maven-status/**
+               !**/target/test-classes/**
+               !**/.git/**
+
       -  name: Upload
          uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
          with:
@@ -309,6 +332,18 @@ jobs:
             restore-keys: |
                maven-
 
+      -  name: Sources Java
+         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+         with:
+            name: class-java
+            path: class-java
+
+      -  name: Sources Editor
+         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+         with:
+            name: class-editor
+            path: class-editor
+
       -  name: Windows
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
@@ -331,32 +366,35 @@ jobs:
          run: |
             mkdir -p jacoco/merged
             shopt -s dotglob
+            cp -r class-java/* java/
+            cp -r class-editor/* .
             unzip -o ./jacoco/windows/jacoco-windows.zip -d jacoco/windows
             unzip -o ./jacoco/linux/jacoco-linux.zip -d jacoco/linux
             unzip -o ./jacoco/editor/jacoco-editor.zip -d jacoco/editor
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
-            mapfile -t EXEC_FILES < <(find jacoco -type f -name "*.exec")
-            java -jar jacococli.jar merge "${EXEC_FILES[@]}" --destfile jacoco/merged/jacoco.exec
-            mapfile -t CLASS_DIRS < <(find java plugins -type d -path "*/target/classes" 2>/dev/null)
-            CLASS_ARGS=()
-            for d in "${CLASS_DIRS[@]}"; do
-               CLASS_ARGS+=(--classfiles "$d")
-            done
+            EXEC_FILES=$(find jacoco -name "*.exec")
+            java -jar jacococli.jar merge $EXEC_FILES --destfile jacoco/merged/jacoco.exec
+            CLASS_DIRS=$(find java plugins -type d -path "*/target/classes" 2>/dev/null || true)
+            CLASS_ARGS=$(printf " --classfiles %s" $CLASS_DIRS)
             java -jar jacococli.jar report jacoco/merged/jacoco.exec \
-               "${CLASS_ARGS[@]}" \
+               $CLASS_ARGS \
                --sourcefiles java \
                --sourcefiles plugins \
                --sourcefiles releng \
-               --xml jacoco.xml
-            rm -rf jacoco
-            rm -f jacococli.jar
+               --xml jacoco.xml \
 
       -  name: Sonar
-         run: mvn sonar:sonar \
-                 -Dsonar.host.url=https://sonarcloud.io \
-                 -Dsonar.organization=b3dgs \
-                 -Dsonar.token=$SONAR_TOKEN \
-                 -Dsonar.projectKey=b3dgs_lionengine \
-                 -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml
+         run: |
+            rm -rf class-java
+            rm -rf class-editor
+            rm -rf jacoco
+            rm -f jacococli.jar
+            mvn sonar:sonar \
+               -Dsonar.host.url=https://sonarcloud.io \
+               -Dsonar.organization=b3dgs \
+               -Dsonar.token=$SONAR_TOKEN \
+               -Dsonar.projectKey=b3dgs_lionengine \
+               -Dsonar.java.binaries=java,plugins,releng \
+               -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml
          env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
