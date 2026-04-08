@@ -349,7 +349,7 @@ jobs:
          run: |
             mkdir -p jacoco/merged/html
             shopt -s dotglob
-            cp -r class-java/* .
+            cp -r class-java/* java/
             cp -r class-editor/* .
             unzip -o ./jacoco/windows/jacoco-windows.zip -d jacoco/windows
             unzip -o ./jacoco/linux/jacoco-linux.zip -d jacoco/linux
@@ -374,6 +374,16 @@ jobs:
                --html jacoco/merged/html
 
       -  name: Sonar
-         run: mvn sonar:sonar -Dsonar.organization=b3dgs -Dsonar.projectKey=b3dgs_lionengine -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_TOKEN -Dsonar.coverage.jacoco.xmlReportPaths=jacoco/merged/jacoco.xml
+         run: |
+            CLASS_DIRS=$(find java plugins -type d -path "*/target/classes" 2>/dev/null || true)
+            BINARIES=$(echo $CLASS_DIRS | tr ' ' ',')
+            mvn sonar:sonar
+               -Dsonar.organization=b3dgs \ 
+               -Dsonar.projectKey=b3dgs_lionengine \
+               -Dsonar.host.url=https://sonarcloud.io \
+               -Dsonar.token=$SONAR_TOKEN \
+               -Dsonar.sources="java,plugins,releng" \
+               -Dsonar.java.binaries="$BINARIES" \
+               -Dsonar.coverage.jacoco.xmlReportPaths=jacoco/merged/jacoco.xml
          env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
