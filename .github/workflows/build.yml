@@ -63,13 +63,13 @@ jobs:
       -  name: Maven
          run: |
             mvn clean deploy -U -B -P "core,sign"
-            $files = Get-ChildItem -Path plugins, tests -Recurse -Filter jacoco.exec
+            $files = Get-ChildItem -Path java -Recurse -Filter jacoco.exec
             if ($files.Count -eq 0) {
                 Write-Host "No jacoco.exec files found, skipping zip"
             } else {
                 $relPaths = $files | ForEach-Object { $_.FullName.Replace("$PWD\", "") }
                 Compress-Archive -Path $relPaths -DestinationPath jacoco-windows.zip
-                Write-Host "Created jacoco-editor.zip with the following files:"
+                Write-Host "Created jacoco-windows.zip with the following files:"
                 $relPaths | ForEach-Object { Write-Host $_ }
             }
 
@@ -254,6 +254,7 @@ jobs:
                 Compress-Archive -Path $relPaths -DestinationPath jacoco-editor.zip
                 Write-Host "Created jacoco-editor.zip with the following files:"
                 $relPaths | ForEach-Object { Write-Host $_ }
+            }
 
       -  name: Repository
          uses: SamKirkland/FTP-Deploy-Action@a51268f67f6605236975928ae28b0f7e9971d50a
