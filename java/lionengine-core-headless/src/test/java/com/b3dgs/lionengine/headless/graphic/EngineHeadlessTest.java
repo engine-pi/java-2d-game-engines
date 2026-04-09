@@ -35,7 +35,7 @@ final class EngineHeadlessTest
      * Clean test.
      */
     @AfterEach
-    public void cleanUp()
+    void cleanUp()
     {
         Engine.terminate();
     }

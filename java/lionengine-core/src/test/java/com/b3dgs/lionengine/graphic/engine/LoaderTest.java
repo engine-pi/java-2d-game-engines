@@ -182,7 +182,7 @@ final class LoaderTest
             waitScreenUnready.countDown();
 
             final AtomicReference<Throwable> throwable = new AtomicReference<>();
-            final Thread thread = new Thread(() -> task.await());
+            final Thread thread = new Thread(task::await);
             thread.setUncaughtExceptionHandler((e, t) -> throwable.set(t));
             thread.start();
 

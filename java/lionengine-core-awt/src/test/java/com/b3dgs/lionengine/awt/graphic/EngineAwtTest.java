@@ -34,7 +34,7 @@ final class EngineAwtTest
      * Clean test.
      */
     @AfterEach
-    public void cleanUp()
+    void cleanUp()
     {
         Engine.terminate();
     }

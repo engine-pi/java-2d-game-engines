@@ -84,7 +84,7 @@ final class LauncherModelTest
      * Clean test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         services.add(new SourceResolutionDelegate(new Resolution(320, 240, 60)));
         launcher = UtilLaunchable.createLauncher(services, setup, featurable);
@@ -94,7 +94,7 @@ final class LauncherModelTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         assertTrue(launchableMedia.getFile().delete());
         assertTrue(launcherMedia.getFile().delete());

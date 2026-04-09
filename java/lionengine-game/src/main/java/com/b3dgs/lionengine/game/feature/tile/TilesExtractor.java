@@ -26,6 +26,7 @@ import com.b3dgs.lionengine.graphic.ColorRgba;
 import com.b3dgs.lionengine.graphic.Graphic;
 import com.b3dgs.lionengine.graphic.Graphics;
 import com.b3dgs.lionengine.graphic.ImageBuffer;
+import com.b3dgs.lionengine.graphic.RgbSupplier;
 import com.b3dgs.lionengine.graphic.drawable.Drawable;
 import com.b3dgs.lionengine.graphic.drawable.ImageHeader;
 import com.b3dgs.lionengine.graphic.drawable.ImageInfo;
@@ -56,7 +57,7 @@ public final class TilesExtractor
      * @param yb The location y.
      * @return <code>true</code> if equals, <code>false</code> else.
      */
-    public static boolean compareTile(int tw, int th, ImageBuffer a, int xa, int ya, ImageBuffer b, int xb, int yb)
+    public static boolean compareTile(int tw, int th, RgbSupplier a, int xa, int ya, RgbSupplier b, int xb, int yb)
     {
         for (int x = 0; x < tw; x++)
         {

@@ -130,8 +130,8 @@ final class TextAwtTest
     void testAlignUnknown()
     {
         final Text text = Graphics.createText(Constant.FONT_DIALOG, 12, TextStyle.NORMAL);
-        final Graphic g = Graphics.createGraphic();
-        g.setGraphic(ToolsAwt.createImage(1, 1, java.awt.Transparency.OPAQUE).createGraphics());
-        assertThrows(() -> text.draw(g, 0, 0, Align.values()[3], Constant.EMPTY_STRING), "Unknown enum: FAIL");
+        final Graphic graphic = Graphics.createGraphic();
+        graphic.setGraphic(ToolsAwt.createImage(1, 1, java.awt.Transparency.OPAQUE).createGraphics());
+        assertThrows(() -> text.draw(graphic, 0, 0, Align.values()[3], Constant.EMPTY_STRING), "Unknown enum: FAIL");
     }
 }

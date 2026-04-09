@@ -87,7 +87,7 @@ final class MapTileRasteredModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         services.add(new Camera());
         viewer = services.add(new ViewerMock());

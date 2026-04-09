@@ -76,7 +76,7 @@ final class OrientableModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         services.add(new MapTileGame());
         final Transformable transformable = featurable.addFeature(TransformableModel.class, services, setup);
@@ -89,7 +89,7 @@ final class OrientableModelTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         featurable.getFeature(Identifiable.class).notifyDestroyed();
     }

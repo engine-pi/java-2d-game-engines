@@ -135,7 +135,8 @@ final class ImageBufferHeadless implements ImageBuffer
             off = yoff;
             for (int x = startX; x < startX + w; x++)
             {
-                color = rgbArray[off++];
+                color = rgbArray[off];
+                off++;
                 buffer[y * width + x] = color;
             }
         }
@@ -174,7 +175,8 @@ final class ImageBufferHeadless implements ImageBuffer
             off = yoff;
             for (int x = startX; x < startX + w; x++)
             {
-                pixels[off++] = getRgb(x, y);
+                pixels[off] = getRgb(x, y);
+                off++;
             }
         }
 

@@ -116,7 +116,7 @@ final class CollidableModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         transformable1.setSize(3, 3);
         collidable1.setGroup(Integer.valueOf(0));
@@ -130,7 +130,7 @@ final class CollidableModelTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         collidable1.getFeature(Identifiable.class).destroy();
         collidable2.getFeature(Identifiable.class).destroy();

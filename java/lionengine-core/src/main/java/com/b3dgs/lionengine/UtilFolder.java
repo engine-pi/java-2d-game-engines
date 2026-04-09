@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,10 +52,10 @@ public final class UtilFolder
         Check.notNull(path);
 
         return Optional.ofNullable(path.listFiles())
-                       .map(files -> Arrays.asList(files)
-                                           .stream()
+                       .map(files -> Arrays.stream(files)
                                            .filter(File::isDirectory)
-                                           .collect(Collectors.toList()))
+                                           .sorted(Comparator.comparing(File::getName))
+                                           .toList())
                        .orElseGet(Collections::emptyList);
     }
 
@@ -91,7 +91,7 @@ public final class UtilFolder
             {
                 fullPath.append(path[i].replace(File.separator, separator));
             }
-            else if (path[i] != null && path[i].length() > 0)
+            else if (path[i] != null && !path[i].isEmpty())
             {
                 fullPath.append(path[i].replace(File.separator, separator));
                 if (!fullPath.substring(fullPath.length() - 1, fullPath.length()).equals(separator))

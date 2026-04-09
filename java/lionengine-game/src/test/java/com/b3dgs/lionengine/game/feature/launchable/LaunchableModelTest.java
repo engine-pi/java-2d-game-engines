@@ -81,7 +81,7 @@ final class LaunchableModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         services.add(new MapTileGame());
     }
@@ -90,7 +90,7 @@ final class LaunchableModelTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         featurable.getFeature(Identifiable.class).notifyDestroyed();
     }

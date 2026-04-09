@@ -94,7 +94,7 @@ final class MapTileCollisionModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         map.addFeature(new MapTileGroupModel());
         map.create(1, 1, 3, 3);
@@ -114,7 +114,7 @@ final class MapTileCollisionModelTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         assertTrue(formulasConfig.getFile().delete());
         assertTrue(groupsConfig.getFile().delete());

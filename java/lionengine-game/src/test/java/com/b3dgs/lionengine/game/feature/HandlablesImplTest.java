@@ -68,7 +68,7 @@ final class HandlablesImplTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         object.getFeature(Identifiable.class).notifyDestroyed();
     }

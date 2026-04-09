@@ -25,7 +25,6 @@ import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -159,11 +158,11 @@ class ScreenBaseAwt extends ScreenAwtAbstract
             img = Arrays.asList("16", "32", "48", "64", "128", "256")
                         .stream()
                         .map(i -> new ImageIcon(Engine.class.getResource("icon-" + i + ".png")).getImage())
-                        .collect(Collectors.toList());
+                        .toList();
         }
         else
         {
-            img = icons.stream().map(i -> new ImageIcon(i.getUrl()).getImage()).collect(Collectors.toList());
+            img = icons.stream().map(i -> new ImageIcon(i.getUrl()).getImage()).toList();
         }
         frame.setIconImages(img);
     }

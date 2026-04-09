@@ -94,7 +94,7 @@ final class MapGeneratorTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         map.create(Medias.create("forest.png"));
         mapViewer.prepare(map);

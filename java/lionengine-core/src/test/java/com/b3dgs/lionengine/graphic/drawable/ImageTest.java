@@ -145,7 +145,7 @@ final class ImageTest
         final Image image = new ImageImpl(media);
         image.load();
 
-        assertThrows(() -> image.load(), "[" + media + "] " + ImageImpl.ERROR_ALREADY_LOADED);
+        assertThrows(image::load, "[" + media + "] " + ImageImpl.ERROR_ALREADY_LOADED);
 
         image.dispose();
     }
@@ -158,7 +158,7 @@ final class ImageTest
     {
         final Image image = new ImageImpl(Graphics.createImageBuffer(64, 32));
 
-        assertThrows(() -> image.load(), ImageImpl.ERROR_ALREADY_LOADED);
+        assertThrows(image::load, ImageImpl.ERROR_ALREADY_LOADED);
 
         image.dispose();
     }

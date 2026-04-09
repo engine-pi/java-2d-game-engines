@@ -80,7 +80,7 @@ final class FogOfWarTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         UtilMap.fill(map, UtilMap.TILE_GROUND);
         services.add(map);

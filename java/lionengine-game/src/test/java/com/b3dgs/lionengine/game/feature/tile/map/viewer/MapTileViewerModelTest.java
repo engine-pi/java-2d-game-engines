@@ -71,7 +71,7 @@ final class MapTileViewerModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         services.add(new Camera());
         viewer = services.add(new ViewerMock());
@@ -97,7 +97,7 @@ final class MapTileViewerModelTest
         map.setTile(1, 1, 1);
 
         final AtomicBoolean rendered = new AtomicBoolean();
-        final MapTileRenderer renderer = (g, tile, x, y) -> rendered.set(true);
+        final MapTileRenderer renderer = (graphic, tile, x, y) -> rendered.set(true);
 
         mapViewer.render(g);
 

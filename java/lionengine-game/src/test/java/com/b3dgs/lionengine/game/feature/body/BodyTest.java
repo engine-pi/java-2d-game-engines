@@ -73,7 +73,7 @@ final class BodyTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         object.getFeature(Identifiable.class).notifyDestroyed();
     }

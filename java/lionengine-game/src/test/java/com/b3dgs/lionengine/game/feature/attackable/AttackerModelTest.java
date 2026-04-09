@@ -89,7 +89,7 @@ final class AttackerModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         attacker = UtilAttackable.createAttacker(object, services, setup);
     }
@@ -98,7 +98,7 @@ final class AttackerModelTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         object.getFeature(Identifiable.class).notifyDestroyed();
     }

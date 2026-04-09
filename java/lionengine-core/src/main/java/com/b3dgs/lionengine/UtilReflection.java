@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Queue;
-import java.util.stream.Collectors;
 
 /**
  * Utility class related to java reflection.
@@ -283,8 +282,7 @@ public final class UtilReflection
     {
         currents.stream()
                 .map(Class::getInterfaces)
-                .forEach(types -> Arrays.asList(types)
-                                        .stream()
+                .forEach(types -> Arrays.stream(types)
                                         .filter(type -> base.isAssignableFrom(type) && !type.equals(base))
                                         .forEach(nexts::add));
     }
@@ -298,10 +296,9 @@ public final class UtilReflection
      */
     private static Collection<Class<?>> filterInterfaces(Class<?> object, Class<?> base)
     {
-        return Arrays.asList(object.getInterfaces())
-                     .stream()
+        return Arrays.stream(object.getInterfaces())
                      .filter(current -> base.isAssignableFrom(current) && !current.equals(base))
-                     .collect(Collectors.toList());
+                     .toList();
     }
 
     /**

@@ -34,9 +34,9 @@ final class FontCharDataTest
     {
         final FontCharData data = new FontCharData(0, 1, 2);
 
-        assertEquals(0, data.getId());
-        assertEquals(1, data.getWidth());
-        assertEquals(2, data.getHeight());
+        assertEquals(0, data.id());
+        assertEquals(1, data.width());
+        assertEquals(2, data.height());
     }
 
     /**

@@ -215,11 +215,21 @@ final class WavImpl implements Wav
      */
     private static void readSound(AudioInputStream input, SourceDataLine dataLine) throws IOException
     {
-        int read;
-        final byte[] buffer = new byte[BUFFER];
-        while ((read = input.read(buffer, 0, buffer.length)) > 0)
+        try
         {
-            dataLine.write(buffer, 0, read);
+            int read;
+            final byte[] buffer = new byte[BUFFER];
+            while ((read = input.read(buffer, 0, buffer.length)) > 0)
+            {
+                dataLine.write(buffer, 0, read);
+            }
+        }
+        catch (final IOException exception)
+        {
+            if (exception.getMessage() == null || !exception.getMessage().contains("closed"))
+            {
+                throw exception;
+            }
         }
     }
 
@@ -322,17 +332,7 @@ final class WavImpl implements Wav
             updateVolume(dataLine, AudioFactory.getVolume() * volume / Constant.HUNDRED);
             dataLine.start();
 
-            try
-            {
-                readSound(input, dataLine);
-            }
-            catch (final IOException exception)
-            {
-                if (exception.getMessage() == null || !exception.getMessage().contains("closed"))
-                {
-                    throw exception;
-                }
-            }
+            readSound(input, dataLine);
             close(input, dataLine);
         }
         catch (final IOException | LineUnavailableException exception)

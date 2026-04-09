@@ -104,7 +104,7 @@ final class SelectorRefresherTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
 
         services.add(new ContextMock());

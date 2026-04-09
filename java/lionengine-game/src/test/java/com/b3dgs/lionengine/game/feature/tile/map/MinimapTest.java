@@ -122,6 +122,6 @@ final class MinimapTest
     {
         final Minimap minimap = new Minimap(new MapTileGame());
 
-        assertThrows(() -> minimap.prepare(), Minimap.ERROR_SURFACE);
+        assertThrows(minimap::prepare, Minimap.ERROR_SURFACE);
     }
 }

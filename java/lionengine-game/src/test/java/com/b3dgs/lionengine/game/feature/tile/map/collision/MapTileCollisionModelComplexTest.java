@@ -128,7 +128,7 @@ final class MapTileCollisionModelComplexTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         mapGroup.loadGroups(Arrays.asList(createGroup("ground", TILE_GROUND),
                                           createGroup("slope_left_0", TILE_SLOPE_LEFT_0),

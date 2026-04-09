@@ -461,7 +461,7 @@ final class AnimatorTest
     void testListenerState()
     {
         final AtomicReference<AnimState> stated = new AtomicReference<>();
-        final AnimatorListener listener = (AnimatorStateListener) state -> stated.set(state);
+        final AnimatorListener listener = (AnimatorStateListener) stated::set;
         final Animation animation = new Animation(Animation.DEFAULT_NAME, 1, 3, 0.25, true, false);
         final Animator animator = new AnimatorModel();
         animator.addListener(listener);
@@ -488,7 +488,7 @@ final class AnimatorTest
     void testListenerFrame()
     {
         final AtomicReference<Integer> framed = new AtomicReference<>();
-        final AnimatorListener listener = (AnimatorFrameListener) frame -> framed.set(Integer.valueOf(frame));
+        final AnimatorListener listener = (AnimatorFrameListener) framed::set;
         final Animation animation = new Animation(Animation.DEFAULT_NAME, 1, 3, 1.25, true, false);
         final Animator animator = new AnimatorModel();
         animator.addListener(listener);
@@ -516,7 +516,7 @@ final class AnimatorTest
     void testListenerAnim()
     {
         final AtomicReference<Animation> anim = new AtomicReference<>();
-        final AnimatorListener listener = (AnimatorAnimListener) a -> anim.set(a);
+        final AnimatorListener listener = (AnimatorAnimListener) anim::set;
         final Animation animation = new Animation(Animation.DEFAULT_NAME, 1, 3, 1.25, true, false);
         final Animator animator = new AnimatorModel();
         animator.addListener(listener);

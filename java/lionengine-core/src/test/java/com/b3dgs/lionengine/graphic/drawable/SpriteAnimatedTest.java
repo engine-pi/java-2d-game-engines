@@ -176,7 +176,7 @@ final class SpriteAnimatedTest
         final SpriteAnimated sprite = new SpriteAnimatedImpl(media, 16, 8);
         sprite.load();
 
-        assertThrows(() -> sprite.load(), "[" + media + "] " + SpriteImpl.ERROR_ALREADY_LOADED);
+        assertThrows(sprite::load, "[" + media + "] " + SpriteImpl.ERROR_ALREADY_LOADED);
     }
 
     /**
@@ -187,7 +187,7 @@ final class SpriteAnimatedTest
     {
         final SpriteAnimated sprite = new SpriteAnimatedImpl(Graphics.createImageBuffer(64, 32), 16, 8);
 
-        assertThrows(() -> sprite.load(), SpriteImpl.ERROR_ALREADY_LOADED);
+        assertThrows(sprite::load, SpriteImpl.ERROR_ALREADY_LOADED);
     }
 
     /**

@@ -86,7 +86,7 @@ final class MapTileGroupModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         mapGroup.prepare(featurable);
     }

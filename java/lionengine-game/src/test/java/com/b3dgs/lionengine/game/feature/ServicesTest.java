@@ -144,7 +144,7 @@ final class ServicesTest
     /**
      * Service without valid constructor.
      */
-    public static abstract class InvalidConstructorService
+    public abstract static class InvalidConstructorService
     {
         /**
          * Private.

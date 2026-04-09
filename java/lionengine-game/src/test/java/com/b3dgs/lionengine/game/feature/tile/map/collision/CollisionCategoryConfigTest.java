@@ -71,7 +71,7 @@ final class CollisionCategoryConfigTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         final MapTileGame map = new MapTileGame();
         map.addFeature(new MapTileGroupModel());

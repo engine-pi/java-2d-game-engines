@@ -98,7 +98,7 @@ final class SetupTest
         final Setup setup = new Setup(config);
 
         assertEquals(config, setup.getMedia());
-        assertThrows(() -> setup.getIconFile(), Setup.ERROR_ICON_FILE);
+        assertThrows(setup::getIconFile, Setup.ERROR_ICON_FILE);
         assertNotNull(setup);
     }
 
@@ -151,8 +151,8 @@ final class SetupTest
     {
         final Setup setup = new Setup(Medias.create("ObjectNoConstructor.xml"));
 
-        assertThrows(() -> setup.getSurfaceFile(), Setup.ERROR_SURFACE_FILE);
-        assertThrows(() -> setup.getSurface(), Setup.ERROR_SURFACE);
+        assertThrows(setup::getSurfaceFile, Setup.ERROR_SURFACE_FILE);
+        assertThrows(setup::getSurface, Setup.ERROR_SURFACE);
     }
 
     /**
@@ -163,6 +163,6 @@ final class SetupTest
     {
         final Setup setup = new Setup(Medias.create("ObjectNoConstructor.xml"));
 
-        assertThrows(() -> setup.getIconFile(), Setup.ERROR_ICON_FILE);
+        assertThrows(setup::getIconFile, Setup.ERROR_ICON_FILE);
     }
 }

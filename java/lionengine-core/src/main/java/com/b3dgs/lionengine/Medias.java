@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
 /**
@@ -183,7 +182,7 @@ public final class Medias
                            .map(file -> Medias.create(file.getPath()
                                                           .substring(prefixLength)
                                                           .split("\\" + File.separator)))
-                           .collect(Collectors.toList());
+                           .toList();
         }
         final Collection<ZipEntry> entries = UtilZip.getEntriesByExtension(jar, fullPath, extension);
         final List<Media> medias = new ArrayList<>(entries.size());

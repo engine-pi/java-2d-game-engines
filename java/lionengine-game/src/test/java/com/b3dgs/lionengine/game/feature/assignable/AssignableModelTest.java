@@ -76,7 +76,7 @@ final class AssignableModelTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         assignable.getFeature(Identifiable.class).notifyDestroyed();
     }

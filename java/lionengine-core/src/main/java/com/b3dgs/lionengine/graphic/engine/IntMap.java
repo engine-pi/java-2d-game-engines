@@ -75,7 +75,7 @@ public class IntMap<V>
      */
     public IntMap()
     {
-        this(51, 0.8f);
+        this(51, 0.8F);
     }
 
     /**
@@ -85,7 +85,7 @@ public class IntMap<V>
      */
     public IntMap(int initialCapacity)
     {
-        this(initialCapacity, 0.8f);
+        this(initialCapacity, 0.8F);
     }
 
     /**

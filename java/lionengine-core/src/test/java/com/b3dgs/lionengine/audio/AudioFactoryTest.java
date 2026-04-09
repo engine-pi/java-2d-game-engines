@@ -58,7 +58,7 @@ final class AudioFactoryTest
      * Reset formats.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         AudioFactory.clearFormats();
     }

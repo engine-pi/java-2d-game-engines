@@ -82,7 +82,7 @@ final class WorldTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         services.add(new Context()
         {

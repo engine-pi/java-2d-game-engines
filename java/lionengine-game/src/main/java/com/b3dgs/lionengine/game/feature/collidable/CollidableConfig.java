@@ -82,8 +82,7 @@ public record CollidableConfig(Integer group, Collection<Integer> accepted)
             }
             else
             {
-                acceptedGroups = Arrays.asList(ACCEPTED_SEPARATOR_PATTERN.split(accepted))
-                                       .stream()
+                acceptedGroups = Arrays.stream(ACCEPTED_SEPARATOR_PATTERN.split(accepted))
                                        .map(Integer::valueOf)
                                        .collect(Collectors.toSet());
             }

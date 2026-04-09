@@ -49,7 +49,7 @@ final class StateHandlerTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         StateBase.reset();
     }

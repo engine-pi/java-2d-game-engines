@@ -109,7 +109,6 @@ final class UtilFolderTest
         Collections.sort(expected);
 
         final List<File> found = UtilFolder.getDirectories(dir.toFile());
-        Collections.sort(found);
 
         assertEquals(expected, found);
 

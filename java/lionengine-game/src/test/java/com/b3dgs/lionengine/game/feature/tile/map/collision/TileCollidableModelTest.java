@@ -97,7 +97,7 @@ final class TileCollidableModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         services.add(new Camera());
         map.addFeature(new MapTileGroupModel());
@@ -116,7 +116,7 @@ final class TileCollidableModelTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         assertTrue(formulasConfig.getFile().delete());
         assertTrue(groupsConfig.getFile().delete());

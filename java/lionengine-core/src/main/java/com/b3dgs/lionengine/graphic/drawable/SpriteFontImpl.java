@@ -233,10 +233,10 @@ final class SpriteFontImpl implements SpriteFont
                 final FontCharData d = fontData.get(Character.valueOf(word.charAt(j)));
                 if (d != null)
                 {
-                    surface.setLocation(x + lx - width, y + ly + d.getHeight());
-                    surface.setTile(d.getId());
+                    surface.setLocation(x + lx - width, y + ly + d.height());
+                    surface.setTile(d.id());
                     surface.render(g);
-                    lx += d.getWidth() + 1;
+                    lx += d.width() + 1;
                 }
             }
 
@@ -323,7 +323,7 @@ final class SpriteFontImpl implements SpriteFont
             final FontCharData d = fontData.get(Character.valueOf(text.charAt(i)));
             if (d != null)
             {
-                lx += d.getWidth() + 1;
+                lx += d.width() + 1;
             }
         }
 

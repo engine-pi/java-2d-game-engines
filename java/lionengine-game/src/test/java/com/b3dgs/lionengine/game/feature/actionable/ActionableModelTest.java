@@ -74,7 +74,7 @@ final class ActionableModelTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         actionable.getFeature(Identifiable.class).notifyDestroyed();
 

@@ -99,7 +99,7 @@ final class ProducerModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         services.add(new Handler(services));
         services.add(new SourceResolutionProvider()
@@ -130,7 +130,7 @@ final class ProducerModelTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         object.getFeature(Identifiable.class).notifyDestroyed();
         assertTrue(media.getFile().delete());

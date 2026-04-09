@@ -131,7 +131,7 @@ final class CollidableFramedModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         collidable1.setGroup(Integer.valueOf(0));
         collidable2.setGroup(Integer.valueOf(1));
@@ -144,7 +144,7 @@ final class CollidableFramedModelTest
      * Clean test.
      */
     @AfterEach
-    public void clean()
+    void clean()
     {
         collidable1.getFeature(Identifiable.class).destroy();
         collidable2.getFeature(Identifiable.class).destroy();

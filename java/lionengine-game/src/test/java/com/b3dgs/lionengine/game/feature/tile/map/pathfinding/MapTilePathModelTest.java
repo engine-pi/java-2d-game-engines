@@ -87,7 +87,7 @@ final class MapTilePathModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         services.add(new Camera());
         map.addFeature(new MapTileGroupModel());

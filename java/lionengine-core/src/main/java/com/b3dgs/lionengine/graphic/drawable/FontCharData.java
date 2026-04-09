@@ -25,16 +25,13 @@ import com.b3dgs.lionengine.LionEngineException;
  * <p>
  * This class is Thread-Safe.
  * </p>
+ * 
+ * @param id The character id (must be superior or equal to 0).
+ * @param width The character width (must be superior or equal to 0).
+ * @param height The character height (must be superior or equal to 0).
  */
-final class FontCharData
+record FontCharData(int id, double width, double height)
 {
-    /** Character id. */
-    private final int id;
-    /** Character width. */
-    private final double width;
-    /** Character height. */
-    private final double height;
-
     /**
      * Internal constructor.
      * 
@@ -45,8 +42,6 @@ final class FontCharData
      */
     FontCharData(int id, double width, double height)
     {
-        super();
-
         Check.superiorOrEqual(id, 0);
         Check.superiorOrEqual(width, 0.0);
         Check.superiorOrEqual(height, 0.0);
@@ -54,35 +49,5 @@ final class FontCharData
         this.id = id;
         this.width = width;
         this.height = height;
-    }
-
-    /**
-     * Get the character id.
-     * 
-     * @return The character id.
-     */
-    public int getId()
-    {
-        return id;
-    }
-
-    /**
-     * Get the character width.
-     * 
-     * @return The character width.
-     */
-    public double getWidth()
-    {
-        return width;
-    }
-
-    /**
-     * Get the character height.
-     * 
-     * @return The character height.
-     */
-    public double getHeight()
-    {
-        return height;
     }
 }

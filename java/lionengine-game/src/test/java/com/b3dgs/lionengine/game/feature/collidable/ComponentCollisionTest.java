@@ -96,7 +96,7 @@ final class ComponentCollisionTest
      * Prepare test.
      */
     @BeforeEach
-    public void prepare()
+    void prepare()
     {
         services.add(new Camera());
 
