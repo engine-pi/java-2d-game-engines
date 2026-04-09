@@ -394,26 +394,26 @@ jobs:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Delete Sources Java
-        uses: actions/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
+        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
         with:
            name: class-java
 
       - name: Delete Sources Editor
-        uses: actions/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
+        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
         with:
            name: class-editor
 
       - name: Delete Jacoco Windows
-        uses: actions/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
+        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
         with:
            name: jacoco-windows
 
       - name: Delete Jacoco Linux
-        uses: actions/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
+        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
         with:
            name: jacoco-linux
 
       - name: Delete Jacoco Editor
-        uses: actions/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
+        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
         with:
            name: jacoco-editor
