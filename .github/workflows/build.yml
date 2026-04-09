@@ -348,19 +348,19 @@ jobs:
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
             name: jacoco-windows
-            path: ./jacoco/windows
+            path: jacoco/windows
 
       -  name: Linux
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
             name: jacoco-linux
-            path: ./jacoco/linux
+            path: jacoco/linux
 
       -  name: Editor
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
          with:
             name: jacoco-editor
-            path: ./jacoco/editor
+            path: jacoco/editor
 
       -  name: Jacoco
          run: |
@@ -379,15 +379,33 @@ jobs:
             SRC_EDITOR_ARGS=$(printf " --sourcefiles %s" $SRC_EDITOR_DIRS)
             CLASS_DIRS=$(find java plugins tests -type d -path "*/target/classes" 2>/dev/null || true)
             CLASS_ARGS=$(printf " --classfiles %s" $CLASS_DIRS)
-            java -jar jacococli.jar report jacoco.exec $SRC_JAVA_ARGS $SRC_EDITOR_ARGS $CLASS_ARGS --xml jacoco.xml
+            echo $SRC_JAVA_ARGS $SRC_EDITOR_ARGS $CLASS_ARGS
+            java -jar jacococli.jar report jacoco.exec $SRC_JAVA_ARGS $SRC_EDITOR_ARGS $CLASS_ARGS --xml jacoco.xml --html html
+
+      -  name: Up
+         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+         with:
+            name: jacoco-exec
+            path: jacoco.exec
+
+      -  name: Up
+         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+         with:
+            name: jacoco-xml
+            path: jacoco.xml
+
+      -  name: Up
+         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+         with:
+            name: html
+            path: html
 
       -  name: Sonar
-         run: |
-            mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Psonar \
-               -Dsonar.host.url=https://sonarcloud.io \
-               -Dsonar.organization=b3dgs \
-               -Dsonar.token=$SONAR_TOKEN \
-               -Dsonar.projectKey=b3dgs_lionengine \
-               -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml
+         run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Psonar \
+                  -Dsonar.host.url=https://sonarcloud.io \
+                  -Dsonar.organization=b3dgs \
+                  -Dsonar.token=$SONAR_TOKEN \
+                  -Dsonar.projectKey=b3dgs_lionengine \
+                  -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml
          env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
