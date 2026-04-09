@@ -165,7 +165,9 @@ jobs:
                gradle-
 
       -  name: Keystore
-         run: printf "%s" "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > java/lionengine-core-android/android.jks
+         env:
+            KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+         run: printf "%s" "$KEYSTORE_BASE64" | base64 -d > java/lionengine-core-android/android.jks
 
       -  name: GPG
          uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd
@@ -190,16 +192,16 @@ jobs:
          run: mvn clean install -U -B -P "android,sign"
 
       -  name: Gradle
-         run: |
-            cd java/lionengine-core-android
-            chmod +x gradlew
-            ./gradlew publish -Pkeystore=android.jks
          env:
             ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.MAVEN_USERNAME }}
             ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MAVEN_PASSWORD }}
             ORG_GRADLE_PROJECT_keystore.alias: ${{ secrets.KEYSTORE_ALIAS }}
             ORG_GRADLE_PROJECT_keystore.storepassword: ${{ secrets.KEYSTORE_STOREPASS }}
             ORG_GRADLE_PROJECT_keystore.password: ${{ secrets.KEYSTORE_PASS }}
+         run: |
+            cd java/lionengine-core-android
+            chmod +x gradlew
+            ./gradlew publish -Pkeystore=android.jks
 
    editor:
       runs-on: windows-latest
@@ -383,6 +385,8 @@ jobs:
             java -jar jacococli.jar report jacoco.exec $SRC_JAVA_ARGS $SRC_EDITOR_ARGS $CLASS_ARGS --xml jacoco.xml
 
       -  name: Sonar
+         env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
          run: |
             mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Psonar \
                -Dsonar.host.url=https://sonarcloud.io \
@@ -390,8 +394,6 @@ jobs:
                -Dsonar.token=$SONAR_TOKEN \
                -Dsonar.projectKey=b3dgs_lionengine \
                -Dsonar.coverage.jacoco.xmlReportPaths=$GITHUB_WORKSPACE/jacoco.xml
-         env:
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Delete Sources Java
         uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
