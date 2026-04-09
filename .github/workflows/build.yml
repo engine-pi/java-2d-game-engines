@@ -380,32 +380,17 @@ jobs:
             CLASS_DIRS=$(find java plugins tests -type d -path "*/target/classes" 2>/dev/null || true)
             CLASS_ARGS=$(printf " --classfiles %s" $CLASS_DIRS)
             echo $SRC_JAVA_ARGS $SRC_EDITOR_ARGS $CLASS_ARGS
-            java -jar jacococli.jar report jacoco.exec $SRC_JAVA_ARGS $SRC_EDITOR_ARGS $CLASS_ARGS --xml jacoco.xml --html html
-
-      -  name: Up
-         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
-         with:
-            name: jacoco-exec
-            path: jacoco.exec
-
-      -  name: Up
-         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
-         with:
-            name: jacoco-xml
-            path: jacoco.xml
-
-      -  name: Up
-         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
-         with:
-            name: html
-            path: html
+            java -jar jacococli.jar report jacoco.exec $SRC_JAVA_ARGS $SRC_EDITOR_ARGS $CLASS_ARGS --xml jacoco.xml
 
       -  name: Sonar
-         run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Psonar \
-                  -Dsonar.host.url=https://sonarcloud.io \
-                  -Dsonar.organization=b3dgs \
-                  -Dsonar.token=$SONAR_TOKEN \
-                  -Dsonar.projectKey=b3dgs_lionengine \
-                  -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml
+         run: |
+            echo $GITHUB_WORKSPACE
+            ls -l $GITHUB_WORKSPACE/jacoco.xml
+            mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Psonar \
+               -Dsonar.host.url=https://sonarcloud.io \
+               -Dsonar.organization=b3dgs \
+               -Dsonar.token=$SONAR_TOKEN \
+               -Dsonar.projectKey=b3dgs_lionengine \
+               -Dsonar.coverage.jacoco.xmlReportPaths=$GITHUB_WORKSPACE/jacoco.xml
          env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
