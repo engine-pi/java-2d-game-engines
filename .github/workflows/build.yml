@@ -24,14 +24,6 @@ jobs:
             fetch-depth: 1
             fetch-tags: false
 
-      -  name: Java
-         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
-         with:
-            distribution: temurin
-            java-version: 25
-            mvn-toolchain-id: |
-               JavaSE-25
-
       -  name: Cache
          uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
          with:
@@ -40,6 +32,14 @@ jobs:
             key: maven-${{ hashFiles('**/pom.xml') }}
             restore-keys: |
                maven-
+               
+      -  name: Java
+         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
+         with:
+            distribution: temurin
+            java-version: 25
+            mvn-toolchain-id: |
+               JavaSE-25
 
       -  name: GPG
          uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd
@@ -390,7 +390,7 @@ jobs:
          env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
          run: |
-            mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Psonar \
+            mvn -Psonar \
                -Dsonar.host.url=https://sonarcloud.io \
                -Dsonar.organization=b3dgs \
                -Dsonar.token=$SONAR_TOKEN \

@@ -71,7 +71,6 @@
         <profile>
             <id>android</id>
             <properties>
-                <jdk.version>17</jdk.version>
                 <maven.source.skip>true</maven.source.skip>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
                 <maven.test.skip>true</maven.test.skip>
@@ -80,7 +79,6 @@
         <profile>
             <id>editor</id>
             <properties>
-                <jdk.version>17</jdk.version>
                 <maven.source.skip>true</maven.source.skip>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
             </properties>
