@@ -364,8 +364,6 @@ jobs:
 
       -  name: Jacoco
          run: |
-            mkdir -p jacoco/merged
-            mkdir -p target/site/jacoco
             shopt -s dotglob
             cp -r class-java/* java/
             cp -r class-editor/* .
@@ -374,28 +372,22 @@ jobs:
             unzip -o ./jacoco/editor/jacoco-editor.zip -d jacoco/editor
             curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
             EXEC_FILES=$(find jacoco -name "*.exec")
-            java -jar jacococli.jar merge $EXEC_FILES --destfile jacoco/merged/jacoco.exec
+            java -jar jacococli.jar merge $EXEC_FILES --destfile jacoco.exec
+            SRC_JAVA_DIRS=$(find java -type d -path "*/src/main/java" 2>/dev/null || true)
+            SRC_JAVA_ARGS=$(printf " --sourcefiles %s" $SRC_JAVA_DIRS)
+            SRC_EDITOR_DIRS=$(find plugins -type d -path "*/src" 2>/dev/null || true)
+            SRC_EDITOR_ARGS=$(printf " --sourcefiles %s" $SRC_EDITOR_DIRS)
             CLASS_DIRS=$(find java plugins tests -type d -path "*/target/classes" 2>/dev/null || true)
             CLASS_ARGS=$(printf " --classfiles %s" $CLASS_DIRS)
-            java -jar jacococli.jar report jacoco/merged/jacoco.exec \
-               $CLASS_ARGS \
-               --sourcefiles java \
-               --sourcefiles plugins \
-               --sourcefiles tests \
-               --sourcefiles releng \
-               --xml target/site/jacoco/jacoco.xml
+            java -jar jacococli.jar report jacoco.exec $SRC_JAVA_ARGS $SRC_EDITOR_ARGS $CLASS_ARGS --xml jacoco.xml
 
       -  name: Sonar
          run: |
-            rm -rf class-java
-            rm -rf class-editor
-            rm -rf jacoco
-            rm -f jacococli.jar
-            tree /home/runner/work/lionengine/lionengine -a
             mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Psonar \
                -Dsonar.host.url=https://sonarcloud.io \
                -Dsonar.organization=b3dgs \
                -Dsonar.token=$SONAR_TOKEN \
-               -Dsonar.projectKey=b3dgs_lionengine
+               -Dsonar.projectKey=b3dgs_lionengine \
+               -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml
          env:
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
