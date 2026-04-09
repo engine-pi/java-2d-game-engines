@@ -372,7 +372,9 @@ jobs:
             unzip -o ./jacoco/windows/jacoco-windows.zip -d jacoco/windows
             unzip -o ./jacoco/linux/jacoco-linux.zip -d jacoco/linux
             unzip -o ./jacoco/editor/jacoco-editor.zip -d jacoco/editor
-            curl -L -o jacococli.jar https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
+            curl --proto '=https' --tlsv1.2 -L \
+               -o jacococli.jar \
+               https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/0.8.14/org.jacoco.cli-0.8.14-nodeps.jar
             EXEC_FILES=$(find jacoco -name "*.exec")
             java -jar jacococli.jar merge $EXEC_FILES --destfile jacoco.exec
             SRC_JAVA_DIRS=$(find java -type d -path "*/src/main/java" 2>/dev/null || true)
