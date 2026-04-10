@@ -334,12 +334,12 @@ final class MapTileCollisionModelTest
         CollisionCategoryConfig.exports(setup.getRoot(), categoryX);
         final FeaturableModel object = new FeaturableModel(services, setup);
 
-        final Transformable transformable = object.addFeature(TransformableModel.class, services, setup);
-        transformable.setSize(1, 1);
+        final Transformable t = object.addFeature(TransformableModel.class, services, setup);
+        t.setSize(1, 1);
 
         final TileCollidable collidable = object.addFeature(TileCollidableModel.class, services, setup);
         collidable.setEnabled(true);
 
-        return transformable;
+        return t;
     }
 }

@@ -278,14 +278,14 @@ final class TileCollidableModelTest
      */
     private Transformable createObject(Featurable featurable)
     {
-        final Setup setup = new Setup(config);
-        CollisionCategoryConfig.exports(setup.getRoot(), categoryY);
-        CollisionCategoryConfig.exports(setup.getRoot(), categoryX);
+        final Setup s = new Setup(config);
+        CollisionCategoryConfig.exports(s.getRoot(), categoryY);
+        CollisionCategoryConfig.exports(s.getRoot(), categoryX);
 
-        final Transformable transformable = featurable.addFeature(TransformableModel.class, services, setup);
+        final Transformable transformable = featurable.addFeature(TransformableModel.class, services, s);
         transformable.setSize(2, 2);
 
-        collidable = featurable.addFeature(TileCollidableModel.class, services, setup);
+        collidable = featurable.addFeature(TileCollidableModel.class, services, s);
         collidable.setEnabled(true);
 
         assertArrayEquals(Arrays.asList(categoryY, categoryX).toArray(), collidable.getCategories().toArray());

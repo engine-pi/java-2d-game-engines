@@ -164,9 +164,9 @@ final class ActionableModelTest
 
         final Setup setup = new Setup(media);
         final ObjectAction object = new ObjectAction(services, setup, executed);
-        final ActionableModel actionable = new ActionableModel(services, setup);
-        actionable.prepare(object);
-        actionable.update(1.0);
+        final ActionableModel a = new ActionableModel(services, setup);
+        a.prepare(object);
+        a.update(1.0);
 
         assertTrue(executed.get());
     }

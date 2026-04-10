@@ -175,7 +175,7 @@ final class LaunchableModelTest
     void testListener()
     {
         final AtomicBoolean fired = new AtomicBoolean();
-        final LaunchableListener listener = launchable -> fired.set(true);
+        final LaunchableListener listener = l -> fired.set(true);
         launchable.addListener(listener);
 
         assertFalse(fired.get());
@@ -198,10 +198,10 @@ final class LaunchableModelTest
     @Test
     void testCheck()
     {
-        final Launchable launchable = new LaunchableModel(services, setup, transformable);
+        final Launchable l = new LaunchableModel(services, setup, transformable);
         final Self self = new Self(services, setup);
-        launchable.checkListener(self);
-        launchable.launch();
+        l.checkListener(self);
+        l.launch();
 
         assertTrue(self.fired.get());
     }

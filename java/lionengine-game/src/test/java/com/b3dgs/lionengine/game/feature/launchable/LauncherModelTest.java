@@ -222,25 +222,25 @@ final class LauncherModelTest
     @Test
     void testLauncherDelay()
     {
-        final Media launcherMedia = UtilLaunchable.createLauncherMedia(launchableMedia, 100);
-        final Setup setup = new Setup(launcherMedia);
-        final Launcher launcher = UtilLaunchable.createLauncher(services, setup, featurable);
+        final Media media = UtilLaunchable.createLauncherMedia(launchableMedia, 100);
+        final Setup s = new Setup(media);
+        final Launcher l = UtilLaunchable.createLauncher(services, s, featurable);
 
         final AtomicBoolean fired = new AtomicBoolean();
         final AtomicReference<FeatureProvider> firedLaunchable = new AtomicReference<>();
-        launcher.addListener(UtilLaunchable.createListener(fired));
-        launcher.addListener(UtilLaunchable.createListener(firedLaunchable));
+        l.addListener(UtilLaunchable.createListener(fired));
+        l.addListener(UtilLaunchable.createListener(firedLaunchable));
 
         assertTimeout(1000L, () ->
         {
-            while (!launcher.fire())
+            while (!l.fire())
             {
-                launcher.update(1.0);
+                l.update(1.0);
             }
         });
 
         final Handler handler = services.get(Handler.class);
-        launcher.update(1.0);
+        l.update(1.0);
         handler.update(1.0);
 
         assertEquals(0, handler.size());
@@ -251,7 +251,7 @@ final class LauncherModelTest
         {
             while (firedLaunchable.get() == null)
             {
-                launcher.update(1.0);
+                l.update(1.0);
                 handler.update(1.0);
             }
         });
@@ -330,18 +330,18 @@ final class LauncherModelTest
     void testLauncherSelfListener()
     {
         final LaunchableObjectSelf object = new LaunchableObjectSelf(services, setup);
-        final Launcher launcher = UtilLaunchable.createLauncher(services, setup, object);
-        launcher.addListener((LauncherListener) object);
-        launcher.addListener((LaunchableListener) object);
+        final Launcher l = UtilLaunchable.createLauncher(services, setup, object);
+        l.addListener((LauncherListener) object);
+        l.addListener((LaunchableListener) object);
 
         assertFalse(object.fired.get());
         assertNull(object.firedLaunchable.get());
 
         assertTimeout(1000L, () ->
         {
-            while (!launcher.fire())
+            while (!l.fire())
             {
-                launcher.update(1.0);
+                l.update(1.0);
             }
         });
 
@@ -364,17 +364,17 @@ final class LauncherModelTest
     void testListenerAutoAdd()
     {
         final LaunchableObjectSelf object = new LaunchableObjectSelf(services, setup);
-        final Launcher launcher = UtilLaunchable.createLauncher(services, setup, object);
-        launcher.checkListener(object);
+        final Launcher l = UtilLaunchable.createLauncher(services, setup, object);
+        l.checkListener(object);
 
         assertFalse(object.fired.get());
         assertNull(object.firedLaunchable.get());
 
         assertTimeout(1000L, () ->
         {
-            while (!launcher.fire())
+            while (!l.fire())
             {
-                launcher.update(1.0);
+                l.update(1.0);
             }
         });
         final Handler handler = services.get(Handler.class);
@@ -383,7 +383,7 @@ final class LauncherModelTest
         assertTrue(object.fired.get());
         assertNotNull(object.firedLaunchable.get());
 
-        launcher.removeListener(object);
+        l.removeListener(object);
         object.fired.set(false);
         object.firedLaunchable.set(null);
 
@@ -404,18 +404,18 @@ final class LauncherModelTest
     @Test
     void testLauncherFailure()
     {
-        final Media launchableMedia = UtilTestSetup.createMedia(Featurable.class);
-        final Media launcherMedia = UtilLaunchable.createLauncherMedia(launchableMedia);
-        final Setup setup = new Setup(launcherMedia);
-        final Launcher launcher = UtilLaunchable.createLauncher(services, setup, featurable);
+        final Media launchableMediaA = UtilTestSetup.createMedia(Featurable.class);
+        final Media launcherMediaA = UtilLaunchable.createLauncherMedia(launchableMediaA);
+        final Setup s = new Setup(launcherMediaA);
+        final Launcher l = UtilLaunchable.createLauncher(services, s, featurable);
 
         try
         {
             assertThrowsTimeout(1000L, () ->
             {
-                while (!launcher.fire())
+                while (!l.fire())
                 {
-                    launcher.update(1.0);
+                    l.update(1.0);
                 }
             }, "No recognized constructor found for: Featurable.xml");
         }
@@ -426,7 +426,7 @@ final class LauncherModelTest
             handler.update(1.0);
 
             assertEquals(0, handler.size());
-            assertTrue(launchableMedia.getFile().delete());
+            assertTrue(launchableMediaA.getFile().delete());
         }
     }
 
@@ -436,18 +436,18 @@ final class LauncherModelTest
     @Test
     void testLauncherException()
     {
-        final Media launchableMedia = UtilTestSetup.createMedia(LaunchableObjectException.class);
-        final Media launcherMedia = UtilLaunchable.createLauncherMedia(launchableMedia);
-        final Setup setup = new Setup(launcherMedia);
-        final Launcher launcher = UtilLaunchable.createLauncher(services, setup, featurable);
+        final Media launchableMediaA = UtilTestSetup.createMedia(LaunchableObjectException.class);
+        final Media launcherMediaA = UtilLaunchable.createLauncherMedia(launchableMediaA);
+        final Setup s = new Setup(launcherMediaA);
+        final Launcher l = UtilLaunchable.createLauncher(services, s, featurable);
 
         try
         {
             assertThrowsTimeout(1000L, () ->
             {
-                while (!launcher.fire())
+                while (!l.fire())
                 {
-                    launcher.update(1.0);
+                    l.update(1.0);
                 }
             }, "Feature not found: " + Launchable.class.getName());
         }
@@ -458,7 +458,7 @@ final class LauncherModelTest
             handler.update(1.0);
 
             assertEquals(0, handler.size());
-            assertTrue(launchableMedia.getFile().delete());
+            assertTrue(launchableMediaA.getFile().delete());
         }
     }
 
@@ -468,15 +468,15 @@ final class LauncherModelTest
     @Test
     void testCheckListener()
     {
-        final Media launchableMedia = UtilTestSetup.createMedia(LaunchableObjectException.class);
-        final Media launcherMedia = UtilLaunchable.createLauncherMedia(launchableMedia);
-        final Setup setup = new Setup(launcherMedia);
+        final Media launchableMediaA = UtilTestSetup.createMedia(LaunchableObjectException.class);
+        final Media launcherMediaA = UtilLaunchable.createLauncherMedia(launchableMediaA);
+        final Setup s = new Setup(launcherMediaA);
         services.add(new Factory(services));
         services.add(new Handler(services));
 
         final AtomicBoolean launchableListener = new AtomicBoolean();
         final AtomicBoolean launcherListener = new AtomicBoolean();
-        final Launcher launcher = new LauncherModel(services, setup)
+        final Launcher l = new LauncherModel(services, s)
         {
             @Override
             public void addListener(LaunchableListener listener)
@@ -494,23 +494,23 @@ final class LauncherModelTest
         assertFalse(launchableListener.get());
         assertFalse(launcherListener.get());
 
-        launcher.checkListener(launcher);
+        l.checkListener(l);
 
         assertFalse(launchableListener.get());
         assertFalse(launcherListener.get());
 
-        launcher.checkListener((LaunchableListener) l -> launcher.update(1.0));
+        l.checkListener((LaunchableListener) f -> l.update(1.0));
 
         assertTrue(launchableListener.get());
         assertFalse(launcherListener.get());
 
-        launcher.checkListener((LauncherListener) () -> launcher.update(1.0));
+        l.checkListener((LauncherListener) () -> l.update(1.0));
 
         launchableListener.set(false);
 
         assertFalse(launchableListener.get());
         assertTrue(launcherListener.get());
 
-        assertTrue(launchableMedia.getFile().delete());
+        assertTrue(launchableMediaA.getFile().delete());
     }
 }

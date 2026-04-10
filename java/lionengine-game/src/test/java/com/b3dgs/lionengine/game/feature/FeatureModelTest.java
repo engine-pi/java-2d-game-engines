@@ -83,13 +83,13 @@ final class FeatureModelTest
         assertEquals(featurable.getFeature(Transformable.class), feature.getFeature(Transformable.class));
         assertEquals(transformable, feature.getFeature(Transformable.class));
 
-        final FeatureProvider feature = featurable.getFeatures().iterator().next();
-        assertTrue(feature.equals(featurable.getFeature(Recycler.class))
-                   || feature.equals(featurable.getFeature(Identifiable.class))
-                   || feature.equals(transformable),
-                   feature.getClass().getName());
+        final FeatureProvider f = featurable.getFeatures().iterator().next();
+        assertTrue(f.equals(featurable.getFeature(Recycler.class))
+                   || f.equals(featurable.getFeature(Identifiable.class))
+                   || f.equals(transformable),
+                   f.getClass().getName());
 
-        for (final Class<? extends FeatureProvider> type : feature.getFeaturesType())
+        for (final Class<? extends FeatureProvider> type : f.getFeaturesType())
         {
             assertTrue(Recycler.class.isAssignableFrom(type)
                        || Identifiable.class.isAssignableFrom(type)

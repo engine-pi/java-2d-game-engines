@@ -639,10 +639,10 @@ final class ConfigurerTest
     void testSave()
     {
         final Media media = createConfig("save.xml");
-        final Configurer configurer = new Configurer(media);
-        final Xml root = configurer.getRoot();
+        final Configurer c = new Configurer(media);
+        final Xml root = c.getRoot();
         root.setText("save");
-        configurer.save();
+        c.save();
 
         assertEquals("save", new Configurer(media).getText());
         assertTrue(media.getFile().delete());

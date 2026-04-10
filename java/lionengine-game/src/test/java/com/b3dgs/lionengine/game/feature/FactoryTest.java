@@ -218,7 +218,7 @@ final class FactoryTest
         final Handler handler = new Handler(services);
         final AtomicReference<Featurable> added = new AtomicReference<>();
         final AtomicReference<Featurable> removed = new AtomicReference<>();
-        final Factory factory = new Factory(services)
+        final Factory f = new Factory(services)
         {
             @Override
             public void notifyHandlableAdded(Featurable featurable)
@@ -234,8 +234,8 @@ final class FactoryTest
                 removed.set(featurable);
             }
         };
-        handler.addListener(factory);
-        final Featurable featurable = factory.create(Medias.create("Object.xml"), ObjectWithIdentifiable.class);
+        handler.addListener(f);
+        final Featurable featurable = f.create(Medias.create("Object.xml"), ObjectWithIdentifiable.class);
         handler.add(featurable);
 
         assertNull(added.get());

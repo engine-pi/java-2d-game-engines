@@ -146,9 +146,9 @@ final class AssignableModelTest
         clicked.set(true);
 
         final ObjectAssign object = new ObjectAssign(services, setup, assigned);
-        final AssignableModel assignable = new AssignableModel(services, setup);
-        assignable.prepare(object);
-        assignable.update(1.0);
+        final AssignableModel a = new AssignableModel(services, setup);
+        a.prepare(object);
+        a.update(1.0);
 
         assertTrue(assigned.get());
     }

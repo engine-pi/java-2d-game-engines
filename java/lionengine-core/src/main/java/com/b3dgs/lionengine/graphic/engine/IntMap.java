@@ -147,8 +147,6 @@ public class IntMap<V>
             return oldValue;
         }
 
-        final int[] keyTable = this.keyTable;
-
         // Check for existing keys.
         final int index1 = key & mask;
         final int key1 = keyTable[index1];
@@ -280,8 +278,6 @@ public class IntMap<V>
 
     private void push(int ik, V iv, int i1, int k1, int i2, int k2, int i3, int k3)
     {
-        final int[] keyTable = this.keyTable;
-
         int index1 = i1;
         int key1 = k1;
         int index2 = i2;
@@ -291,14 +287,10 @@ public class IntMap<V>
         int insertKey = ik;
         V insertValue = iv;
 
-        final V[] valueTable = this.valueTable;
-        final int mask = this.mask;
-
         // Push keys until an empty bucket is found.
         int evictedKey;
         V evictedValue;
         int i = 0;
-        final int pushIterations = this.pushIterations;
         do
         {
             // Replace the key and value for one of the hashes.
@@ -428,7 +420,6 @@ public class IntMap<V>
 
     private V getStash(int key, V defaultValue)
     {
-        final int[] keyTable = this.keyTable;
         for (int i = capacity, n = i + stashSize; i < n; i++)
         {
             if (keyTable[i] == key)
@@ -448,8 +439,6 @@ public class IntMap<V>
         {
             return;
         }
-        final int[] keyTable = this.keyTable;
-        final V[] valueTable = this.valueTable;
         for (int i = capacity + stashSize; i-- > 0;)
         {
             keyTable[i] = EMPTY;

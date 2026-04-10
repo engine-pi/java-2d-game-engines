@@ -90,10 +90,10 @@ final class TransformableModelTest
     void testDefaultSize()
     {
         final Media media = UtilTestSetup.createConfig(TransformableModelTest.class);
-        final Transformable transformable = new TransformableModel(services, new Setup(media));
+        final Transformable t = new TransformableModel(services, new Setup(media));
 
-        assertEquals(0, transformable.getWidth());
-        assertEquals(0, transformable.getHeight());
+        assertEquals(0, t.getWidth());
+        assertEquals(0, t.getHeight());
         assertTrue(media.getFile().delete());
     }
 

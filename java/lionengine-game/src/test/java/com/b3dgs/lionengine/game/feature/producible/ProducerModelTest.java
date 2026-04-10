@@ -142,62 +142,62 @@ final class ProducerModelTest
     @Test
     void testDefaultProduction()
     {
-        final ProducerModel producer = new ProducerModel(services, setup);
-        producer.prepare(new FeaturableModel(services, setup));
-        producer.recycle();
-        producer.setStepsSpeed(0.5);
+        final ProducerModel p = new ProducerModel(services, setup);
+        p.prepare(new FeaturableModel(services, setup));
+        p.recycle();
+        p.setStepsSpeed(0.5);
 
         final AtomicReference<Featurable> start = new AtomicReference<>();
         final AtomicReference<Featurable> current = new AtomicReference<>();
         final AtomicReference<Featurable> done = new AtomicReference<>();
         final AtomicReference<Featurable> cant = new AtomicReference<>();
-        producer.addListener(UtilProducible.createProducerListener(start, current, done, cant));
-        producer.update(1.0);
+        p.addListener(UtilProducible.createProducerListener(start, current, done, cant));
+        p.update(1.0);
 
-        assertNull(producer.getProducingElement());
-        assertEquals(-1.0, producer.getProgress());
-        assertEquals(-1, producer.getProgressPercent());
-        assertEquals(0, producer.getQueueLength());
-        assertFalse(producer.isProducing());
+        assertNull(p.getProducingElement());
+        assertEquals(-1.0, p.getProgress());
+        assertEquals(-1, p.getProgressPercent());
+        assertEquals(0, p.getQueueLength());
+        assertFalse(p.isProducing());
 
         final Featurable featurable = UtilProducible.createProducible(services);
-        producer.addToProductionQueue(featurable);
+        p.addToProductionQueue(featurable);
 
-        assertEquals(0, producer.getQueueLength());
+        assertEquals(0, p.getQueueLength());
         assertNull(start.get());
-        assertFalse(producer.isProducing());
+        assertFalse(p.isProducing());
 
-        producer.update(1.0);
+        p.update(1.0);
 
-        assertEquals(0.0, producer.getProgress());
-        assertEquals(0, producer.getProgressPercent());
-        assertEquals(0, producer.getQueueLength());
+        assertEquals(0.0, p.getProgress());
+        assertEquals(0, p.getProgressPercent());
+        assertEquals(0, p.getQueueLength());
         assertEquals(featurable, start.get());
         assertNull(current.get());
-        assertTrue(producer.isProducing());
-        assertEquals(featurable, producer.getProducingElement());
+        assertTrue(p.isProducing());
+        assertEquals(featurable, p.getProducingElement());
 
-        producer.update(1.0);
+        p.update(1.0);
 
-        assertEquals(0.5, producer.getProgress());
-        assertEquals(50, producer.getProgressPercent());
+        assertEquals(0.5, p.getProgress());
+        assertEquals(50, p.getProgressPercent());
         assertEquals(featurable, current.get());
         assertNull(done.get());
-        assertTrue(producer.isProducing());
+        assertTrue(p.isProducing());
 
-        producer.update(1.0);
+        p.update(1.0);
 
-        assertEquals(1.0, producer.getProgress());
-        assertEquals(100, producer.getProgressPercent());
+        assertEquals(1.0, p.getProgress());
+        assertEquals(100, p.getProgressPercent());
         assertEquals(featurable, current.get());
         assertNull(done.get());
-        assertFalse(producer.isProducing());
+        assertFalse(p.isProducing());
 
-        producer.update(1.0);
+        p.update(1.0);
 
         assertEquals(featurable, done.get());
         assertNull(cant.get());
-        assertFalse(producer.isProducing());
+        assertFalse(p.isProducing());
     }
 
     /**
@@ -274,37 +274,37 @@ final class ProducerModelTest
     @Test
     void testProductionListenerSelf()
     {
-        final ProducerObjectSelf object = new ProducerObjectSelf(services, setup);
-        final ProducerModel producer = new ProducerModel(services, setup);
-        producer.prepare(object);
-        producer.recycle();
-        producer.setStepsSpeed(1.0);
-        producer.addListener(object);
+        final ProducerObjectSelf o = new ProducerObjectSelf(services, setup);
+        final ProducerModel p = new ProducerModel(services, setup);
+        p.prepare(o);
+        p.recycle();
+        p.setStepsSpeed(1.0);
+        p.addListener(o);
 
         final Featurable featurable = UtilProducible.createProducible(services);
-        producer.addToProductionQueue(featurable);
+        p.addToProductionQueue(featurable);
 
-        assertEquals(0, object.flag.get());
+        assertEquals(0, o.flag.get());
 
-        producer.update(1.0);
+        p.update(1.0);
 
-        assertEquals(1, object.flag.get());
+        assertEquals(1, o.flag.get());
 
-        producer.update(1.0);
+        p.update(1.0);
 
-        assertEquals(2, object.flag.get());
+        assertEquals(2, o.flag.get());
 
-        producer.update(1.0);
+        p.update(1.0);
 
-        assertEquals(3, object.flag.get());
+        assertEquals(3, o.flag.get());
 
-        producer.update(1.0);
-        object.flag.set(0);
-        producer.removeListener(object);
-        producer.update(1.0);
-        producer.update(1.0);
+        p.update(1.0);
+        o.flag.set(0);
+        p.removeListener(o);
+        p.update(1.0);
+        p.update(1.0);
 
-        assertEquals(0, object.flag.get());
+        assertEquals(0, o.flag.get());
     }
 
     /**
@@ -498,20 +498,20 @@ final class ProducerModelTest
     @Test
     void testListenerAutoAdd()
     {
-        final ProducerObjectSelf object = new ProducerObjectSelf(services, setup);
-        final ProducerModel producer = new ProducerModel(services, setup);
-        producer.prepare(object);
-        producer.setStepsSpeed(50.0);
-        producer.checkListener(object);
-        producer.recycle();
+        final ProducerObjectSelf o = new ProducerObjectSelf(services, setup);
+        final ProducerModel p = new ProducerModel(services, setup);
+        p.prepare(o);
+        p.setStepsSpeed(50.0);
+        p.checkListener(o);
+        p.recycle();
 
         final Featurable featurable = UtilProducible.createProducible(services);
-        producer.addToProductionQueue(featurable);
+        p.addToProductionQueue(featurable);
 
-        assertEquals(0, object.flag.get());
+        assertEquals(0, o.flag.get());
 
-        producer.update(1.0);
+        p.update(1.0);
 
-        assertEquals(1, object.flag.get());
+        assertEquals(1, o.flag.get());
     }
 }

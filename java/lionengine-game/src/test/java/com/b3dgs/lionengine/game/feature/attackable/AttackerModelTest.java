@@ -113,12 +113,12 @@ final class AttackerModelTest
         final Xml xml = new Xml(media);
         xml.save(media);
 
-        final AttackerModel attacker = new AttackerModel(services,
-                                                         new Setup(media),
-                                                         new AnimatableModel(services, setup),
-                                                         new TransformableModel(services, setup));
+        final AttackerModel a = new AttackerModel(services,
+                                                  new Setup(media),
+                                                  new AnimatableModel(services, setup),
+                                                  new TransformableModel(services, setup));
 
-        assertTrue(attacker.getAttackDamages() == 0);
+        assertTrue(a.getAttackDamages() == 0);
         assertTrue(media.getFile().delete());
     }
 
@@ -140,14 +140,14 @@ final class AttackerModelTest
         xml.add(AttackerConfig.exports(new AttackerConfig(time, distanceMin, distanceMax, damagesMin, damagesMax)));
         xml.save(media);
 
-        final AttackerModel attacker = new AttackerModel(services,
-                                                         new Setup(media),
-                                                         new AnimatableModel(services, setup),
-                                                         new TransformableModel(services, setup));
-        attacker.setAttackFrame(frame);
+        final AttackerModel a = new AttackerModel(services,
+                                                  new Setup(media),
+                                                  new AnimatableModel(services, setup),
+                                                  new TransformableModel(services, setup));
+        a.setAttackFrame(frame);
 
-        assertTrue(attacker.getAttackDamages() >= damagesMin);
-        assertTrue(attacker.getAttackDamages() <= damagesMax);
+        assertTrue(a.getAttackDamages() >= damagesMin);
+        assertTrue(a.getAttackDamages() <= damagesMax);
         assertTrue(media.getFile().delete());
     }
 
@@ -188,15 +188,15 @@ final class AttackerModelTest
         canAttack.set(true);
         attacker.setAttackChecker(t -> canAttack.get());
 
-        final Transformable target = new TransformableModel(services, setup);
-        target.teleport(1, 1);
-        attacker.setAttackDistanceComputer((s, t) -> 5);
-        attacker.attack(target);
+        final Transformable t = new TransformableModel(services, setup);
+        t.teleport(1, 1);
+        attacker.setAttackDistanceComputer((s, u) -> 5);
+        attacker.attack(t);
         attacker.update(1.0);
 
         assertFalse(attacker.isAttacking());
 
-        attacker.setAttackDistanceComputer((s, t) -> 1);
+        attacker.setAttackDistanceComputer((s, u) -> 1);
         attacker.update(1.0);
         attacker.update(1.0);
 
@@ -320,18 +320,18 @@ final class AttackerModelTest
     void testSelfListener()
     {
         final ObjectAttackerSelf object2 = new ObjectAttackerSelf(services, setup);
-        final AttackerModel attacker = UtilAttackable.createAttacker(object2, services, setup);
-        attacker.recycle();
+        final AttackerModel a = UtilAttackable.createAttacker(object2, services, setup);
+        a.recycle();
         canAttack.set(true);
-        attacker.setAttackChecker(t -> canAttack.get());
+        a.setAttackChecker(t -> canAttack.get());
 
         target.teleport(10, 10);
-        attacker.update(1.0);
+        a.update(1.0);
 
         assertFalse(object2.flag.get());
 
-        attacker.attack(target);
-        attacker.update(1.0);
+        a.attack(target);
+        a.update(1.0);
 
         assertTrue(object2.flag.get());
 
@@ -464,21 +464,21 @@ final class AttackerModelTest
     @Test
     void testListenerAutoAdd()
     {
-        final ObjectAttackerSelf object = new ObjectAttackerSelf(services, setup);
-        final Attacker attacker = UtilAttackable.createAttacker(object, services, setup);
-        attacker.checkListener(new Object());
-        attacker.checkListener(object);
+        final ObjectAttackerSelf o = new ObjectAttackerSelf(services, setup);
+        final Attacker a = UtilAttackable.createAttacker(o, services, setup);
+        a.checkListener(new Object());
+        a.checkListener(o);
 
-        attacker.attack(target);
+        a.attack(target);
 
-        attacker.updateBefore();
-        attacker.update(1.0);
-        attacker.updateAfter();
+        a.updateBefore();
+        a.update(1.0);
+        a.updateAfter();
 
-        attacker.updateBefore();
-        attacker.update(1.0);
-        attacker.updateAfter(); // 2 ticks for attack interval
+        a.updateBefore();
+        a.update(1.0);
+        a.updateAfter(); // 2 ticks for attack interval
 
-        assertTrue(object.flag.get());
+        assertTrue(o.flag.get());
     }
 }
