@@ -309,6 +309,40 @@
 }
 
 
+/*
+ * Styling for the difficulty choice box
+ */
+.fxgl-difficulty-choice-box {
+    -fx-background-color: rgba(0, 0, 0, 0.35);
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-color: rgba(255, 255, 255, 0.25);
+    -fx-border-radius: 4;
+    -fx-font-size: 18px;
+}
+
+.fxgl-difficulty-choice-box:hover,
+.fxgl-difficulty-choice-box:focused,
+.fxgl-difficulty-choice-box:focused:hover,
+.fxgl-difficulty-choice-box:armed {
+    -fx-background-color: rgba(0, 0, 0, 0.45);
+    -fx-background-radius: 4;
+    -fx-background-insets: 0;
+    -fx-border-color: rgba(255, 255, 255, 0.35);
+}
+
+.fxgl-difficulty-choice-box .label {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+}
+
+.fxgl-difficulty-choice-box .context-menu {
+    -fx-background-color: rgba(20, 20, 20, 0.9);
+}
+
+.fxgl-difficulty-choice-box .menu-item:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+}
 
 
 /*

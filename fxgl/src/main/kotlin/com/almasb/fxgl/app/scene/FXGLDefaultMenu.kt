@@ -16,6 +16,7 @@ import com.almasb.fxgl.dsl.*
 import com.almasb.fxgl.dsl.FXGL.Companion.animationBuilder
 import com.almasb.fxgl.dsl.FXGL.Companion.random
 import com.almasb.fxgl.dsl.FXGL.Companion.texture
+import com.almasb.fxgl.gameplay.GameDifficulty
 import com.almasb.fxgl.input.Input
 import com.almasb.fxgl.input.InputModifier
 import com.almasb.fxgl.input.Trigger
@@ -258,6 +259,12 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         itemOptions.setChild(createOptionsMenu())
         box.add(itemOptions)
 
+        if (enabledItems.contains(MenuItem.DIFFICULTY)) {
+            val itemDifficulty = MenuButton("menu.difficulty")
+            itemDifficulty.setMenuContent({ createDifficultyMenu() })
+            box.add(itemDifficulty)
+        }
+
         if (enabledItems.contains(MenuItem.EXTRA)) {
             val itemExtra = MenuButton("menu.extra")
             itemExtra.setChild(createExtraMenu())
@@ -296,6 +303,12 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         val itemOptions = MenuButton("menu.options")
         itemOptions.setChild(createOptionsMenu())
         box.add(itemOptions)
+
+        if (enabledItems.contains(MenuItem.DIFFICULTY)) {
+            val itemDifficulty = MenuButton("menu.difficulty")
+            itemDifficulty.setMenuContent({ createDifficultyMenu() })
+            box.add(itemDifficulty)
+        }
 
         if (enabledItems.contains(MenuItem.EXTRA)) {
             val itemExtra = MenuButton("menu.extra")
@@ -341,6 +354,30 @@ open class FXGLDefaultMenu(type: MenuType) : FXGLMenu(type) {
         }
 
         return MenuBox(itemGameplay, itemControls, itemVideo, itemAudio, btnRestore)
+    }
+
+    private fun createDifficultyMenu(): MenuContent {
+        val difficultyBox = getUIFactoryService().newChoiceBox(
+            FXCollections.observableArrayList(GameDifficulty.entries)
+        )
+
+        difficultyBox.styleClass.add("fxgl-difficulty-choice-box")
+
+        difficultyBox.value = getSettings().gameDifficulty
+        getSettings().gameDifficultyProperty().bindBidirectional(difficultyBox.valueProperty())
+
+        difficultyBox.valueProperty().addListener { _, _, _ ->
+            switchMenuContentTo(EMPTY)
+        }
+
+        val row = HBox(
+            25.0,
+            getUIFactoryService().newText(localizedStringProperty("menu.difficulty").concat(":")),
+            difficultyBox
+        )
+        row.alignment = Pos.CENTER
+
+        return MenuContent(row)
     }
 
     private fun createExtraMenu(): MenuBox {
