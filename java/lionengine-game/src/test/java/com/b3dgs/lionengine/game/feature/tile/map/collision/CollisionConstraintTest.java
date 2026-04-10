@@ -41,7 +41,7 @@ final class CollisionConstraintTest
      * Prepare test.
      */
     @BeforeEach
-    public void before()
+    void before()
     {
         constraint.add(Orientation.EAST, "group");
     }

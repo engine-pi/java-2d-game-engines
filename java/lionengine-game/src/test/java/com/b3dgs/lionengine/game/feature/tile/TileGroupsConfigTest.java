@@ -50,7 +50,7 @@ final class TileGroupsConfigTest
      * Clean up test.
      */
     @AfterAll
-    public static void cleanUp()
+    static void cleanUp()
     {
         Medias.setResourcesDirectory(null);
     }

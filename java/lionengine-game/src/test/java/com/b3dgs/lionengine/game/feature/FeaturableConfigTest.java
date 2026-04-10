@@ -45,7 +45,7 @@ final class FeaturableConfigTest
      * Prepare test.
      */
     @BeforeAll
-    public static void setUp()
+    static void setUp()
     {
         Medias.setResourcesDirectory(System.getProperty("java.io.tmpdir"));
     }
@@ -54,7 +54,7 @@ final class FeaturableConfigTest
      * Clean up test.
      */
     @AfterAll
-    public static void cleanUp()
+    static void cleanUp()
     {
         Medias.setResourcesDirectory(null);
     }

@@ -69,7 +69,7 @@ final class TransformableModelTest
      * Prepare test.
      */
     @BeforeEach
-    public void before()
+    void before()
     {
         transformable.prepare(featurable);
     }
@@ -78,7 +78,7 @@ final class TransformableModelTest
      * Clean test.
      */
     @AfterEach
-    public void after()
+    void after()
     {
         featurable.getFeature(Identifiable.class).notifyDestroyed();
     }

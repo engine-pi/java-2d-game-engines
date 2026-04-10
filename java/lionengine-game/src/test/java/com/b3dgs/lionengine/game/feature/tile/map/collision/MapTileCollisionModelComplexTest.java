@@ -98,23 +98,23 @@ final class MapTileCollisionModelComplexTest
                                     new CollisionConstraint());
     }
 
-    private final CollisionFormula f_ground = createFormula("ground", 0.0, 0.0);
-    private final CollisionFormula f_slope_left_0 = createFormula("slope_left_0", 0.5, 0.0);
-    private final CollisionFormula f_slope_left_1 = createFormula("slope_left_1", 0.5, 8.0);
-    private final CollisionFormula f_slope_right_0 = createFormula("slope_right_0", -0.5, 16.0);
-    private final CollisionFormula f_slope_right_1 = createFormula("slope_right_1", -0.5, 8.0);
+    private final CollisionFormula fGround = createFormula("ground", 0.0, 0.0);
+    private final CollisionFormula fSlopeLeft0 = createFormula("slope_left_0", 0.5, 0.0);
+    private final CollisionFormula fSlopeLeft1 = createFormula("slope_left_1", 0.5, 8.0);
+    private final CollisionFormula fSlopeRight0 = createFormula("slope_right_0", -0.5, 16.0);
+    private final CollisionFormula fSlopeRight1 = createFormula("slope_right_1", -0.5, 8.0);
 
-    private final CollisionGroup g_ground = new CollisionGroup("ground", Arrays.asList(f_ground));
-    private final CollisionGroup g_slope_left_0 = new CollisionGroup("slope_left_0", Arrays.asList(f_slope_left_0));
-    private final CollisionGroup g_slope_left_1 = new CollisionGroup("slope_left_1", Arrays.asList(f_slope_left_1));
-    private final CollisionGroup g_slope_right_0 = new CollisionGroup("slope_right_0", Arrays.asList(f_slope_right_0));
-    private final CollisionGroup g_slope_right_1 = new CollisionGroup("slope_right_1", Arrays.asList(f_slope_right_1));
+    private final CollisionGroup gGround = new CollisionGroup("ground", Arrays.asList(fGround));
+    private final CollisionGroup gSlopeLeft0 = new CollisionGroup("slope_left_0", Arrays.asList(fSlopeLeft0));
+    private final CollisionGroup gSlopeLeft1 = new CollisionGroup("slope_left_1", Arrays.asList(fSlopeLeft1));
+    private final CollisionGroup gSlopeRight0 = new CollisionGroup("slope_right_0", Arrays.asList(fSlopeRight0));
+    private final CollisionGroup gSlopeRight1 = new CollisionGroup("slope_right_1", Arrays.asList(fSlopeRight1));
 
-    private final List<CollisionGroup> groupsList = Arrays.asList(g_ground,
-                                                                  g_slope_left_0,
-                                                                  g_slope_left_1,
-                                                                  g_slope_right_0,
-                                                                  g_slope_right_1);
+    private final List<CollisionGroup> groupsList = Arrays.asList(gGround,
+                                                                  gSlopeLeft0,
+                                                                  gSlopeLeft1,
+                                                                  gSlopeRight0,
+                                                                  gSlopeRight1);
 
     private final CollisionCategory category = new CollisionCategory("y", Axis.Y, 0, 0, true, groupsList);
 
@@ -149,11 +149,11 @@ final class MapTileCollisionModelComplexTest
     private void loadCollisions()
     {
         final Map<String, CollisionFormula> formulas = new HashMap<>();
-        for (final CollisionFormula formula : Arrays.asList(f_ground,
-                                                            f_slope_left_0,
-                                                            f_slope_left_1,
-                                                            f_slope_right_0,
-                                                            f_slope_right_1))
+        for (final CollisionFormula formula : Arrays.asList(fGround,
+                                                            fSlopeLeft0,
+                                                            fSlopeLeft1,
+                                                            fSlopeRight0,
+                                                            fSlopeRight1))
         {
             formulas.put(formula.getName(), formula);
         }

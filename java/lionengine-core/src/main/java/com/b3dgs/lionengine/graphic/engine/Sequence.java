@@ -145,6 +145,7 @@ public abstract class Sequence implements Sequencable, Sequencer, Zooming, TimeC
     public final void setSplit0()
     {
         renderer = new SequenceRenderer[1];
+
         renderer[0] = new SequenceRenderer(context, resolution, 0, 0, this::render);
     }
 
@@ -170,12 +171,13 @@ public abstract class Sequence implements Sequencable, Sequencer, Zooming, TimeC
             dy = 1;
         }
 
-        renderer = new SequenceRenderer[2];
-        renderer[0] = new SequenceRenderer(context, resolution, dx, dy, screen1);
-        renderer[1] = new SequenceRenderer(context, resolution, dx, dy, screen2);
+        renderer = new SequenceRenderer[SequenceRenderer.RENDERERS_SPLIT];
 
-        renderer[0].setLocation(0);
-        renderer[1].setLocation(1);
+        renderer[SequenceRenderer.RENDERER_SPLIT_LEFT] = new SequenceRenderer(context, resolution, dx, dy, screen1);
+        renderer[SequenceRenderer.RENDERER_SPLIT_RIGHT] = new SequenceRenderer(context, resolution, dx, dy, screen2);
+
+        renderer[SequenceRenderer.RENDERER_SPLIT_LEFT].setLocation(SequenceRenderer.RENDERER_SPLIT_LEFT);
+        renderer[SequenceRenderer.RENDERER_SPLIT_RIGHT].setLocation(SequenceRenderer.RENDERER_SPLIT_RIGHT);
     }
 
     /**
@@ -188,19 +190,21 @@ public abstract class Sequence implements Sequencable, Sequencer, Zooming, TimeC
      */
     public final void setSplit(Renderable screen1, Renderable screen2, Renderable screen3, Renderable screen4)
     {
-        // CHECKSTYLE IGNORE LINE: Magic
-        renderer = new SequenceRenderer[4];
-        renderer[0] = new SequenceRenderer(context, resolution, 1, 1, screen1);
-        renderer[1] = new SequenceRenderer(context, resolution, 1, 1, screen2);
-        renderer[2] = new SequenceRenderer(context, resolution, 1, 1, screen3);
-        // CHECKSTYLE IGNORE LINE: Magic
-        renderer[3] = new SequenceRenderer(context, resolution, 1, 1, screen4);
+        renderer = new SequenceRenderer[SequenceRenderer.RENDERERS_QUAD];
 
-        renderer[0].setLocation(0);
-        renderer[1].setLocation(1);
-        renderer[2].setLocation(2);
-        // CHECKSTYLE IGNORE LINE: Magic
-        renderer[3].setLocation(3);
+        renderer[SequenceRenderer.RENDERER_QUAD_TOP_LEFT] = new SequenceRenderer(context, resolution, 1, 1, screen1);
+        renderer[SequenceRenderer.RENDERER_QUAD_TOP_RIGHT] = new SequenceRenderer(context, resolution, 1, 1, screen2);
+        renderer[SequenceRenderer.RENDERER_QUAD_BOTTOM_LEFT] = new SequenceRenderer(context, resolution, 1, 1, screen3);
+        renderer[SequenceRenderer.RENDERER_QUAD_BOTTOM_RIGHT] = new SequenceRenderer(context,
+                                                                                     resolution,
+                                                                                     1,
+                                                                                     1,
+                                                                                     screen4);
+
+        renderer[SequenceRenderer.RENDERER_QUAD_TOP_LEFT].setLocation(SequenceRenderer.RENDERER_QUAD_TOP_LEFT);
+        renderer[SequenceRenderer.RENDERER_QUAD_TOP_RIGHT].setLocation(SequenceRenderer.RENDERER_QUAD_TOP_RIGHT);
+        renderer[SequenceRenderer.RENDERER_QUAD_BOTTOM_LEFT].setLocation(SequenceRenderer.RENDERER_QUAD_BOTTOM_LEFT);
+        renderer[SequenceRenderer.RENDERER_QUAD_BOTTOM_RIGHT].setLocation(SequenceRenderer.RENDERER_QUAD_BOTTOM_RIGHT);
     }
 
     /**

@@ -84,7 +84,7 @@ final class HudTest
      * Prepare test.
      */
     @BeforeEach
-    public void before()
+    void before()
     {
         services.add(new ContextMock());
         services.add(new Handler(services));

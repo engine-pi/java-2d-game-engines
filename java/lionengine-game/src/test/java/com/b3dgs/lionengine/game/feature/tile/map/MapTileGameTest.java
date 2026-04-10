@@ -255,7 +255,7 @@ final class MapTileGameTest
         map.create(16, 16, 3, 3);
 
         final AtomicReference<Tile> set = new AtomicReference<>();
-        final TileSetListener listener = tile -> set.set(tile);
+        final TileSetListener listener = set::set;
         map.addListener(listener);
         map.setTile(0, 0, 0);
 

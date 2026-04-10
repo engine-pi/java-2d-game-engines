@@ -164,6 +164,6 @@ final class UtilLaunchable
      */
     public static LaunchableListener createListener(final AtomicReference<FeatureProvider> firedLaunchable)
     {
-        return launchable -> firedLaunchable.set(launchable);
+        return firedLaunchable::set;
     }
 }

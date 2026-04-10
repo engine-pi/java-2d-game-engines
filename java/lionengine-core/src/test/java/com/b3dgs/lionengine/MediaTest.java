@@ -160,7 +160,7 @@ final class MediaTest
         final Media media = Medias.create("void");
 
         assertFalse(media.exists());
-        assertThrows(() -> media.getInputStream(), "[void] " + MediaDefault.ERROR_OPEN_MEDIA);
+        assertThrows(media::getInputStream, "[void] " + MediaDefault.ERROR_OPEN_MEDIA);
     }
 
     /**

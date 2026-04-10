@@ -149,7 +149,7 @@ final class StateHandlerTest
             handler.prepare(featurable);
             handler.changeState(StateIdle.class);
 
-            assertCause(() -> handler.updateAfter(), "Animation not found: " + StateIdle.class.getName());
+            assertCause(handler::updateAfter, "Animation not found: " + StateIdle.class.getName());
         }
         finally
         {
@@ -267,7 +267,7 @@ final class StateHandlerTest
             final StateHandler handler = new StateHandler(services, setup);
             handler.changeState(State.class);
 
-            assertCause(() -> handler.updateAfter(), NoSuchMethodException.class);
+            assertCause(handler::updateAfter, NoSuchMethodException.class);
             assertTrue(config.getFile().delete());
         }
         finally

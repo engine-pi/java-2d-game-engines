@@ -53,7 +53,7 @@ final class MapTileTransitionModelTest
      * Prepare test.
      */
     @BeforeAll
-    public static void setUp()
+    static void setUp()
     {
         Medias.setResourcesDirectory(System.getProperty("java.io.tmpdir"));
         media = UtilTransformable.createMedia(MapTileTransitionModelTest.class);
@@ -64,7 +64,7 @@ final class MapTileTransitionModelTest
      * Clean up test.
      */
     @AfterAll
-    public static void cleanUp()
+    static void cleanUp()
     {
         assertTrue(media.getFile().delete());
         assertTrue(config.getFile().delete());

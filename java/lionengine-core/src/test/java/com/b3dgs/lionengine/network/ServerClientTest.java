@@ -48,7 +48,7 @@ final class ServerClientTest
      * @throws IOException If error.
      */
     @Test
-    public void testDefault() throws IOException
+    void testDefault() throws IOException
     {
         final ChannelBuffer channel = new ChannelBuffer();
         final ServerUdp server = new ServerUdp(channel);
@@ -97,7 +97,7 @@ final class ServerClientTest
      * @throws IOException If error.
      */
     @Test
-    public void testInfo() throws IOException
+    void testInfo() throws IOException
     {
         final ChannelBuffer channel = new ChannelBuffer();
         final ServerUdp server = new ServerUdp(channel);
@@ -132,7 +132,7 @@ final class ServerClientTest
      * @throws IOException If error.
      */
     @Test
-    public void testConnectDisconnect() throws IOException
+    void testConnectDisconnect() throws IOException
     {
         final ChannelBuffer channel = new ChannelBuffer();
         final ServerUdp server = new ServerUdp(channel);
@@ -300,7 +300,7 @@ final class ServerClientTest
      * @throws IOException If error.
      */
     @Test
-    public void testPing() throws IOException
+    void testPing() throws IOException
     {
         final ChannelBuffer channel = new ChannelBuffer();
         final ServerUdp server = new ServerUdp(channel);
@@ -362,7 +362,7 @@ final class ServerClientTest
      * @throws IOException If error.
      */
     @Test
-    public void testAlive() throws IOException
+    void testAlive() throws IOException
     {
         final ChannelBuffer channel = new ChannelBuffer();
         final ServerUdp server = new ServerUdp(channel);

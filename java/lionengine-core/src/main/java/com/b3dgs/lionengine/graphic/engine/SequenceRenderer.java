@@ -39,6 +39,22 @@ import com.b3dgs.lionengine.graphic.Transform;
  */
 public final class SequenceRenderer implements Rasterbar
 {
+    /** Renderers. */
+    static final int RENDERERS_SPLIT = 2;
+    /** Renderer split left. */
+    static final int RENDERER_SPLIT_LEFT = 0;
+    /** Renderer split right. */
+    static final int RENDERER_SPLIT_RIGHT = 1;
+    /** Renderers. */
+    static final int RENDERERS_QUAD = 4;
+    /** Renderer top left. */
+    static final int RENDERER_QUAD_TOP_LEFT = 0;
+    /** Renderer top right. */
+    static final int RENDERER_QUAD_TOP_RIGHT = 1;
+    /** Renderer bottom left. */
+    static final int RENDERER_QUAD_BOTTOM_LEFT = 2;
+    /** Renderer quad bottom right. */
+    static final int RENDERER_QUAD_BOTTOM_RIGHT = 3;
     /** Scaling precision. */
     private static final double SCALE_PRECISION = 0.01;
     /** No alpha clamp. */
@@ -120,6 +136,7 @@ public final class SequenceRenderer implements Rasterbar
      * @param source The resolution source (must not be <code>null</code>).
      * @throws LionEngineException If invalid argument.
      */
+    // CHECKSTYLE IGNORE LINE: CyclomaticComplexity
     void initResolution(Resolution source)
     {
         Check.notNull(source);
@@ -148,7 +165,7 @@ public final class SequenceRenderer implements Rasterbar
         bu = new int[w * h];
         transform = getTransform();
 
-        if (id == 1)
+        if (id == RENDERER_SPLIT_RIGHT || id == RENDERER_QUAD_TOP_RIGHT)
         {
             if (scaleDivX > 1)
             {
@@ -163,12 +180,11 @@ public final class SequenceRenderer implements Rasterbar
                 x = (int) (w * fh / 2);
             }
         }
-        if (id == 2)
+        if (id == RENDERER_QUAD_BOTTOM_LEFT)
         {
             y = (int) (h * fw / 2);
         }
-        // CHECKSTYLE IGNORE LINE: MagicNumber
-        if (id == 3)
+        if (id == RENDERER_QUAD_BOTTOM_RIGHT)
         {
             x = (int) (w * fh / 2);
             y = (int) (h * fw / 2);

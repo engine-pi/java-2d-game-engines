@@ -67,7 +67,7 @@ final class CursorTest
      * Prepare test.
      */
     @BeforeEach
-    public void before()
+    void before()
     {
         services.add(new ContextMock());
     }
