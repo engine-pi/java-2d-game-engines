@@ -91,7 +91,7 @@ public class AnimatableModel extends FeatureModel implements Animatable, Recycla
         Check.notNull(config);
 
         this.animator = animator;
-        priorityUpdate = config.getInteger(RoutineUpdate.ANIMATABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_ANIMATABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
     }
 
     @Override

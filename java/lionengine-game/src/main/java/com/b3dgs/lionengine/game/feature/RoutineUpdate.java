@@ -25,39 +25,39 @@ import com.b3dgs.lionengine.game.Feature;
 public interface RoutineUpdate extends Feature, Updatable
 {
     /** State handler feature priority. */
-    int STATE = 0;
+    int P_STATE = 0;
     /** Actionable feature priority. */
-    int ACTIONABLE = STATE + 1;
+    int P_ACTIONABLE = P_STATE + 1;
     /** Assignable feature priority. */
-    int ASSIGNABLE = ACTIONABLE + 1;
+    int P_ASSIGNABLE = P_ACTIONABLE + 1;
     /** Attacker feature priority. */
-    int ATTACKER = ACTIONABLE + 1;
+    int P_ATTACKER = P_ACTIONABLE + 1;
     /** Extractor feature priority. */
-    int EXTRACTOR = ATTACKER + 1;
+    int P_EXTRACTOR = P_ATTACKER + 1;
     /** Producer feature priority. */
-    int PRODUCER = EXTRACTOR + 1;
+    int P_PRODUCER = P_EXTRACTOR + 1;
     /** Launchable feature priority. */
-    int LAUNCHABLE = PRODUCER + 1;
+    int P_LAUNCHABLE = P_PRODUCER + 1;
     /** Launcher feature priority. */
-    int LAUNCHER = LAUNCHABLE + 1;
+    int P_LAUNCHER = P_LAUNCHABLE + 1;
     /** Custom feature priority. */
-    int CUSTOM = LAUNCHER + 1;
+    int P_CUSTOM = P_LAUNCHER + 1;
     /** Body feature priority. */
-    int BODY = CUSTOM + 1;
+    int P_BODY = P_CUSTOM + 1;
     /** Pathfindable feature priority. */
-    int PATHFINDABLE = BODY + 1;
+    int P_PATHFINDABLE = P_BODY + 1;
     /** Collidable feature priority. */
-    int COLLIDABLE = PATHFINDABLE + 1;
+    int P_COLLIDABLE = P_PATHFINDABLE + 1;
     /** Tile collidable feature priority. */
-    int TILECOLLIDABLE = COLLIDABLE + 1;
+    int P_TILECOLLIDABLE = P_COLLIDABLE + 1;
     /** Mirrorable feature priority. */
-    int MIRRORABLE = TILECOLLIDABLE + 1;
+    int P_MIRRORABLE = P_TILECOLLIDABLE + 1;
     /** Animatable feature priority. */
-    int ANIMATABLE = MIRRORABLE + 1;
+    int P_ANIMATABLE = P_MIRRORABLE + 1;
     /** Rasterable feature priority. */
-    int RASTERABLE = ANIMATABLE + 1;
+    int P_RASTERABLE = P_ANIMATABLE + 1;
     /** Transformable feature priority. */
-    int TRANSFORMABLE = RASTERABLE + 1;
+    int P_TRANSFORMABLE = P_RASTERABLE + 1;
 
     /**
      * Compare routine priority.
@@ -104,12 +104,12 @@ public interface RoutineUpdate extends Feature, Updatable
     }
 
     /**
-     * Get the ordering priority (higher means high priority, lower means low priority, {@link #CUSTOM} is default).
+     * Get the ordering priority (higher means high priority, lower means low priority, {@link #P_CUSTOM} is default).
      * 
      * @return The ordering priority.
      */
     default int getPriotityUpdate()
     {
-        return CUSTOM;
+        return P_CUSTOM;
     }
 }

@@ -66,7 +66,7 @@ public class MirrorableModel extends FeatureModel implements Mirrorable, Recycla
 
         Check.notNull(config);
 
-        priorityUpdate = config.getInteger(RoutineUpdate.MIRRORABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_MIRRORABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
     }
 
     @Override

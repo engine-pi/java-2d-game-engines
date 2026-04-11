@@ -148,7 +148,7 @@ public class AttackerModel extends FeatureModel implements Attacker, Recyclable
 
         this.animatable = animatable;
         this.transformable = transformable;
-        priorityUpdate = config.getInteger(RoutineUpdate.ATTACKER, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_ATTACKER, FeaturableConfig.ATT_PRIORITY_UPDATE);
 
         readConfig();
     }

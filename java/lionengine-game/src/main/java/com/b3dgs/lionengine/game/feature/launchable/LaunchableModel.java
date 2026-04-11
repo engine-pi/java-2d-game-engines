@@ -90,7 +90,7 @@ public class LaunchableModel extends FeatureModel implements Launchable, Recycla
         Check.notNull(config);
 
         this.transformable = transformable;
-        priorityUpdate = config.getInteger(RoutineUpdate.LAUNCHABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_LAUNCHABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
     }
 
     @Override

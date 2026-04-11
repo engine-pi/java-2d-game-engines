@@ -140,7 +140,7 @@ public class TileCollidableModel extends FeatureModel implements TileCollidable,
 
         this.transformable = transformable;
 
-        priorityUpdate = config.getInteger(RoutineUpdate.TILECOLLIDABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_TILECOLLIDABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
 
         if (setup.hasNode(CollisionCategoryConfig.NODE_CATEGORIES))
         {

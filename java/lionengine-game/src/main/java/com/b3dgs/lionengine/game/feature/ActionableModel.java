@@ -105,7 +105,7 @@ public class ActionableModel extends FeatureModel implements Actionable
 
         Check.notNull(config);
 
-        priorityUpdate = config.getInteger(RoutineUpdate.ACTIONABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_ACTIONABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
 
         final ActionConfig ac = ActionConfig.imports(setup);
         button = Geom.createArea(ac.getX(), ac.getY(), ac.getWidth(), ac.getHeight());

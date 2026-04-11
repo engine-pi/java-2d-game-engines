@@ -190,7 +190,7 @@ public class LauncherModel extends FeatureModel implements Launcher, Recyclable
 
         Check.notNull(config);
 
-        priorityUpdate = config.getInteger(RoutineUpdate.LAUNCHER, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_LAUNCHER, FeaturableConfig.ATT_PRIORITY_UPDATE);
 
         if (viewer == null)
         {

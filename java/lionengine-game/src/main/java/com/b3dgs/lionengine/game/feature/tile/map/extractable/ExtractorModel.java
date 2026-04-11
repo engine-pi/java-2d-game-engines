@@ -108,7 +108,7 @@ public class ExtractorModel extends FeatureModel implements Extractor, Recyclabl
     {
         super(services, setup);
 
-        priorityUpdate = config.getInteger(RoutineUpdate.EXTRACTOR, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_EXTRACTOR, FeaturableConfig.ATT_PRIORITY_UPDATE);
 
         if (setup.hasNode(ExtractorConfig.NODE_EXTRACTOR))
         {

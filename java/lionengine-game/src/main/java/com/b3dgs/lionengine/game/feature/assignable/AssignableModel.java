@@ -99,7 +99,7 @@ public class AssignableModel extends FeatureModel implements Assignable
 
         Check.notNull(config);
 
-        priorityUpdate = config.getInteger(RoutineUpdate.ASSIGNABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_ASSIGNABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
     }
 
     @Override

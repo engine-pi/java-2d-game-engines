@@ -160,7 +160,7 @@ public class StateHandler extends FeatureModel implements RoutineUpdate, Recycla
         Check.notNull(config);
 
         this.converter = converter;
-        priorityUpdate = config.getInteger(RoutineUpdate.STATE, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_STATE, FeaturableConfig.ATT_PRIORITY_UPDATE);
         classLoader = services.getOptional(ClassLoader.class).orElse(getClass().getClassLoader());
         StateConfig.imports(setup).ifPresent(state ->
         {

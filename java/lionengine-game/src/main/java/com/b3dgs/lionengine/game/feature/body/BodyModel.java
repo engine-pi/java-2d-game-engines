@@ -73,7 +73,7 @@ public class BodyModel extends FeatureModel implements Body, Recyclable
 
         Check.notNull(config);
 
-        priorityUpdate = config.getInteger(RoutineUpdate.BODY, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_BODY, FeaturableConfig.ATT_PRIORITY_UPDATE);
         readConfig();
     }
 

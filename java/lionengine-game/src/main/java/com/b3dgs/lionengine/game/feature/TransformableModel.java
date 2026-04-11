@@ -84,7 +84,7 @@ public class TransformableModel extends FeatureModel implements Transformable, R
 
         Check.notNull(config);
 
-        priorityUpdate = config.getInteger(RoutineUpdate.TRANSFORMABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_TRANSFORMABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
         readConfig();
     }
 

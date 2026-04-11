@@ -123,7 +123,7 @@ public class ProducerModel extends FeatureModel implements Producer, Recyclable
 
         Check.notNull(config);
 
-        priorityUpdate = config.getInteger(RoutineUpdate.PRODUCER, FeaturableConfig.ATT_PRIORITY_UPDATE);
+        priorityUpdate = config.getInteger(RoutineUpdate.P_PRODUCER, FeaturableConfig.ATT_PRIORITY_UPDATE);
     }
 
     /**
