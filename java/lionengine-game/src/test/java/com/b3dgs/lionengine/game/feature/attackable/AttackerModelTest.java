@@ -353,8 +353,12 @@ final class AttackerModelTest
         final AtomicBoolean anim = new AtomicBoolean();
         final AtomicReference<Transformable> ended = new AtomicReference<>();
         final AtomicBoolean stopped = new AtomicBoolean();
-        final AttackerListener listener;
-        listener = UtilAttackable.createListener(preparing, reaching, started, ended, anim, stopped);
+        final AttackerListener listener = UtilAttackable.createListener(preparing,
+                                                                        reaching,
+                                                                        started,
+                                                                        ended,
+                                                                        anim,
+                                                                        stopped);
 
         attacker.addListener(listener);
         attacker.recycle();

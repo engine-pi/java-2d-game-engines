@@ -451,8 +451,7 @@ public class Force implements Direction, Updatable
     {
         final int prime = 31;
         int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(fh);
+        long temp = Double.doubleToLongBits(fh);
         result = prime * result + (int) (temp ^ temp >>> 32);
         temp = Double.doubleToLongBits(fv);
         result = prime * result + (int) (temp ^ temp >>> 32);

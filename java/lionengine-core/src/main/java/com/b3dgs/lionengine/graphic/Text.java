@@ -89,6 +89,17 @@ public interface Text extends Renderable
     void setLocation(double x, double y);
 
     /**
+     * Set text location.
+     * 
+     * @param x The text x.
+     * @param y The text y.
+     */
+    default void setLocation(int x, int y)
+    {
+        setLocation((double) x, (double) y);
+    }
+
+    /**
      * Set text to render.
      * 
      * @param text The text to render.

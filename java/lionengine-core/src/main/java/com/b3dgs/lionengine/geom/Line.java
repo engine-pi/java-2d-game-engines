@@ -120,8 +120,7 @@ public final class Line
     {
         final int prime = 31;
         int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(x1);
+        long temp = Double.doubleToLongBits(x1);
         result = prime * result + (int) (temp ^ temp >>> 32);
         temp = Double.doubleToLongBits(y1);
         result = prime * result + (int) (temp ^ temp >>> 32);

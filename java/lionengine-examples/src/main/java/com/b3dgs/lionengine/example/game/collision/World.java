@@ -50,8 +50,7 @@ public final class World extends WorldHelper
         map.create(Medias.create("level.png"));
         camera.setLimits(map);
 
-        final MapTileCollisionRenderer mapCollisionRenderer;
-        mapCollisionRenderer = map.addFeature(new MapTileCollisionRendererModel());
+        final MapTileCollisionRenderer mapCollisionRenderer = map.addFeature(new MapTileCollisionRendererModel());
         mapCollisionRenderer.createCollisionDraw();
         map.getFeature(MapTileViewer.class).addRenderer(mapCollisionRenderer);
 

@@ -176,15 +176,12 @@ public class WorldInteractionTile implements WorldMouseClickListener, WorldMouse
         final SheetPaletteType type = SheetsPaletteModel.INSTANCE.getSheetPaletteType();
         switch (type)
         {
-            case SELECTION:
-                selectedTile = tile;
-                break;
-            case EDITION:
+            case SELECTION -> selectedTile = tile;
+            case EDITION -> {
                 selectedTile = null;
                 updateTileEdition(tile);
-                break;
-            default:
-                throw new LionEngineException(type);
+            }
+            default -> throw new LionEngineException(type);
         }
     }
 

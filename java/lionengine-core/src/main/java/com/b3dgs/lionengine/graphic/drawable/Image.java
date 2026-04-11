@@ -86,6 +86,17 @@ public interface Image extends Resource, Shape, Renderable
     void setLocation(double x, double y);
 
     /**
+     * Set the location on screen.
+     * 
+     * @param x The horizontal location.
+     * @param y The vertical location.
+     */
+    default void setLocation(int x, int y)
+    {
+        setLocation((double) x, (double) y);
+    }
+
+    /**
      * Set the location on screen from a viewer viewpoint.
      * 
      * @param viewer The viewer reference.

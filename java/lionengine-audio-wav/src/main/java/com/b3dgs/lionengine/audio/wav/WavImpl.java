@@ -152,17 +152,10 @@ final class WavImpl implements Wav
             final FloatControl pan = (FloatControl) dataLine.getControl(Type.PAN);
             switch (alignment)
             {
-                case CENTER:
-                    pan.setValue(0.0F);
-                    break;
-                case RIGHT:
-                    pan.setValue(1.0F);
-                    break;
-                case LEFT:
-                    pan.setValue(-1.0F);
-                    break;
-                default:
-                    throw new LionEngineException(alignment);
+                case CENTER -> pan.setValue(0.0F);
+                case RIGHT -> pan.setValue(1.0F);
+                case LEFT -> pan.setValue(-1.0F);
+                default -> throw new LionEngineException(alignment);
             }
         }
     }

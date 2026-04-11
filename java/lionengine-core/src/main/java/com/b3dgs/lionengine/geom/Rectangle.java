@@ -265,8 +265,7 @@ public final class Rectangle implements Area
     {
         final int prime = 31;
         int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(x);
+        long temp = Double.doubleToLongBits(x);
         result = prime * result + (int) (temp ^ temp >>> 32);
         temp = Double.doubleToLongBits(y);
         result = prime * result + (int) (temp ^ temp >>> 32);

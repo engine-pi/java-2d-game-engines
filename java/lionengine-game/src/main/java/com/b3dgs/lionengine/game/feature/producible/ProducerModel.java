@@ -308,23 +308,12 @@ public class ProducerModel extends FeatureModel implements Producer, Recyclable
     {
         switch (state)
         {
-            case NONE:
-                progress = -1;
-                break;
-            case WILL_PRODUCE:
-                actionWillProduce();
-                break;
-            case PRODUCING:
-                actionProducing();
-                break;
-            case PRODUCED:
-                actionProduced();
-                break;
-            case CHECK:
-                actionCheck();
-                break;
-            default:
-                throw new LionEngineException(state);
+            case NONE -> progress = -1;
+            case WILL_PRODUCE -> actionWillProduce();
+            case PRODUCING -> actionProducing();
+            case PRODUCED -> actionProduced();
+            case CHECK -> actionCheck();
+            default -> throw new LionEngineException(state);
         }
     }
 

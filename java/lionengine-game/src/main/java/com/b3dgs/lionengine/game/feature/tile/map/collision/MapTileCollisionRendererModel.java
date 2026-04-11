@@ -92,14 +92,9 @@ public class MapTileCollisionRendererModel extends FeatureAbstract implements Ma
         final CollisionRange range = formula.getRange();
         switch (range.getOutput())
         {
-            case X:
-                renderX(g, function, range, th, y);
-                break;
-            case Y:
-                renderY(g, function, range, th, x);
-                break;
-            default:
-                throw new LionEngineException(range.getOutput());
+            case X -> renderX(g, function, range, th, y);
+            case Y -> renderY(g, function, range, th, x);
+            default -> throw new LionEngineException(range.getOutput());
         }
     }
 

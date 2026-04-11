@@ -114,8 +114,7 @@ public final class Coord implements Localizable
     {
         final int prime = 31;
         int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(x);
+        long temp = Double.doubleToLongBits(x);
         result = prime * result + (int) (temp ^ temp >>> 32);
         temp = Double.doubleToLongBits(y);
         return prime * result + (int) (temp ^ temp >>> 32);
