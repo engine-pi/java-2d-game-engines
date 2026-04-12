@@ -87,7 +87,7 @@ public abstract class BackgroundAbstract implements Background
     /** Total background height. */
     protected int totalHeight;
     /** Offset y. */
-    private int offsetY;
+    private double offsetY;
     /** Internal length. */
     private int n;
 
@@ -112,7 +112,7 @@ public abstract class BackgroundAbstract implements Background
      * 
      * @return The y offset.
      */
-    public int getOffsetY()
+    public double getOffsetY()
     {
         return offsetY;
     }
@@ -173,24 +173,24 @@ public abstract class BackgroundAbstract implements Background
     public final void update(double extrp, double speed, double x, double y)
     {
         final int lowest = totalHeight;
-        int py;
+        double py;
         if (maxY == 0)
         {
-            py = (int) Math.round(y);
+            py = Math.round(y);
         }
         else
         {
             final double currentY = UtilMath.clamp(y, minY, maxY);
-            py = (int) Math.round(currentY / maxY * lowest) - lowest + offsetY;
+            py = Math.round(currentY / maxY * lowest) - lowest + offsetY;
             if (py > 0)
             {
-                py = 0;
+                py = 0.0;
             }
         }
 
         for (int i = 0; i < n; i++)
         {
-            components.get(i).update(extrp, (int) Math.round(x), py, speed);
+            components.get(i).update(extrp, (int) Math.round(x), (int) py, speed);
         }
     }
 
