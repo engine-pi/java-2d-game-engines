@@ -4,7 +4,7 @@
 
 **A Java 2D game engine, born from the [Lionheart Remake](https://lionheart.b3dgs.com) project.**
 
-[![Build](https://github.com/b3dgs/lionengine/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/b3dgs/lionengine/actions/workflows/build.yml)
+[![Build](https://github.com/b3dgs/lionengine/actions/workflows/ci-cd.yml/badge.svg?branch=master)](https://github.com/b3dgs/lionengine/actions/workflows/ci-cd.yml)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=b3dgs_lionengine&metric=coverage)](https://sonarcloud.io/summary/new_code?id=b3dgs_lionengine)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=b3dgs_lionengine&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=b3dgs_lionengine)
 [![Maven Central](https://maven-badges.sml.io/maven-central/com.b3dgs.lionengine/lionengine-core/badge.svg)](https://maven-badges.sml.io/maven-central/com.b3dgs.lionengine/lionengine-core)
