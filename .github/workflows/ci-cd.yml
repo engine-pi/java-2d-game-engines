@@ -1,4 +1,4 @@
-name: Build
+name: CI/CD
 
 on:
    push:
@@ -17,10 +17,10 @@ jobs:
    core-deploy:
       runs-on: windows-latest
       steps:
+
       -  name: Checkout
          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
          with:
-            ref: master
             fetch-depth: 1
             fetch-tags: false
 
@@ -32,20 +32,23 @@ jobs:
             key: maven-${{ hashFiles('**/pom.xml') }}
             restore-keys: |
                maven-
-               
+
       -  name: Java
          uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
          with:
             distribution: temurin
             java-version: 25
-            mvn-toolchain-id: |
-               JavaSE-25
+
+      -  name: Set up Maven
+         uses: stCarolas/setup-maven@12eb41b233df95d49b0c11fc1b5bc8312e5d4ce0
+         with:
+            maven-version: 3.9.14
 
       -  name: GPG
          uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd
          with:
-            gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-            passphrase: ${{ secrets.GPG_PASSPHRASE }}
+            gpg_private_key: ${{ secrets.GPG_B64 }}
+            passphrase: ${{ env.MAVEN_GPG_PASSPHRASE }}
 
       -  name: Settings
          uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788
@@ -54,9 +57,9 @@ jobs:
                [
                  {
                    "id": "ossrh",
-                   "username": "${{ secrets.MAVEN_USERNAME }}",
-                   "password": "${{ secrets.MAVEN_PASSWORD }}",
-                   "passphrase": "${{ secrets.GPG_PASSPHRASE }}"
+                   "username": "${{ env.MAVEN_USERNAME }}",
+                   "password": "${{ env.MAVEN_PASSWORD }}",
+                   "passphrase": "${{ env.MAVEN_GPG_PASSPHRASE }}"
                  }
                ]
 
@@ -97,20 +100,12 @@ jobs:
    core-test:
       runs-on: ubuntu-latest
       steps:
+
       -  name: Checkout
          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
          with:
-            ref: master
             fetch-depth: 1
             fetch-tags: false
-
-      -  name: Java
-         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
-         with:
-            distribution: temurin
-            java-version: 25
-            mvn-toolchain-id: |
-               JavaSE-25
 
       -  name: Cache
          uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
@@ -120,6 +115,17 @@ jobs:
             key: maven-${{ hashFiles('**/pom.xml') }}
             restore-keys: |
                maven-
+
+      -  name: Java
+         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
+         with:
+            distribution: temurin
+            java-version: 25
+
+      -  name: Set up Maven
+         uses: stCarolas/setup-maven@12eb41b233df95d49b0c11fc1b5bc8312e5d4ce0
+         with:
+            maven-version: 3.9.14
 
       -  name: Install
          run: sudo apt-get update && sudo apt-get install -y xvfb libasound2-dev alsa-utils
@@ -139,20 +145,12 @@ jobs:
    android:
       runs-on: ubuntu-latest
       steps:
+
       -  name: Checkout
          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
          with:
-            ref: master
             fetch-depth: 1
             fetch-tags: false
-
-      -  name: Java
-         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
-         with:
-            distribution: temurin
-            java-version: 17
-            mvn-toolchain-id: |
-               JavaSE-17
 
       -  name: Cache
          uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
@@ -164,16 +162,27 @@ jobs:
             restore-keys: |
                gradle-
 
+      -  name: Java
+         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
+         with:
+            distribution: temurin
+            java-version: 17
+
+      -  name: Set up Maven
+         uses: stCarolas/setup-maven@12eb41b233df95d49b0c11fc1b5bc8312e5d4ce0
+         with:
+            maven-version: 3.9.14
+
       -  name: Keystore
          env:
-            KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-         run: printf "%s" "$KEYSTORE_BASE64" | base64 -d > java/lionengine-core-android/android.jks
+            KEYSTORE_BASE64: ${{ secrets.KEYSTORE_B64 }}
+         run: printf "%s" "$KEYSTORE_BASE64" | base64 -d > java/lionengine-core-android/keystore.jks
 
       -  name: GPG
          uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd
          with:
-            gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-            passphrase: ${{ secrets.GPG_PASSPHRASE }}
+            gpg_private_key: ${{ secrets.GPG_B64 }}
+            passphrase: ${{ env.MAVEN_GPG_PASSPHRASE }}
 
       -  name: Settings
          uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788
@@ -182,9 +191,9 @@ jobs:
                [
                  {
                    "id": "ossrh",
-                   "username": "${{ secrets.MAVEN_USERNAME }}",
-                   "password": "${{ secrets.MAVEN_PASSWORD }}",
-                   "passphrase": "${{ secrets.GPG_PASSPHRASE }}"
+                   "username": "${{ env.MAVEN_USERNAME }}",
+                   "password": "${{ env.MAVEN_PASSWORD }}",
+                   "passphrase": "${{ env.MAVEN_GPG_PASSPHRASE }}"
                  }
                ]
 
@@ -193,33 +202,25 @@ jobs:
 
       -  name: Gradle
          env:
-            ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.MAVEN_USERNAME }}
-            ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MAVEN_PASSWORD }}
+            ORG_GRADLE_PROJECT_mavenUsername: ${{ env.MAVEN_USERNAME }}
+            ORG_GRADLE_PROJECT_mavenPassword: ${{ env.MAVEN_PASSWORD }}
             ORG_GRADLE_PROJECT_keystore.alias: ${{ secrets.KEYSTORE_ALIAS }}
-            ORG_GRADLE_PROJECT_keystore.storepassword: ${{ secrets.KEYSTORE_STOREPASS }}
+            ORG_GRADLE_PROJECT_keystore.storepassword: ${{ secrets.KEYSTORE_PASS }}
             ORG_GRADLE_PROJECT_keystore.password: ${{ secrets.KEYSTORE_PASS }}
          run: |
             cd java/lionengine-core-android
             chmod +x gradlew
-            ./gradlew publish -Pkeystore=android.jks
+            ./gradlew publish -Pkeystore=keystore.jks
 
    editor:
       runs-on: windows-latest
       steps:
+
       -  name: Checkout
          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
          with:
-            ref: master
             fetch-depth: 1
             fetch-tags: false
-
-      -  name: Java
-         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
-         with:
-            distribution: temurin
-            java-version: 17
-            mvn-toolchain-id: |
-               JavaSE-17
 
       -  name: Cache
          uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
@@ -230,11 +231,22 @@ jobs:
             restore-keys: |
                maven-
 
+      -  name: Java
+         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
+         with:
+            distribution: temurin
+            java-version: 17
+
+      -  name: Set up Maven
+         uses: stCarolas/setup-maven@12eb41b233df95d49b0c11fc1b5bc8312e5d4ce0
+         with:
+            maven-version: 3.9.14
+
       -  name: GPG
          uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd
          with:
-            gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-            passphrase: ${{ secrets.GPG_PASSPHRASE }}
+            gpg_private_key: ${{ secrets.GPG_B64 }}
+            passphrase: ${{ env.MAVEN_GPG_PASSPHRASE }}
 
       -  name: Settings
          uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788
@@ -243,9 +255,9 @@ jobs:
                [
                  {
                    "id": "ossrh",
-                   "username": "${{ secrets.MAVEN_USERNAME }}",
-                   "password": "${{ secrets.MAVEN_PASSWORD }}",
-                   "passphrase": "${{ secrets.GPG_PASSPHRASE }}"
+                   "username": "${{ env.MAVEN_USERNAME }}",
+                   "password": "${{ env.MAVEN_PASSWORD }}",
+                   "passphrase": "${{ env.MAVEN_GPG_PASSPHRASE }}"
                  }
                ]
 
@@ -313,17 +325,8 @@ jobs:
       -  name: Checkout
          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
          with:
-            ref: master
             fetch-depth: 1
             fetch-tags: false
-
-      -  name: Java
-         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
-         with:
-            distribution: temurin
-            java-version: 25
-            mvn-toolchain-id: |
-               JavaSE-25
 
       -  name: Cache
          uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
@@ -333,6 +336,19 @@ jobs:
             key: maven-${{ hashFiles('**/pom.xml') }}
             restore-keys: |
                maven-
+
+      -  name: Java
+         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
+         with:
+            distribution: temurin
+            java-version: 25
+            mvn-toolchain-id: |
+               JavaSE-25
+
+      -  name: Set up Maven
+         uses: stCarolas/setup-maven@12eb41b233df95d49b0c11fc1b5bc8312e5d4ce0
+         with:
+            maven-version: 3.9.14
 
       -  name: Sources Java
          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
@@ -397,27 +413,27 @@ jobs:
                -Dsonar.projectKey=b3dgs_lionengine \
                -Dsonar.coverage.jacoco.xmlReportPaths=$GITHUB_WORKSPACE/jacoco.xml
 
-      - name: Delete Sources Java
-        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
-        with:
-           name: class-java
+      -  name: Delete Sources Java
+         uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
+         with:
+            name: class-java
 
-      - name: Delete Sources Editor
-        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
-        with:
-           name: class-editor
+      -  name: Delete Sources Editor
+         uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
+         with:
+            name: class-editor
 
-      - name: Delete Jacoco Windows
-        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
-        with:
-           name: jacoco-windows
+      -  name: Delete Jacoco Windows
+         uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
+         with:
+            name: jacoco-windows
 
-      - name: Delete Jacoco Linux
-        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
-        with:
-           name: jacoco-linux
+      -  name: Delete Jacoco Linux
+         uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
+         with:
+            name: jacoco-linux
 
-      - name: Delete Jacoco Editor
-        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
-        with:
-           name: jacoco-editor
+      -  name: Delete Jacoco Editor
+         uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118
+         with:
+            name: jacoco-editor
