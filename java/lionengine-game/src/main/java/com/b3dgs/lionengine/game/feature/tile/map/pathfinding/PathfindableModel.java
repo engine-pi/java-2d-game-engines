@@ -226,7 +226,7 @@ public class PathfindableModel extends FeatureModel implements Pathfindable, Rec
         Check.notNull(config);
 
         priorityUpdate = config.getInteger(RoutineUpdate.P_PATHFINDABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
-        priorityRender = config.getInteger(RoutineRender.PATHFINDABLE, FeaturableConfig.ATT_PRIORITY_RENDER);
+        priorityRender = config.getInteger(RoutineRender.P_PATHFINDABLE, FeaturableConfig.ATT_PRIORITY_RENDER);
         id = identifiable.getId();
         this.transformable = transformable;
 

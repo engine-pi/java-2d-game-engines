@@ -186,7 +186,7 @@ public class RasterableModel extends FeatureModel implements Rasterable, Recycla
         this.animatable = animatable;
 
         priorityUpdate = config.getInteger(RoutineUpdate.P_RASTERABLE, FeaturableConfig.ATT_PRIORITY_UPDATE);
-        priorityRender = config.getInteger(RoutineRender.RASTERABLE, FeaturableConfig.ATT_PRIORITY_RENDER);
+        priorityRender = config.getInteger(RoutineRender.P_RASTERABLE, FeaturableConfig.ATT_PRIORITY_RENDER);
         setupRastered = setup;
 
         origin = OriginConfig.imports(setup);

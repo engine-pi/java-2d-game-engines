@@ -20,6 +20,7 @@ import static com.b3dgs.lionengine.UtilAssert.assertArrayEquals;
 import static com.b3dgs.lionengine.UtilAssert.assertEquals;
 import static com.b3dgs.lionengine.UtilAssert.assertPrivateConstructor;
 import static com.b3dgs.lionengine.UtilAssert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -97,12 +98,38 @@ final class UtilConversionTest
     @Test
     void testToTitleCaseWord()
     {
-        assertEquals("Title Toto", UtilConversion.toTitleCaseWord("title toto"));
-        assertEquals("Title Toto", UtilConversion.toTitleCaseWord("title_toto"));
-        assertEquals("Title Toto", UtilConversion.toTitleCaseWord("title-toto"));
-        assertEquals("Title Toto", UtilConversion.toTitleCaseWord("title%toto"));
-        assertEquals("Titletoto", UtilConversion.toTitleCaseWord("titletoto"));
-        assertEquals("Title To To", UtilConversion.toTitleCaseWord("title to to"));
+        assertThrows(LionEngineException.class, () -> UtilConversion.toTitleCaseWord(null));
+        assertEquals("", UtilConversion.toTitleCaseWord(""));
+        assertEquals("", UtilConversion.toTitleCaseWord("   "));
+
+        assertEquals("Hello", UtilConversion.toTitleCaseWord("hello"));
+        assertEquals("Hello World", UtilConversion.toTitleCaseWord("hello world"));
+
+        assertEquals("Hello World", UtilConversion.toTitleCaseWord("hello-world"));
+        assertEquals("Hello World", UtilConversion.toTitleCaseWord("hello_world"));
+        assertEquals("Hello World", UtilConversion.toTitleCaseWord("hello.world"));
+        assertEquals("Hello World", UtilConversion.toTitleCaseWord("hello,world"));
+        assertEquals("Hello World", UtilConversion.toTitleCaseWord("hello%world"));
+
+        assertEquals("Hello World", UtilConversion.toTitleCaseWord("hello---world"));
+        assertEquals("Hello World", UtilConversion.toTitleCaseWord("hello___world"));
+        assertEquals("Hello World", UtilConversion.toTitleCaseWord("hello -_- world"));
+        assertEquals("Hello World Test", UtilConversion.toTitleCaseWord("hello---world___test"));
+
+        assertEquals("Hello World", UtilConversion.toTitleCaseWord("  hello   world  "));
+
+        assertEquals("Éee", UtilConversion.toTitleCaseWord("éee"));
+        assertEquals("Éee Âaa", UtilConversion.toTitleCaseWord("éee-âaa"));
+        assertEquals("Ça Va", UtilConversion.toTitleCaseWord("ça_va"));
+
+        assertEquals("Version 2", UtilConversion.toTitleCaseWord("version-2"));
+        assertEquals("123 Test", UtilConversion.toTitleCaseWord("123_test"));
+
+        assertEquals("Hello World 123 Test", UtilConversion.toTitleCaseWord("  hello---WORLD_123%test "));
+
+        assertEquals("", UtilConversion.toTitleCaseWord("!!!___---%%%"));
+
+        assertEquals("Hello World", UtilConversion.toTitleCaseWord("Hello World"));
     }
 
     /**
