@@ -64,6 +64,16 @@ public final class ScreenAndroid extends ScreenAbstract implements SurfaceHolder
     }
 
     /**
+     * Set the view size.
+     *
+     * @param config The config reference.
+     */
+    public static synchronized void setSize(Config config)
+    {
+        holder.setFixedSize(config.getOutput().getWidth(), config.getOutput().getHeight());
+    }
+    
+    /**
      * Set the view holder.
      *
      * @param view The view holder.
@@ -129,8 +139,6 @@ public final class ScreenAndroid extends ScreenAbstract implements SurfaceHolder
 
         view.getGamepad().setOnUsed(() -> keyboard.setEnabled(false));
         devices.put(Gamepad.class, view.getGamepad());
-
-        holder.setFixedSize(config.getOutput().getWidth(), config.getOutput().getHeight());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
