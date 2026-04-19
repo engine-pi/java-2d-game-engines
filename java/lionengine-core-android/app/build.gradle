@@ -16,10 +16,10 @@ android {
             storePassword property('keystore.storepassword')
         }
     }
-    compileSdk 36
+    compileSdk 37
     defaultConfig {
         minSdkVersion 21
-        targetSdk 36
+        targetSdkVersion 37
         signingConfig signingConfigs.app
         multiDexEnabled true
     }
@@ -27,8 +27,8 @@ android {
     compileOptions {
         coreLibraryDesugaringEnabled true
 
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
 
     publishing {
