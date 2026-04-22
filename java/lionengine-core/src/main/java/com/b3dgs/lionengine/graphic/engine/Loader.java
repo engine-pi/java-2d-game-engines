@@ -41,6 +41,8 @@ import com.b3dgs.lionengine.graphic.Screen;
  */
 public final class Loader
 {
+    /** Loader error. */
+    private static final String ERROR_LOADER = "Loader error";
     /** Error task stopped. */
     private static final String ERROR_TASK_STOPPED = "Task stopped before ended !";
     /** Logger. */
@@ -52,10 +54,35 @@ public final class Loader
      * @param config The configuration used (must not be <code>null</code>).
      * @param sequenceClass The the next sequence to start (must not be <code>null</code>).
      * @param arguments The sequence arguments list if needed by its constructor.
+     * @throws LionEngineException If sequence is invalid or wrong arguments.
+     */
+    public static void start(Config config, Class<? extends Sequencable> sequenceClass, Object... arguments)
+    {
+        Check.notNull(config);
+        Check.notNull(sequenceClass);
+        Check.notNull(arguments);
+
+        try
+        {
+            handle(config, sequenceClass, arguments);
+        }
+        catch (final LionEngineException exception)
+        {
+            LOGGER.error(ERROR_LOADER, exception);
+            Engine.terminate();
+        }
+    }
+
+    /**
+     * Start the loader with an initial sequence.
+     * 
+     * @param config The configuration used (must not be <code>null</code>).
+     * @param sequenceClass The the next sequence to start (must not be <code>null</code>).
+     * @param arguments The sequence arguments list if needed by its constructor.
      * @return The asynchronous task executed.
      * @throws LionEngineException If sequence is invalid or wrong arguments.
      */
-    public static TaskFuture start(Config config, Class<? extends Sequencable> sequenceClass, Object... arguments)
+    public static TaskFuture startAsync(Config config, Class<? extends Sequencable> sequenceClass, Object... arguments)
     {
         Check.notNull(config);
         Check.notNull(sequenceClass);
@@ -67,7 +94,7 @@ public final class Loader
         thread.setUncaughtExceptionHandler((t, e) ->
         {
             reference.set(e);
-            LOGGER.error("Loader error", e);
+            LOGGER.error(ERROR_LOADER, e);
             Engine.terminate();
         });
         thread.start();
@@ -88,6 +115,7 @@ public final class Loader
         final Screen screen = Graphics.createScreen(config);
         try
         {
+            screen.addListener(Engine::terminate);
             screen.start();
             screen.awaitReady();
 

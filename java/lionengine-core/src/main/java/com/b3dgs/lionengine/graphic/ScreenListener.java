@@ -24,12 +24,18 @@ public interface ScreenListener
     /**
      * Called when gained focus. May be called by another thread.
      */
-    void notifyFocusGained();
+    default void notifyFocusGained()
+    {
+        // Nothing
+    }
 
     /**
      * Called when lost focus. May be called by another thread.
      */
-    void notifyFocusLost();
+    default void notifyFocusLost()
+    {
+        // Nothing
+    }
 
     /**
      * Called when screen has been closed. May be called by another thread.

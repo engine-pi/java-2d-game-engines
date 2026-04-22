@@ -37,7 +37,7 @@ public abstract class Engine
     /** Error message engine already started. */
     static final String ERROR_STARTED_ALREADY = "The engine has already been started !";
     /** Engine starting. */
-    private static final String ENGINE_STARTING = "Starting \"" + Constant.ENGINE_NAME + " \" {} for {} {}";
+    private static final String ENGINE_STARTING = "Starting " + Constant.ENGINE_NAME + " {} for {} {}";
     /** Engine terminated. */
     private static final String ENGINE_TERMINATED = Constant.ENGINE_NAME + " terminated";
     /** Logger. */

@@ -63,6 +63,6 @@ final class SequenceGameTest
     @Test
     void testSequenceGame()
     {
-        assertTimeout(1000L, () -> Loader.start(CONFIG, SequenceGameMock.class).await());
+        assertTimeout(1000L, () -> Loader.startAsync(CONFIG, SequenceGameMock.class).await());
     }
 }

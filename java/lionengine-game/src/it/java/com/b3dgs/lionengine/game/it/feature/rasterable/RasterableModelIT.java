@@ -37,6 +37,6 @@ final class RasterableModelIT
     {
         EngineAwt.start(getClass().getSimpleName(), new Version(1, 0, 0), getClass());
         final Resolution output = new Resolution(640, 480, 60);
-        Loader.start(Config.windowed(output), SceneRasterable.class).await();
+        Loader.startAsync(Config.windowed(output), SceneRasterable.class).await();
     }
 }
