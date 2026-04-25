@@ -1,0 +1,419 @@
+[2.0.0-SNAPSHOT]
+...In development...
+- Update to artemis-odb 2.3.0
+- De-coupled LibGDX to allow for other runtime implementations
+- Interpolation is now automatically handled by framework
+- Added MonoGame runtime for consoles
+- Added LibGDX LWJGL3 runtime for desktop
+- Added timestep mode configuration
+- Added object pool for geometry and collision objects
+- Added task executor API to use platform-specific thread implementations
+- Added (optional) object pooling for geometry classes
+- Added more collection classes such as LruObjectMap, ByteMap, etc.
+- Added concurrent collection class implementations
+- Added new GamePad API with improved controller/feature support (third-party controllers, rumble, player index, etc.)
+- Added new extensible XML schema for UI
+- Simplified geometry class hierarchy
+- Optimised shape rendering under LibGDX
+- Improvements to UiContainer input handling
+- Fixed UI input when rendering to a viewport
+- Fixed delta always being set to zero before game container update methods invoked (only affecting Android)
+
+[1.9.10]
+- Update to latest RoboVM to support iOS 12
+- Fixed clipping not working when rendering shapes
+
+[1.9.9]
+- Fixed TSX paths not being normalised
+
+[1.9.8]
+- Added ActionListenerAdapter, HoverListenerAdapter, and UiInputSourceListenerAdapter
+
+[1.9.7]
+- Added overridable onMouseMoved, onMouseDown, onMouseUp events to CustomUiElement
+
+[1.9.6]
+- Fixed crash when Tiled object templates have no properties
+
+[1.9.5]
+- Added UiContainer setting to passthrough mouse movements to subsequent input handlers
+- Fixed duplicate Y value correction on flipped Tiled object templates that reference tiles
+
+[1.9.4]
+- Fixed for ArrayOutOfBoundsException in GridUiNavigation (thanks Dan Allen)
+- Fixed .intersects() incorrectly returning true for rotated rectangles (thanks Stephen Kelly-Hannon)
+
+[1.9.3]
+- Fixed crash on Android when playing sounds (thanks Dan Allen)
+- Fixed entities being scheduled for interpolate/render after being removed during update
+- BasicGame now implements GameResizeListener
+
+[1.9.2]
+- (#86) Fix cast exception when minimizing desktop-based games
+
+[1.9.1]
+- Fix hexagonal Tiled map rendering when tile sizes do not match hex side length
+
+[1.9.0]
+- Update to LibGDX 1.9.8
+- [BREAKING] UiContainer can now select a NavigationMode instead of only enabling/disabling keyboard
+- [BREAKING] Font loading split into BitmapFont and MonospaceFont
+- [BREAKING] Game no longer pauses when changing to/from foreground/background. Game now pauses when minimised/restored. Toggle these settings via DesktopMini2DxConfig.
+- Added SpriteSheet class
+- Added GameDataSerializable interface for reading/writing binary data
+- Added method to get file handles within the player data directory
+- Added CustomCursor class for implementing custom cursors with up/down state
+- Added Viewport implementations (Extend, Fill, Fit, Screen and Stretch)
+- Added MonospaceFont, MonospaceFontCache and FontGlyphLayout for simplified font rendering
+- Added method to show/hide ScrollBox scroll track
+- Added support for Tiled object templates
+- Added TextInputListener interface for TextBox
+- Added grabInput method to TextBox
+- Added support for Tiled layer groups
+- Added flag to set strict Tile layer visibility state
+- Improved Graphics performance by reducing spritebatch flushes
+- Tilesets can now be loaded from TextureAtlas instances
+- UiContainer can now have multiple navigation action keys
+- Mdx.playerData now uses temp files to write before moving files to target filename
+- Fixed ScrollBox not using disabled button state when thumb cannot scroll
+- Fixed Graphics#tint not being reset each frame
+- Fixed UI element clipping when UI animation is playing
+- Fixed UI navigation cursor not updating when switching between controller and mouse
+- Fixed DesktopPlayerData not ensuring data directory exists when writing JSON or binary files
+- Fixed Sprite not carrying over flip status from TextureRegion
+- Fixed out of bounds error when TextBox is set to value smaller than previous value
+- Fixed LibGDX stages rendering upside-down
+- (#79) Add isInterpolateRequired() to collision classes
+
+[1.8.2]
+- Fixed UI hotkeys triggering actions while elements are disabled
+
+[1.8.1]
+- [BREAKING] TileMergeMode modes renamed to Y_THEN_X, X_THEN_X and SQUARE
+- Added new TileMergeMode modes; Y_THEN_X_ALTERNATING and X_THEN_Y_ALTERNATING
+- Added support for polyline per Tiled 1.2 specification
+
+[1.8.0]
+- Update to RoboVM 2.3.3
+- [BREAKING] Replace usages of Java collections with GDX collections to improve performance
+- [BREAKING] UI Modal and Containers are now unified into a single Container class
+- [BREAKING] Deferred UI tasks can now be deferred until update() or layout()
+- [BREAKING] UI elements now default to pixel coordinate UI layout
+- [BREAKING] Rename PS4Button.X to PS4Button.CROSS per PS specification
+- Added support for all GDX collection classes in XML/JSON serialization
+- Added CustomUiElement class to simplify implementing custom UI elements
+- Added support for both flex and pixel coordinate UI layouts
+- Added support for static, ninepatch and tiling UI element backgrounds
+- Added multiple images to ImageButton to allow for images based on button state
+- Added NodeStateListener to UiElement
+- Added shadow, spacing, kerning and flip options to UiFont
+- Added controller trigger button down/up notifications
+- Added option to set hover state when resetting a UiNavigation cursor
+- UI can now use controller triggers as hotkeys and D-PAD for UI navigation
+- Improved UI theme JSON consistency
+- Improved scrolling when dragging scroll thumb in ScrollBox
+- Fixed hotkey based actions not triggering correct UI state
+- Fixed TypingTextAnimation not resetting correctly
+- Fixed UI elements changing state within margin area
+- Fixed SlideIn/SlideOut visibility timing
+- Fixed graphics context unnecessarily applying clip when clip is same size as viewport
+- Seperated resize events from reset events in text animations
+
+[1.7.14]
+- (#76) Added support for Tiled object shapes
+- (#77) Fixed fade transitions modifying the color instance
+
+[1.7.13]
+- Fixed out of bounds exception when switch between TabView and another navigation type
+
+[1.7.12]
+- Added IntTreeMap implementation
+- Fixed incorrect clip caching between scrollbox and other elements
+- Reduced UI render node + layer memory usage
+- Reduced memory usage by switching to IntMap where appropriate
+
+[1.7.11]
+- Fixed Xbox360 controller left/right trigger detection on Windows
+- Fixed incorrect Mac/Linux key bindings on Xbox360 controller
+- Fixed UiUtils#setUpControllerInput not initializing PS4 controller correctly
+- Fixed TiledMapLoader crashing when loading cached Tiled layers asynchronously
+- [BREAKING] Removed PS3 controller support due to inconsistent support across platforms
+
+[1.7.10]
+- Significantly reduce memory usage of XML and JSON serializers
+
+[1.7.9]
+- [BREAKING] mini2Dx artemis systems moved from package com.artemis.system to com.artemis to provide access to artemis-odb scopes
+- Fix interpolation and rendering systems not checking disabled flag
+- Fix DispersedIntervalEntitySystem not removing entities from processing queue if deleted between intervals
+
+[1.7.8]
+- Fix collisions not using IDs for equals/hashcode
+- Optimise debug rendering of QuadTrees
+
+[1.7.7]
+- Added Select#getOption(index) method
+- Fixed nested defer() tasks immediately completing with parent
+
+[1.7.6]
+- Changed RenderLayer#render to public method
+- Reduce memory usage of ParentRenderNode by sharing clip cache across instances
+
+[1.7.5]
+- Changed ImageRenderNode textureRegion field visibility to protected
+- Fixed TypingTextAnimation not resetting after initially skipped
+
+[1.7.4]
+- Fixed LabelRenderNode not updating text if updated from its own defer call
+
+[1.7.3]
+- Added additional assert in DisperedIntervalEntitySystemTest
+- Fixed multiple UiElement defer ordering when durations are same
+
+[1.7.2]
+- Significant memory usage improvements across all geometry classes
+
+[1.7.1]
+- Added TypingTextAnimation#getCurrentCharacterIndex
+
+[1.7.0]
+- [BREAKING] LayoutRuleset is now applied to both horizontal and vertical calculations
+- [BREAKING] UI minHeight now includes padding + margin in check
+- [BREAKING] TiledCollisionFactory now takes TiledMap as parameter
+- [BREAKING] SlideIn/SlideOut animations now take duration as parameter
+- [BREAKING] TiledCollisionMerger#isMergable now accepts TiledMap and TileLayer parameters
+- (#74) Added TiledMapLoader for loading TiledMap instances via AssetManager
+- Added AnimatedImage element to UI library
+- Added new FlexDirections; ROW_REVERSE and CENTER
+- Added Sprite#getAlpha() method
+- Added jacocoTestReport for better code coverage reporting
+- Added #equals method to ControllerButton implementations
+- Added #equals and #hashcode methods to geometry classes
+- TiledCollisionFactory can now return null to specify no collision
+- Prototype beans no longer require setters/getters for dependency injection
+- Fixed merging concurrency exception during object movement within concurrent QuadTrees
+- Fixed incorrect Circle bounding box dimensions
+- Fixed dependency injection validating injection too early
+- Fixed typing text animation cutting off last character
+- Fixed unnecessary Image render node layouts when setting same value for texture path
+- Fixed Image#getTexturePath returning null
+- Fixed duplicate notifications for CollisionPoint listeners
+- Fixed XML deserialization constructor matching on Android
+- Fixed transitionIn#initialise not being called during screen transitions
+- (#53) Increased code coverage on Rectangle and Circle
+
+[1.6.5]
+- (#72) Fixed support for flipped tiles in Tiled object GID
+
+[1.6.4]
+- (#71) Fixed regression with missing setCenter method in shapes after 1.3 refactor
+- Fixed child UI elements receiving mouseDown events when hidden
+
+[1.6.3]
+- Added additional UiElement defer method that accepts a duration
+- UI defer operations can now be cancelled
+
+[1.6.2]
+- Added support for rotated + flipped tiles
+- Added TiledObject#getProperties method
+- Fixed Tiled property parse notification for TSX tilesets
+
+[1.6.1]
+- Added support for animated tiles
+
+[1.6.0]
+- Added hexagonal Tiled map support
+- TSX tilesets now shared across TiledMap instances when path is same - reduces memory usage
+
+[1.5.4]
+- Added more utility methods to TiledCollisionMapper
+- Added TiledMap.getLayerIndexIgnoreCase
+- Added support for Tile type attribute
+
+[1.5.3]
+- (#70) Fixed libgdx stage2D integration for UiContainer
+
+[1.5.2]
+- Fixed locking exception in removeAll(List) for concurrent QuadTree implementations
+
+[1.5.1]
+- Added JRebel support to UiContainer
+- Added label + icon getters for TabButton
+- Added removeAll() method to UiNavigation interface and implementations
+
+[1.5.0]
+WARNING: This release changes the default target timestep from 100FPS to 60FPS. 
+To change it back set config.targetTimestep to 0.1f
+
+- Updated to libGDX 1.9.6, roboVM 2.3.0 and artemis-odb 2.1.0
+- (#68) Added Checkbox, Slider and RadioButton UI elements
+- Added Graphics#isWindowReady()
+- Added additional add/remove methods to MdxController interface
+- Added direction input threshold setting to UI controller input implementations
+- Added methods to clear UI hotkeys
+- Added methods to set text of left and right Select buttons
+- Added UiContainerOperation and ClearShaderProgramOperation for render pipelines
+- Added ScrollBox#setMinHeight to override the style's minimum height
+- Added UiElement#defer to defer method calls until the next frame
+- Added PerformanceTracker for debugging performance issues
+- Added methods to TiledCollisionMapper to map non-collision areas
+- Added lightweight classes for static collisions:
+-- StaticCollisionBox
+-- StaticCollisionCircle
+-- StaticCollisionPolygon
+- UI elements can now be hidden based on controller type (hidden-controller-xbox360, etc.)
+- [BREAKING] Changed default target timestep to 60FPS
+- ScreenSize values can now be scaled as NO_SCALING, LINEAR or INVERSE (NO_SCALING is default)
+- ActionListeners now receive event details via ActionEvent instance
+- Improved controller javadocs
+- LibGdxGraphics now uses LibGDX ShapeRenderer for shape rendering
+- UiContainerListeners now only receive inputSourceChanged and controllerTypeChanged events once per frame
+- Fixed UI controller input blocking other controller listeners when no input is consumed by UiContainer
+- Fixed Button instances not triggering right-click events
+- Fixed ScrollBox#setMaxHeight triggering unnecessary layouts
+- Fixed Graphics tint value not being set on startup
+- Fixed UiContainerRenderTree always set to dirty
+- Fixed RepeatableNinePatch not repeating correctly when using TextureRegion
+- Fixed UI button up/down controller events triggering when controller is disabled
+- Fixed NPE when resetting navigation with no navigation elements configured
+- Fixed GridUiNavigation misordering elements when using set#(x,y)
+- Fixed GridUiNavigation triggering unnecessary cursor resets
+- Fixed hotkeys not triggering if the element was outside of the navigation element node
+- Fixed invalid merge invocations in QuadTree implementations
+
+[1.4.9]
+- Fix @PostDeserialize not being invoked for nested objects
+
+[1.4.8]
+- Fix UiContainer not clearing active action element
+- Fix Rectangle returning 0,0 as its center
+
+[1.4.7]
+- Graphics can now draw TiledDrawable instances
+- Added RepeatedNinePatch which repeats instead of stretches
+- UI element backgrounds can now set backgroundMode to "repeat" or "stretch"
+
+[1.4.6]
+- Reduce float array allocations in Polygon#setVertices
+- Added ScreenBasedGame#getScreenManager and ScreenManager#getGameScreens
+
+[1.4.5]
+- Added Shape#add and Shape#subtract methods for modifying position
+- QuadTree implementations can now specify a minimum quad size
+- Added Positionable#moveTowards for easier movement logic
+- Added Positionable#getDistanceTo(x,y)
+
+[1.4.4]
+- Added additional methods to geometry classes
+-- Shape#getCenterX + Shape#getCenterY
+-- Shape#scale
+-- Shape#setRadius
+-- Polygon#isEquilateral
+-- LineSegment#getLength
+- Added methods to preset singletons and prototypes for dependency injection
+- Added @PostInject annotation to trigger methods after dependency injection
+- @Autowired dependencies now also inject into super classes
+
+[1.4.3]
+- Fix UiContainer blocking keyUp/buttonUp events when it did not accept the original keyDown/buttonDown event
+
+[1.4.2]
+- Added TiledMap#getObjectGroups() method
+- Added additional getProperties() methods to Tiled classes
+
+[1.4.1]
+- Added TiledCollisionMapper method to get objects by type
+- Added DispersedIntervalEntitySystem
+
+[1.4.0]
+- Performance improvements to Polygon class
+- Added @PostDeserialize annotation to trigger methods after deserialising from xml/json
+- Added Graphics#drawBitmapFontCache
+- Added backgrounds to Labels
+- Added BitmapFont caching to UiFont
+- Added FlexDirection for changing layout of children UI elements
+- UI framework now renders text using BitmapFontCache instances
+- UI elements that contain children now extend ParentUiElement class
+-- Button is now a non-abstract class that acts as a parent element
+-- TextButton and ImageButton are now utility classes
+- Fixed serialisation of enums that contain abstract methods
+- Moved Os util classes to natives-loader project
+
+[1.3.1]
+- Graphics can now take circle radius as an int or float
+- Added methods to access RenderLayer children
+- Added UiContainerListener interface for listening to UiContainer events
+- Fixed ninepatch sizes not applying to Buttons correctly
+
+[1.3.0]
+- Updated to libGDX 1.9.4, roboVM 2.2.0, and artemis-odb 1.4.0
+- Updated to Android build tools 23.0.1
+- (#38) Added drawNinePatch() and clearScaling() methods to Graphics
+- (#45) Added contains and getDistanceFromCenter to Circle
+- (#45) Added fillShape() method to Graphics class
+- (#45) Added Shape#intersects(Shape) and Shape#contains(Shape)
+- (#45) Added Polygon and Triangle classes. Rectangle now backed by Polygon.
+- (#46) Fixed ParticleEffect not flipped correctly on load
+- (#48) Fixed alpha channel not being applied to line rendering
+- (#50) Fixed TiledMap rendering incorrectly when scaled down
+- (#54) Added performance benchmarking for collisions
+- (#55) Added non-rectangle support to RegionQuadTree and ConcurrentRegionQuadTree
+- Improved Graphics#clip performance on mobile devices (changed to Depth Buffer method)
+- Added UI framework (mini2Dx-ui)
+- Added headless runtime (mini2Dx-headless)
+- Added controller mappings - Xbox One, Xbox 360 controllers
+- Added controller dead zone implementations - axial, radial and scaled radial
+- Added render pipeline feature
+- Added RegularShape classes (shapes with equal interior angles)
+- Added NPE prevention to TiledCollisionMapper
+- Added additional drawTexture() methods to Graphics
+- Added Sizeable and SizeChangeListener interfaces
+- Added GameResizeListener and removed onResize method from GameContainer
+- Added MdxException for mini2Dx runtime exceptions
+- Added WorldListener interface to listen for entity creation/deletion
+- Added TextureRegion setFlip, setFlipX and setFlipY
+- Added Graphics.setRotation
+- Added getPixelWidth() and getPixelHeight() to TiledMap
+- Added non-entity render and interpolate Artemis systems
+- Positionable instances now have getId() method
+- Improved pixel rounding and reduced interpolation for CollisionBox, CollisionCircle and CollisionPoint
+- Mdx.json can now read/write to/from FileHandle instances
+- Added @NonConcrete annotation for interface serialization in Mdx.xml and Mdx.json
+- Added @ConstructorArg for constructor based serialization in Mdx.xml and Mdx.json
+- Fixed inconsistencies in TextureRegion and NinePatch APIs
+- Fixed Mdx.xml not deserializing maps correctly when values are objects
+- Fixed Mdx.xml and Mdx.json not serializing/deserialzing super class fields
+- Fixed Mdx.xml and Mdx.json not deserialzing enum fields correctly
+- Fixed Animation flipping Sprites when rendering at a coordinate
+- Fixed TiledParser exception when TiledObjects had non-integer coordinates
+- TiledObjectGroup instances are now treated as layers to match Tiled specification
+- QuadTrees
+  * Added QuadTree interface for all QuadTree implementations
+  * Existing Quad class renamed to PointQuadTree
+  * Added thread-safe versions of PointQuadTree and RegionQuadTree
+  * QuadTrees now have a watermark for remerging empty quads
+  * Performance improvements to QuadTree implementations
+
+[1.2.1]
+- (#39) Fixed Animation flipping Sprites by default
+
+[1.2.0]
+- Updated to libGDX 1.6.5 and roboVM 1.6.0
+- (#28) Added artemis-odb integration
+- (#34) Fixed input not being polled if multiple updates occur in one frame
+- (#35) Added TextureRegion wrapper class
+- Added mini2Dx-specific game launcher classes
+- Added forceTo(x, y) method to CollisionPoint and CollisionCircle
+- Fixed tile image and id calculation for tilesets with margin and/or spacing
+
+[1.1.0]
+- Updated to libGDX 1.6.4, roboVM 1.5.0 and reflections 0.9.10
+- (#25) Added isometric Tiled map support
+- Added utility classes for extracting collision data from TiledMap instances
+- Fixed exception when disposing orthogonal TiledMaps that do not use caching
+
+[1.0.1]
+- Fixed reentering issues with position listener locks
+
+[1.0.0]
+- Initial release

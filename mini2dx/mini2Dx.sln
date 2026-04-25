@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mini2Dx-monogame", "monogame\mini2Dx-monogame.csproj", "{AC3AE86C-55AD-4F1E-97E8-12E6389137AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "monogame-pipeline-ext", "monogame-pipeline-ext\monogame-pipeline-ext.csproj", "{6F98E109-6222-4843-B89A-22CDAE2FE514}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uats-monogame-desktop", "uats-monogame-desktop\uats-monogame-desktop.csproj", "{EC789EA9-7450-46D2-A4FB-08A5E9ABD902}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mini2Dx-uats", "uats\generated-src\mini2Dx-uats.csproj", "{A1678519-56DC-47DA-A6D3-C7EA773F55F1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC3AE86C-55AD-4F1E-97E8-12E6389137AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC3AE86C-55AD-4F1E-97E8-12E6389137AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC3AE86C-55AD-4F1E-97E8-12E6389137AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC3AE86C-55AD-4F1E-97E8-12E6389137AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F98E109-6222-4843-B89A-22CDAE2FE514}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F98E109-6222-4843-B89A-22CDAE2FE514}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F98E109-6222-4843-B89A-22CDAE2FE514}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F98E109-6222-4843-B89A-22CDAE2FE514}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC789EA9-7450-46D2-A4FB-08A5E9ABD902}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC789EA9-7450-46D2-A4FB-08A5E9ABD902}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC789EA9-7450-46D2-A4FB-08A5E9ABD902}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC789EA9-7450-46D2-A4FB-08A5E9ABD902}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1678519-56DC-47DA-A6D3-C7EA773F55F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1678519-56DC-47DA-A6D3-C7EA773F55F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1678519-56DC-47DA-A6D3-C7EA773F55F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1678519-56DC-47DA-A6D3-C7EA773F55F1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C9217CFC-4F7F-4E4E-B488-B4EE26DD13AE}
+	EndGlobalSection
+EndGlobal

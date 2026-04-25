@@ -1,0 +1,472 @@
+﻿/*******************************************************************************
+ * Copyright 2019 Viridian Software Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+using System;
+using Org.Mini2Dx.Core.Graphics;
+using Color = Org.Mini2Dx.Core.Graphics.Color;
+
+namespace monogame.Graphics
+{
+    class MonoGamePixmap : global::Java.Lang.Object, Org.Mini2Dx.Core.Graphics.Pixmap
+    {
+        private Microsoft.Xna.Framework.Color[,] _pixmap;
+        private MonoGameColor _setColor;
+        private PixmapBlending _blending;
+        private PixmapFilter _filter;
+        private readonly PixmapFormat _format;
+        private readonly int _width, _height;
+
+        public MonoGamePixmap(int width, int height) : this(width, height, PixmapFormat.RGBA8888_){}
+
+        public MonoGamePixmap(int width, int height, PixmapFormat format)
+        {
+            _width = width;
+            _height = height;
+            _pixmap = new Microsoft.Xna.Framework.Color[width, height];
+            _setColor = new MonoGameColor(0, 0, 0, 0);
+            _blending = PixmapBlending.NONE_;
+            _filter = PixmapFilter.NEAREST_NEIGHBOUR_;
+            _format = format;
+        }
+        
+        public void dispose_EFE09FC0()
+        {
+            
+        }
+
+        public void drawCircle_FCB7E48B(int centerX, int centerY, int radius)
+        {
+            if (radius <= 0)
+            {
+                return;
+            }
+            int radiusSquared = radius * radius;
+            
+            drawPixel_224D2728(centerX, centerY + radius);
+            drawPixel_224D2728(centerX, centerY - radius);
+            drawPixel_224D2728(centerX + radius, centerY);
+            drawPixel_224D2728(centerX - radius, centerY);
+
+            var x = 1;
+            var y = (int) (Math.Sqrt(radiusSquared - 1) + 0.5);
+            
+            while (x < y) {
+                drawPixel_224D2728(centerX + x, centerY + y);
+                drawPixel_224D2728(centerX + x, centerY - y);
+                drawPixel_224D2728(centerX - x, centerY + y);
+                drawPixel_224D2728(centerX - x, centerY - y);
+                drawPixel_224D2728(centerX + y, centerY + x);
+                drawPixel_224D2728(centerX + y, centerY - x);
+                drawPixel_224D2728(centerX - y, centerY + x);
+                drawPixel_224D2728(centerX - y, centerY - x);
+                x += 1;
+                y = (int) (Math.Sqrt(radiusSquared - x*x) + 0.5);
+            }
+            if (x == y) {
+                drawPixel_224D2728(centerX + x, centerY + y);
+                drawPixel_224D2728(centerX + x, centerY - y);
+                drawPixel_224D2728(centerX - x, centerY + y);
+                drawPixel_224D2728(centerX - x, centerY - y);
+            }
+        }
+
+        //Implementation of Bresenham's line algorithm: https://stackoverflow.com/a/11683720
+        public void drawLine_9C90BED0(int x, int y, int x2, int y2) 
+        {
+            var deltaX = x2 - x;
+            var deltaY = y2 - y;
+            
+            var deltaXSign = Math.Sign(deltaX);
+            var deltaYSign = Math.Sign(deltaY);
+            
+            var dx2 = deltaXSign;
+            var dy2 = 0;
+            
+            var width = Math.Abs(deltaX);
+            var height = Math.Abs(deltaY);
+            if (width <= height)
+            {
+                width = Math.Abs(deltaY);
+                height = Math.Abs(deltaX);
+                dy2 = Math.Sign(deltaY);
+                dx2 = 0;
+            }
+            var numerator = width >> 1 ;
+            for (var i=0; i<=width; i++)
+            {
+                drawPixel_224D2728(x, y);
+                numerator += height;
+                if (numerator >= width)
+                {
+                    numerator -= width;
+                    x += deltaXSign;
+                    y += deltaYSign;
+                } 
+                else
+                {
+                    x += dx2;
+                    y += dy2;
+                }
+            }
+        }
+
+        public void drawPixel_224D2728(int x, int y)
+        {
+            drawPixel(x, y, _setColor._color);
+        }
+
+        public void drawPixel_E015CAB9(int x, int y, Color color)
+        {
+            drawPixel(x, y, ((MonoGameColor) color)._color);
+        }
+
+        internal Microsoft.Xna.Framework.Color _getMonoGamePixel(int x, int y)
+        {
+            return _pixmap[x, y];
+        }
+
+        public void drawPixel(int x, int y, Microsoft.Xna.Framework.Color color, bool blend = false)
+        {
+            byte colorAlpha = color.A;
+            if (x < getWidth_0EE0D08D() && y < getHeight_0EE0D08D() && x >= 0 && y >= 0)
+            {
+                if (colorAlpha == 255 || !blend)
+                {
+                    _pixmap[x, y] = color;
+                }
+                else
+                {
+                    var blendedColor = new Microsoft.Xna.Framework.Color(color.PackedValue);
+                    blendedColor.R = (byte) ((byte)(color.R * colorAlpha) + (byte)(_getMonoGamePixel(x, y).A * (255 - colorAlpha)));
+                    blendedColor.G = (byte) ((byte)(color.G * colorAlpha) + (byte)(_getMonoGamePixel(x, y).A * (255 - colorAlpha)));
+                    blendedColor.B = (byte) ((byte)(color.B * colorAlpha) + (byte)(_getMonoGamePixel(x, y).A * (255 - colorAlpha)));
+                    _pixmap[x, y] = blendedColor;
+                }
+            }
+        }
+
+        public void drawPixmap_A700ECD1(Pixmap pixmap, int x, int y)
+        {
+            drawPixmap_F845C0E1(pixmap, x, y, 0, 0, pixmap.getWidth_0EE0D08D(), pixmap.getHeight_0EE0D08D());
+        }
+
+        public void drawPixmap_F845C0E1(Pixmap pixmap, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight)
+        {
+            for (var pixmapX = 0; pixmapX < srcWidth; pixmapX++)
+            {
+                for (var pixmapY = 0; pixmapY < srcWidth; pixmapY++)
+                {
+                    drawPixel(x + pixmapX, y + pixmapY, ((MonoGamePixmap) pixmap)._getMonoGamePixel(srcX + pixmapX, srcY + pixmapY));
+                }
+            }
+        }
+ 
+        private static float lerp(float s, float e, float t) {
+            return s + (e - s) * t;
+        }
+ 
+        private static float blerp(float c00, float c10, float c01, float c11, float tx, float ty) {
+            return lerp(lerp(c00, c10, tx), lerp(c01, c11, tx), ty);
+        }
+
+        public void drawPixmap_FFA4EB79(Pixmap pixmap, int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, int dstWidth, int dstHeight)
+        {
+            if (srcWidth == dstWidth && srcHeight == dstHeight)
+            {
+                for (var x = 0; x < srcWidth; x++)
+                {
+                    for (var y = 0; y < srcHeight; y++)
+                    {
+                        drawPixel(dstX + x, dstY + y, ((MonoGamePixmap) pixmap)._getMonoGamePixel(srcX + x, srcY + y));
+                    }
+                }
+            }
+            else if (_filter == PixmapFilter.NEAREST_NEIGHBOUR_)
+            {
+                var xRatio = (float)srcWidth / dstWidth;
+                var yRatio = (float)srcHeight / dstHeight;
+                for (var x = dstX; x < dstX + dstWidth; x++)
+                {
+                    for (var y = dstY; y < dstY + dstWidth; y++)
+                    {
+                        var srcPixX = (int) Math.Round((x - dstX + srcX) * xRatio, MidpointRounding.AwayFromZero);
+                        var srcPixY = (int) Math.Round((y - dstY + srcY) * yRatio, MidpointRounding.AwayFromZero);
+                        drawPixel(x, y, ((MonoGamePixmap) pixmap)._getMonoGamePixel(srcPixX, srcPixY));
+                    }
+                }
+            }
+            else
+            {
+                for (int x = 0; x < dstWidth; ++x)
+                {
+                    for (int y = 0; y < dstWidth; ++y)
+                    {
+                        
+                        float gx = ((float)x) / dstWidth * (srcWidth - 1);
+                        float gy = ((float)y) / dstWidth * (srcWidth - 1);
+                        int gxi = (int)gx;
+                        int gyi = (int)gy;
+                        
+                        var c00 = (uint) pixmap.getPixel_114D0C65(gxi, gyi);
+                        var c10 = (uint) pixmap.getPixel_114D0C65(gxi + 1, gyi);
+                        var c01 = (uint) pixmap.getPixel_114D0C65(gxi, gyi + 1);
+                        var c11 = (uint) pixmap.getPixel_114D0C65(gxi + 1, gyi + 1);
+ 
+                        byte red = (byte)blerp(MonoGameColor.getRAsByte(c00), MonoGameColor.getRAsByte(c10), MonoGameColor.getRAsByte(c01), MonoGameColor.getRAsByte(c11), gx - gxi, gy - gyi);
+                        byte green = (byte)blerp(MonoGameColor.getGAsByte(c00), MonoGameColor.getGAsByte(c10), MonoGameColor.getGAsByte(c01), MonoGameColor.getGAsByte(c11), gx - gxi, gy - gyi);
+                        byte blue = (byte)blerp(MonoGameColor.getBAsByte(c00), MonoGameColor.getBAsByte(c10), MonoGameColor.getBAsByte(c01), MonoGameColor.getBAsByte(c11), gx - gxi, gy - gyi);
+                        byte alpha = (byte)blerp(MonoGameColor.getAAsByte(c00), MonoGameColor.getAAsByte(c10), MonoGameColor.getAAsByte(c01), MonoGameColor.getAAsByte(c11), gx - gxi, gy - gyi);
+                        drawPixel(dstX + x, dstY + y, new Microsoft.Xna.Framework.Color(red, green, blue, alpha));
+                    }
+                }
+            }
+        }
+
+        public void drawRectangle_9C90BED0(int x, int y, int width, int height)
+        {
+            for (int i = 0; i <  width; i++)
+            {
+                drawPixel_224D2728(x + i, y);
+                drawPixel_224D2728(x + i, y + height);
+            }
+            
+            for (int i = 0; i <  height; i++)
+            {
+                drawPixel_224D2728(x, y + i);
+                drawPixel_224D2728(x + width, y + i);
+            }
+        }
+
+        public void fill_EFE09FC0()
+        {
+            for (int x = 0; x < getWidth_0EE0D08D(); x++)
+            {
+                for (int y = 0; y < getHeight_0EE0D08D(); y++)
+                {
+                    drawPixel_224D2728(x, y);
+                }
+            }
+        }
+
+        public void fillCircle_FCB7E48B(int x, int y, int radius)
+        {
+            for (int circleX = x - radius; circleX < x + radius; circleX++)
+            {
+                
+                for (int circleY = y - radius; circleY < y + radius; circleY++)
+                {
+                    if (Math.Pow(circleX - x, 2) + Math.Pow(circleY - y, 2) <= Math.Pow(radius, 2))
+                    {
+                        drawPixel_224D2728(circleX, circleY);
+                    }
+                }
+            }
+        }
+
+        public void fillRectangle_9C90BED0(int x, int y, int width, int height)
+        {
+            for (int newX = x; x < x + width; x++)
+            {
+                for (int newY = y; y < y + height; y++)
+                {
+                    drawPixel_224D2728(newX, newY);
+                }
+            }
+        }
+
+        public void fillTriangle_C62B11B8(int x1, int y1, int x2, int y2, int x3, int y3)
+        {
+            //sort the vertices by y
+            if (y1 > y2)
+            {
+                //swap x1, x2
+                x1 ^= x2;
+                x2 ^= x1;
+                x1 ^= x2;
+                
+                //swap y1, y2
+                y1 ^= y2;
+                y2 ^= y1;
+                y1 ^= y2;
+            }
+            if (y1 > y3)
+            {
+                //swap x1, x3
+                x1 ^= x3;
+                x3 ^= x1;
+                x1 ^= x3;
+                
+                //swap y1, y3
+                y1 ^= y3;
+                y3 ^= y1;
+                y1 ^= y3;
+            }
+            if (y2 > y3)
+            {
+                //swap x2, x3
+                x2 ^= x3;
+                x3 ^= x2;
+                x2 ^= x3;
+                
+                //swap y2, y3
+                y2 ^= y3;
+                y3 ^= y2;
+                y2 ^= y3;
+            }
+
+            var triangleHeight = y3 - y1;
+            for (var i = 0; i < triangleHeight; i++)
+            {
+                var secondHalf = i > y2 - y1 || y2 == y1;
+                var segmentHeight = secondHalf ? y3 - y2 : y2 - y1;
+                var alpha = (float) i / triangleHeight;
+                var beta = (float) (i - (secondHalf ? y2 - y1 : 0)) / segmentHeight;
+                var aX = x1 + (x3 - x1) * alpha;
+                var bX = secondHalf ? x2 + (x3 - x2) * beta : x1 + (x2 - x1) * beta;
+                if (aX > bX)
+                {
+                    aX += bX;
+                    bX = aX - bX;
+                    aX -= bX;
+                }
+
+                for (var j = (int) aX; j <= bX; j++)
+                {
+                    drawPixel_224D2728(j, y1 + i);
+                }
+            }
+        }
+
+        public PixmapBlending getBlending_D642B31C()
+        {
+            return _blending;
+        }
+
+        public PixmapFilter getFilter_3A559157()
+        {
+            return _filter;
+        }
+
+        public PixmapFormat getFormat_4C177B62()
+        {
+            return _format;
+        }
+
+        public int getHeight_0EE0D08D()
+        {
+            return _height;
+        }
+
+        public int getPixel_114D0C65(int x, int y)
+        {
+            if (x >= getWidth_0EE0D08D() || y >= getHeight_0EE0D08D() || x < 0 || y < 0)
+            {
+                return 0;
+            }
+            var color = _pixmap[x, y];
+            return (color.R << 24) | (color.G << 16) | (color.B << 8) | color.A;
+        }
+
+        private UInt32 getPixel(int pixNum)
+        {
+            return (uint)getPixel_114D0C65(pixNum % getWidth_0EE0D08D(), pixNum / getWidth_0EE0D08D());
+        }
+
+        public Microsoft.Xna.Framework.Color[] toRawPixels()
+        {
+            var rawPixels = new Microsoft.Xna.Framework.Color[getWidth_0EE0D08D() * getHeight_0EE0D08D()];
+            for (var x = 0; x < getWidth_0EE0D08D(); x++)
+            {
+                for (var y = 0; y < getHeight_0EE0D08D(); y++)
+                {
+                    rawPixels[y * getWidth_0EE0D08D() + x] = _pixmap[x, y];
+                }
+            }
+
+            return rawPixels;
+        }
+
+        public sbyte[] getPixels_A27A8875()
+        {
+            var numOfPixels = getWidth_0EE0D08D() * getHeight_0EE0D08D();
+            var bytesPerPixel = getBytesPerPixel(_format);
+
+            var bytes = new sbyte[numOfPixels * bytesPerPixel];
+
+            for (int currentPixel = 0; currentPixel < numOfPixels; currentPixel++)
+            {
+                var convertedPixel = MonoGameColor.convertTo(_format, getPixel(currentPixel));
+                switch (bytesPerPixel)
+                {
+                    case 4:
+                        bytes[(bytesPerPixel * currentPixel) + bytesPerPixel - 4] = (sbyte) (convertedPixel >> 24 & 0xff);
+                        goto case 3; //because c# doesn't support switch fallthrough
+                    case 3:
+                        bytes[(bytesPerPixel * currentPixel) + bytesPerPixel - 3] = (sbyte) (convertedPixel >> 16 & 0xff);
+                        goto case 2; //because c# doesn't support switch fallthrough
+                    case 2:
+                        bytes[(bytesPerPixel * currentPixel) + bytesPerPixel - 2] = (sbyte) (convertedPixel >> 8 & 0xff);
+                        goto case 1; //because c# doesn't support switch fallthrough
+                    case 1:
+                        bytes[(bytesPerPixel * currentPixel) + bytesPerPixel - 1] = (sbyte) (convertedPixel & 0xff);
+                        break;
+                    default:
+                        return null;
+                }
+            }
+            
+            return bytes;
+        }
+
+        public static int getBytesPerPixel(PixmapFormat format)
+        {
+            var bytesPerPixel = 2;
+            if (format == PixmapFormat.INTENSITY_)
+            {
+                bytesPerPixel = 1;
+            }
+            else if (format == PixmapFormat.RGB888_)
+            {
+                bytesPerPixel = 3;
+            }
+            else if (format == PixmapFormat.RGBA8888_)
+            {
+                bytesPerPixel = 4;
+            }
+
+            return bytesPerPixel;
+        }
+
+        public int getWidth_0EE0D08D()
+        {
+            return _width;
+        }
+
+        public void setBlending_69C78796(PixmapBlending blending)
+        {
+            _blending = blending;
+        }
+
+        public void setColor_24D51C91(Color color)
+        {
+            _setColor = (MonoGameColor) color;
+        }
+
+        public void setFilter_EACFFDD1(PixmapFilter filter)
+        {
+            _filter = filter;
+        }
+    }
+}

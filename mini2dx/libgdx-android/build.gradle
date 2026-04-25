@@ -1,0 +1,24 @@
+android {
+    ndkVersion "23.2.8568313"
+    compileSdkVersion 30
+	defaultConfig {
+		minSdkVersion 30
+	}
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src/main/java']
+            aidl.srcDirs = ['src/main/java']
+            renderscript.srcDirs = ['src/main/java']     
+		}
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'rebel.xml'
+    }
+}
