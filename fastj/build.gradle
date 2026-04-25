@@ -1,0 +1,166 @@
+plugins {
+    // it's a java library. What did you expect?
+    id 'java-library'
+
+    // For Sonarcloud code coverage testing, these are useful.
+    id 'org.sonarqube' version '3.3'
+    id 'jacoco'
+
+    // For publishing to Maven Central, we'll want these.
+    id "com.vanniktech.maven.publish" version "0.36.0"
+
+    // To be able to use Spotless in the project, this will be needed.
+    id "com.diffplug.spotless" version "7.2.1"
+}
+
+group = 'io.github.lucasstarsz.fastj'
+version = '1.7.0-SNAPSHOT'
+description = 'An open source, Java-based 2D game engine.'
+
+import org.gradle.api.internal.tasks.testing.results.DefaultTestResult
+
+/* ********************* *
+ * General Configuration *
+ * ********************* */
+
+
+java.sourceCompatibility = 21
+java.targetCompatibility = 21
+
+javadoc.source = sourceSets.main.allJava
+javadoc.failOnError = false
+javadoc.options.links = ['https://docs.oracle.com/en/java/javase/21/docs/api/', 'https://www.slf4j.org/apidocs/']
+javadoc.options.stylesheetFile = file("${projectDir}/src/fastjstyle.css")
+javadoc.doLast {
+    copy {
+        from "${projectDir}"
+        into "${projectDir}/build/docs/javadoc"
+        include "src/jquery-ui.overrides.css"
+    }
+}
+
+// Java modules need this in order for the module path to be inferred based on module-info.java files.
+plugins.withType(JavaPlugin).configureEach {
+    java.modularity.inferModulePath = true
+}
+
+wrapper.gradleVersion = '8.14.3'
+wrapper.distributionType = Wrapper.DistributionType.ALL
+
+repositories.mavenCentral()
+
+dependencies.api('org.slf4j:slf4j-api:2.0.0-beta1')
+dependencies.api('com.googlecode.soundlibs:mp3spi:1.9.5.4')
+dependencies.api('com.googlecode.soundlibs:jorbis:0.0.17.4')
+dependencies.api('com.googlecode.soundlibs:tritonus-share:0.3.7.4')
+dependencies.api('com.googlecode.soundlibs:vorbisspi:1.0.3.3')
+
+dependencies.testImplementation('org.slf4j:slf4j-simple:2.0.0-alpha7')
+dependencies.testImplementation(dependencies.platform('org.junit:junit-bom:5.8.2'))
+dependencies.testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
+dependencies.testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+/* ********************* *
+ *     Unit Testing      *
+ * ********************* */
+
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    def totalTestTime = 0
+
+    afterTest { desc, DefaultTestResult result ->
+        totalTestTime += result.endTime - result.startTime
+    }
+
+    afterSuite { desc, DefaultTestResult result ->
+        if (!desc.parent) { // will match the outermost suite
+            def passFailSkip = "$result.successfulTestCount passed, $result.failedTestCount failed, $result.skippedTestCount skipped"
+            def results = "Test Suite Results: $result.resultType ($result.testCount tests, $passFailSkip) in $totalTestTime ms."
+
+            def startItem = '|  '
+            def endItem = '  |'
+            def repeatLength = startItem.length() + results.length() + endItem.length()
+            def dashes = '-' * repeatLength
+
+            logger.info(String.format('%n%n%s%n%s%s%s%n%s%n%n', dashes, startItem, results, endItem, dashes))
+        }
+    }
+}
+
+/* ************************* *
+ *   Spotless Integration   *
+ * ************************* */
+
+spotless {
+    java {
+        trimTrailingWhitespace()
+        importOrder(
+                'tech.fastj',
+                'java',
+                'javax',
+                '',
+                '\\#'
+        )
+        removeUnusedImports()
+    }
+}
+
+
+/* ********************* *
+ *     Code Coverage     *
+ * ********************* */
+
+
+sonarqube.properties {
+    property 'sonar.projectKey', 'fastjengine_FastJ'
+    property 'sonar.organization', 'fastjengine'
+    property 'sonar.host.url', 'https://sonarcloud.io'
+    property 'sonar.exclusions', ['examples/**']
+}
+
+jacocoTestReport {
+    dependsOn(test) // tests are required to run before generating the report
+    reports.xml.required.set(true)
+    reports.csv.required.set(false)
+    reports.xml.outputLocation = layout.buildDirectory.dir('build/reports/jacoco/test/jacocoTestReport.xml').get().asFile
+}
+
+
+/* ********************* *
+ *      Publishing       *
+ * ********************* */
+
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+    coordinates("io.github.lucasstarsz.fastj", "fastj-library", project.version as String)
+
+    pom {
+        name = 'FastJ Game Library'
+        description = 'An open source, Java-based 2D game engine.'
+        inceptionYear = "2020"
+        url = 'https://github.com/fastjengine/FastJ'
+
+        licenses {
+            license {
+                name = 'MIT License'
+                url = 'https://github.com/fastjengine/FastJ/blob/main/LICENSE.txt'
+                distribution = 'https://github.com/fastjengine/FastJ/blob/main/LICENSE.txt'
+            }
+        }
+        developers {
+            developer {
+                id = 'andrewd'
+                name = 'Andrew Dey'
+                email = 'andrewrcdey@gmail.com'
+                url = 'https://github.com'
+            }
+        }
+        scm {
+            connection = 'scm:git:https://github.com/fastjengine/FastJ.git'
+            developerConnection = 'scm:git:https://github.com/fastjengine/FastJ.git'
+            url = 'https://fastj.tech'
+        }
+    }
+}
