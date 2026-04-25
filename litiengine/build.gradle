@@ -1,0 +1,19 @@
+plugins {
+  id "java"
+
+  alias libs.plugins.spotless
+  alias libs.plugins.grgit
+  alias libs.plugins.sonarQube
+
+  id "licensing-defaults"
+  id "sonarqube-defaults"
+}
+
+group = gurkenlabs_group
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(25)
+  }
+  targetCompatibility = JavaVersion.VERSION_17
+}

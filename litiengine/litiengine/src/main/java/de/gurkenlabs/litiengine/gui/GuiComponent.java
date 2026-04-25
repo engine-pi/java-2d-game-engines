@@ -1,0 +1,1541 @@
+package de.gurkenlabs.litiengine.gui;
+
+import de.gurkenlabs.litiengine.Align;
+import de.gurkenlabs.litiengine.Game;
+import de.gurkenlabs.litiengine.Valign;
+import de.gurkenlabs.litiengine.graphics.IRenderable;
+import de.gurkenlabs.litiengine.graphics.ShapeRenderer;
+import de.gurkenlabs.litiengine.graphics.TextRenderer;
+import de.gurkenlabs.litiengine.input.Input;
+import de.gurkenlabs.litiengine.resources.Resources;
+import de.gurkenlabs.litiengine.sound.Sound;
+import de.gurkenlabs.litiengine.tweening.TweenType;
+import de.gurkenlabs.litiengine.tweening.Tweenable;
+import de.gurkenlabs.litiengine.util.ColorHelper;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RectangularShape;
+import java.awt.geom.RoundRectangle2D;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+
+/**
+ * The abstract Class GuiComponent provides all properties and methods needed for screens, built-in,
+ * and custom GUI components such as buttons, sliders, etc... It includes mouse event handling,
+ * different hovering states and appearances, and texts to be rendered.
+ */
+public abstract class GuiComponent
+  implements MouseListener, MouseMotionListener, MouseWheelListener, IRenderable, Tweenable {
+
+  protected static final Font ICON_FONT;
+  private static int id = 0;
+
+  static {
+    final Font icon = Resources.fonts().get("fontello.ttf");
+    ICON_FONT = icon != null ? icon.deriveFont(16f) : null;
+  }
+
+  private final List<Consumer<ComponentMouseEvent>> clickConsumer;
+  private final List<Consumer<ComponentMouseEvent>> mouseDraggedConsumer;
+  private final List<Consumer<ComponentMouseEvent>> mouseEnterConsumer;
+  private final List<Consumer<ComponentMouseEvent>> mouseLeaveConsumer;
+  private final List<Consumer<ComponentMouseEvent>> mouseMovedConsumer;
+  private final List<Consumer<ComponentMouseEvent>> mousePressedConsumer;
+  private final List<Consumer<ComponentMouseEvent>> mouseReleasedConsumer;
+  private final List<Consumer<ComponentMouseWheelEvent>> mouseWheelConsumer;
+  private final List<Consumer<ComponentMouseEvent>> hoverConsumer;
+  private final List<Consumer<String>> textChangedConsumer;
+
+  private final Collection<ComponentRenderListener> renderListeners = ConcurrentHashMap.newKeySet();
+  private final Collection<ComponentRenderedListener> renderedListeners = ConcurrentHashMap.newKeySet();
+
+  private final int componentId;
+  private final Appearance appearance;
+  private final Appearance hoveredAppearance;
+
+  private final List<GuiComponent> components;
+  private final Appearance disabledAppearance;
+
+  private boolean enabled;
+  private Font font;
+  private boolean forwardMouseEvents = true;
+  private double width;
+  private double height;
+
+  private Sound hoverSound;
+  private boolean textAntialiasing;
+  private boolean textShadow;
+
+  private Color textShadowColor;
+  private float textShadowRadius;
+
+  private boolean isHovered;
+  private boolean isPressed;
+  private boolean isSelected;
+  private String name;
+  private boolean suspended;
+  private Object tag;
+  private String text;
+  private Align textAlign;
+  private Valign textValign;
+  private boolean automaticLineBreaks;
+  private int textAngle = 0;
+
+  private double textX;
+  private double textY;
+  private boolean visible;
+  private Point2D location;
+  private Rectangle2D boundingBox;
+
+  private double relativeX;
+  private double relativeY;
+  private double relativeWidth;
+  private double relativeHeight;
+  private boolean hasRelativeLayout;
+  private boolean autoScaling = true;
+
+  /**
+   * Instantiates a new gui component with the dimension (0,0) at the given location.
+   *
+   * @param x the x
+   * @param y the y
+   */
+  protected GuiComponent(final double x, final double y) {
+    this(x, y, 0, 0);
+  }
+
+  /**
+   * Instantiates a new gui component at the point (x,y) with the dimension (width,height).
+   *
+   * @param x      the x
+   * @param y      the y
+   * @param width  the width
+   * @param height the height
+   */
+  protected GuiComponent(final double x, final double y, final double width, final double height) {
+    this.components = new CopyOnWriteArrayList<>();
+    this.clickConsumer = new CopyOnWriteArrayList<>();
+    this.hoverConsumer = new CopyOnWriteArrayList<>();
+    this.mousePressedConsumer = new CopyOnWriteArrayList<>();
+    this.mouseDraggedConsumer = new CopyOnWriteArrayList<>();
+    this.mouseEnterConsumer = new CopyOnWriteArrayList<>();
+    this.mouseLeaveConsumer = new CopyOnWriteArrayList<>();
+    this.mouseReleasedConsumer = new CopyOnWriteArrayList<>();
+    this.mouseWheelConsumer = new CopyOnWriteArrayList<>();
+    this.mouseMovedConsumer = new CopyOnWriteArrayList<>();
+    this.textChangedConsumer = new CopyOnWriteArrayList<>();
+
+    this.appearance = new Appearance();
+    appearance.update(GuiProperties.getDefaultAppearance());
+    appearance.onChange(
+      app -> {
+        for (final GuiComponent child : getComponents()) {
+          child.getAppearance().update(getAppearance());
+        }
+      });
+
+    this.hoveredAppearance = new Appearance();
+    hoveredAppearance.update(GuiProperties.getDefaultAppearanceHovered());
+    hoveredAppearance.onChange(
+      app -> {
+        for (final GuiComponent child : getComponents()) {
+          child.getAppearanceHovered().update(getAppearanceHovered());
+        }
+      });
+
+    this.disabledAppearance = new Appearance();
+    disabledAppearance.update(GuiProperties.getDefaultAppearanceDisabled());
+    disabledAppearance.onChange(
+      app -> {
+        for (final GuiComponent child : getComponents()) {
+          child.getAppearanceDisabled().update(getAppearanceDisabled());
+        }
+      });
+
+    setTextAlign(GuiProperties.getDefaultTextAlign());
+    setTextValign(GuiProperties.getDefaultTextValign());
+
+    setTextAntialiasing(GuiProperties.getDefaultTextAntialiasing());
+    setTextShadow(GuiProperties.getDefaultTextShadow());
+    setTextShadowColor(GuiProperties.getDefaultTextShadowColor());
+    setTextShadowRadius(GuiProperties.getDefaultTextShadowRadius());
+
+    this.componentId = ++id;
+    this.location = new Point2D.Double(x, y);
+    setDimension(width, height);
+    setFont(GuiProperties.getDefaultFont());
+    setSelected(false);
+    setEnabled(true);
+    initializeComponents();
+    updateRelativeLayout();
+  }
+
+  /**
+   * Gets the default appearance object for this GuiComponent.
+   *
+   * @return the appearance
+   */
+  public Appearance getAppearance() {
+    return appearance;
+  }
+
+  /**
+   * Gets the appearance object for this GuiComponent while disabled.
+   *
+   * @return the appearance disabled
+   */
+  public Appearance getAppearanceDisabled() {
+    return disabledAppearance;
+  }
+
+  /**
+   * Gets the appearance object for this GuiComponent while hovered.
+   *
+   * @return the hovered appearance
+   */
+  public Appearance getAppearanceHovered() {
+    return hoveredAppearance;
+  }
+
+  /**
+   * Gets the bounding box of this GuiComponent.
+   *
+   * @return the bounding box
+   */
+  public Rectangle2D getBoundingBox() {
+    if (boundingBox != null) {
+      return boundingBox;
+    }
+
+    this.boundingBox = new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
+    return boundingBox;
+  }
+
+  /**
+   * Gets the component id of this GuiComponent.
+   *
+   * @return the component id
+   */
+  public int getComponentId() {
+    return componentId;
+  }
+
+  /**
+   * Gets the child components of this GuiComponent.
+   *
+   * @return the child components
+   */
+  public List<GuiComponent> getComponents() {
+    return components;
+  }
+
+  /**
+   * Gets the font of this GuiComponent's text.
+   *
+   * @return the GuiComponent's font
+   */
+  public Font getFont() {
+    return font;
+  }
+
+  /**
+   * Gets the height of this GuiComponent.
+   *
+   * @return the height
+   */
+  public double getHeight() {
+    return height;
+  }
+
+  /**
+   * Gets the sound that is played when hovering the GuiComponent.
+   *
+   * @return the hover sound
+   */
+  public Sound getHoverSound() {
+    return hoverSound;
+  }
+
+  /**
+   * Gets the screen location of this GuiComponent.
+   *
+   * @return the screen location
+   */
+  public Point2D getLocation() {
+    return location;
+  }
+
+  /**
+   * Gets the name of this GuiComponent.
+   *
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * Gets the tag.
+   *
+   * @return the tag
+   */
+  public Object getTag() {
+    return tag;
+  }
+
+  /**
+   * Gets the entire Text associated with this GuiComponent. Parts of the Text may get cropped and
+   * can therefore be invisible. To retrieve only the visible part of the text, use
+   * {@code GuiComponent.getTextToRender(Graphics2D g)}.
+   *
+   * @return the entire text on this GuiComponent
+   */
+  public String getText() {
+    return text;
+  }
+
+  /**
+   * Gets the horizontal text alignment.
+   *
+   * @return the horizontal text alignment
+   */
+  public Align getTextAlign() {
+    return textAlign;
+  }
+
+  /**
+   * Gets the vertical text alignment.
+   *
+   * @return the vertical text alignment
+   */
+  public Valign getTextValign() {
+    return textValign;
+  }
+
+  /**
+   * Gets the text angle.
+   *
+   * @return the text angle
+   */
+  public int getTextAngle() {
+    return textAngle;
+  }
+
+  /**
+   * Check whether text antialiasing is activated.
+   *
+   * @return true, if this GuiComponent is currently configured to draw its text with antialiasing.
+   */
+  public boolean hasTextAntialiasing() {
+    return textAntialiasing;
+  }
+
+  /**
+   * Check whether text shadow is activated.
+   *
+   * @return true, if this GuiComponent is currently configured to draw a shadow below its text.
+   */
+  public boolean hasTextShadow() {
+    return textShadow;
+  }
+
+  public Color getTextShadowColor() {
+    return textShadowColor;
+  }
+
+  public void setTextShadowColor(Color textShadowColor) {
+    this.textShadowColor = textShadowColor;
+  }
+
+  public float getTextShadowRadius() {
+    return textShadowRadius;
+  }
+
+  public void setTextShadowRadius(float textShadowRadius) {
+    this.textShadowRadius = textShadowRadius;
+  }
+
+  public boolean hasAutomaticLineBreaks() {
+    return automaticLineBreaks;
+  }
+
+  /**
+   * Gets only the non-cropped bits of Text visible on this GuiComponent.m To retrieve only the
+   * entire text associated with this GuiComponent, use {@code GuiComponent.getText()}.
+   *
+   * @param g The graphics object to render on.
+   * @return the text to render
+   */
+  public String getTextToRender(final Graphics2D g) {
+    if (getText() == null) {
+      return "";
+    } else if (hasAutomaticLineBreaks()) {
+      return getText();
+    }
+    final FontMetrics fm = g.getFontMetrics();
+    String newText = getText();
+
+    while (newText.length() > 1 && fm.stringWidth(newText) >= getWidth()) {
+      newText = newText.substring(1);
+    }
+    return newText;
+  }
+
+  /**
+   * Gets the text X coordinate.
+   *
+   * @return the text X
+   */
+  public double getTextX() {
+    return textX;
+  }
+
+  /**
+   * Gets the text Y coordinate.
+   *
+   * @return the text Y
+   */
+  public double getTextY() {
+    return textY;
+  }
+
+  /**
+   * Gets the width of this GuiComponent.
+   *
+   * @return the width
+   */
+  public double getWidth() {
+    return width;
+  }
+
+  /**
+   * Gets the x coordinate of this GuiComponent.
+   *
+   * @return the x coordinate
+   */
+  public double getX() {
+    return getLocation().getX();
+  }
+
+  /**
+   * Gets x coordinate of this GuiComponent's center point.
+   *
+   * @return the center x coordinate
+   */
+  public double getCenterX() {
+    return getBoundingBox().getCenterX();
+  }
+
+  /**
+   * Gets y coordinate of this GuiComponent's center point.
+   *
+   * @return the center y coordinate
+   */
+  public double getCenterY() {
+    return getBoundingBox().getCenterY();
+  }
+
+
+  /**
+   * Gets the y coordinate of this GuiComponent.
+   *
+   * @return the y coordinate
+   */
+  public double getY() {
+    return getLocation().getY();
+  }
+
+  /**
+   * Checks if the GuiComponent is enabled.
+   *
+   * @return true, if is enabled
+   */
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  /**
+   * Returns whether this component automatically scales its position and size proportionally when
+   * the game window resolution changes.
+   *
+   * <p>When enabled (the default), the component's position and size are stored as fractions of the
+   * window dimensions and recalculated on each resolution change via
+   * {@link #onResolutionChanged(Dimension)}. When disabled, the component retains its absolute pixel
+   * position and size across resolution changes; only child propagation still occurs.</p>
+   *
+   * @return {@code true} if proportional auto-scaling is enabled; {@code false} otherwise
+   * @see #setAutoScaling(boolean)
+   * @see #onResolutionChanged(Dimension)
+   */
+  public boolean isAutoScaling() {
+    return autoScaling;
+  }
+
+  /**
+   * Checks if mouse events are being forwarded by this GuiComponent.
+   *
+   * @return true, the GuiComponent forwards mouse events
+   */
+  public boolean isForwardMouseEvents() {
+    return forwardMouseEvents;
+  }
+
+  /**
+   * Checks if the cursor bounding box intersects with this GuiComponent's bounding box.
+   *
+   * @return true, if the GuiComponent is hovered
+   */
+  public boolean isHovered() {
+    return isHovered;
+  }
+
+  /**
+   * Checks if the mouse button is currently being pressed on this GuiComponent.
+   *
+   * @return true, if the mouse is currently pressed on the GuiComponent
+   */
+  public boolean isPressed() {
+    return isPressed;
+  }
+
+  /**
+   * Checks if the GuiComponent is currently selected.
+   *
+   * @return true, if the GuiComponent is selected
+   */
+  public boolean isSelected() {
+    return isSelected;
+  }
+
+  /**
+   * Checks if the GuiComponent is currently suspended.
+   *
+   * @return true, if the GuiComponent is suspended
+   */
+  public boolean isSuspended() {
+    return suspended;
+  }
+
+  /**
+   * Checks if the GuiComponent is currently visible.
+   *
+   * @return true, if the GuiComponent is visible
+   */
+  public boolean isVisible() {
+    return visible;
+  }
+
+  @Override
+  public void mouseClicked(final MouseEvent e) {
+    if (!mouseEventShouldBeForwarded(e)) {
+      return;
+    }
+
+    if (isPressed()) {
+      final ComponentMouseEvent event = new ComponentMouseEvent(e, this);
+      getClickConsumer().forEach(consumer -> consumer.accept(event));
+      this.isPressed = false;
+    }
+  }
+
+  @Override
+  public void mouseDragged(final MouseEvent e) {
+    if (!mouseEventShouldBeForwarded(e)) {
+      return;
+    }
+
+    final ComponentMouseEvent event = new ComponentMouseEvent(e, this);
+    getMouseDraggedConsumer().forEach(consumer -> consumer.accept(event));
+  }
+
+  @Override
+  public void mouseEntered(final MouseEvent e) {
+    if (!isForwardMouseEvents()) {
+      return;
+    }
+
+    if (!mouseEventShouldBeForwarded(e)) {
+      this.isHovered = false;
+      return;
+    }
+
+    this.isHovered = true;
+    final ComponentMouseEvent event = new ComponentMouseEvent(e, this);
+    getHoverConsumer().forEach(consumer -> consumer.accept(event));
+    if (getHoverSound() != null) {
+      Game.audio().playSound(getHoverSound());
+    }
+
+    getMouseEnterConsumer().forEach(consumer -> consumer.accept(event));
+  }
+
+  @Override
+  public void mouseExited(final MouseEvent e) {
+    if (!isForwardMouseEvents()) {
+      return;
+    }
+
+    this.isHovered = false;
+    this.isPressed = false;
+    final ComponentMouseEvent event = new ComponentMouseEvent(e, this);
+    getMouseLeaveConsumer().forEach(consumer -> consumer.accept(event));
+  }
+
+  @Override
+  public void mouseMoved(final MouseEvent e) {
+    if (!mouseEventShouldBeForwarded(e) && isHovered()) {
+      mouseExited(e);
+      return;
+    }
+
+    // also throw enter event if the mouse did not hover the component
+    // before
+    if (!isHovered()) {
+      mouseEntered(e);
+    }
+
+    final ComponentMouseEvent event = new ComponentMouseEvent(e, this);
+    getMouseMovedConsumer().forEach(consumer -> consumer.accept(event));
+  }
+
+  @Override
+  public void mousePressed(final MouseEvent e) {
+    if (!mouseEventShouldBeForwarded(e)) {
+      return;
+    }
+
+    this.isPressed = true;
+    final ComponentMouseEvent event = new ComponentMouseEvent(e, this);
+    getMousePressedConsumer().forEach(consumer -> consumer.accept(event));
+  }
+
+  @Override
+  public void mouseReleased(final MouseEvent e) {
+    if (!mouseEventShouldBeForwarded(e)) {
+      return;
+    }
+
+    this.isPressed = false;
+
+    final ComponentMouseEvent event = new ComponentMouseEvent(e, this);
+
+    // TODO: check if this should really call the clicked consumers...
+    getClickConsumer().forEach(consumer -> consumer.accept(event));
+    getMouseReleasedConsumer().forEach(consumer -> consumer.accept(event));
+  }
+
+  @Override
+  public void mouseWheelMoved(final MouseWheelEvent e) {
+    getMouseWheelConsumer().forEach(
+      consumer -> consumer.accept(new ComponentMouseWheelEvent(e, this)));
+  }
+
+  /**
+   * Add a callback that is being executed if this GuiComponent is clicked once.
+   *
+   * @param callback the callback
+   */
+  public void onClicked(final Consumer<ComponentMouseEvent> callback) {
+    if (!getClickConsumer().contains(callback)) {
+      getClickConsumer().add(callback);
+    }
+  }
+
+  /**
+   * Add a callback that is being executed if this GuiComponent is hovered with the mouse.
+   *
+   * @param callback the callback
+   */
+  public void onHovered(final Consumer<ComponentMouseEvent> callback) {
+    if (!getHoverConsumer().contains(callback)) {
+      getHoverConsumer().add(callback);
+    }
+  }
+
+  /**
+   * Add a callback that is being executed if the mouse is pressed and moving around while within
+   * the bounds of this GuiComponent.
+   *
+   * @param callback the callback
+   */
+  public void onMouseDragged(final Consumer<ComponentMouseEvent> callback) {
+    if (!getMouseDraggedConsumer().contains(callback)) {
+      getMouseDraggedConsumer().add(callback);
+    }
+  }
+
+  /**
+   * Add a callback that is being executed if the mouse enters the bounds of this GuiComponent.
+   *
+   * @param callback the callback
+   */
+  public void onMouseEnter(final Consumer<ComponentMouseEvent> callback) {
+    if (!getMouseEnterConsumer().contains(callback)) {
+      getMouseEnterConsumer().add(callback);
+    }
+  }
+
+  /**
+   * Add a callback that is being executed if the mouse leaves the bounds of this GuiComponent.
+   *
+   * @param callback the callback
+   */
+  public void onMouseLeave(final Consumer<ComponentMouseEvent> callback) {
+    if (!getMouseLeaveConsumer().contains(callback)) {
+      getMouseLeaveConsumer().add(callback);
+    }
+  }
+
+  /**
+   * Add a callback that is being executed if the mouse is moving around while within the bounds of
+   * this GuiComponent.
+   *
+   * @param callback the callback
+   */
+  public void onMouseMoved(final Consumer<ComponentMouseEvent> callback) {
+    if (!getMouseMovedConsumer().contains(callback)) {
+      getMouseMovedConsumer().add(callback);
+    }
+  }
+
+  /**
+   * Add a callback that is being executed if the mouse is continually pressed while within the
+   * bounds of this GuiComponent.
+   *
+   * @param callback the callback
+   */
+  public void onMousePressed(final Consumer<ComponentMouseEvent> callback) {
+    if (!getMousePressedConsumer().contains(callback)) {
+      getMousePressedConsumer().add(callback);
+    }
+  }
+
+  /**
+   * Add a callback that is being executed if the mouse button is released while within the bounds
+   * of this GuiComponent.
+   *
+   * @param callback the callback
+   */
+  public void onMouseReleased(final Consumer<ComponentMouseEvent> callback) {
+    if (!getMouseReleasedConsumer().contains(callback)) {
+      getMouseReleasedConsumer().add(callback);
+    }
+  }
+
+  /**
+   * Add a callback that is being executed if the mouse wheel is scrolled while within the bounds of
+   * this GuiComponent.
+   *
+   * @param callback the callback
+   */
+  public void onMouseWheelScrolled(final Consumer<ComponentMouseWheelEvent> callback) {
+    if (!getMouseWheelConsumer().contains(callback)) {
+      getMouseWheelConsumer().add(callback);
+    }
+  }
+
+  /**
+   * Add a callback that is being executed if the text on this GuiComponent changes.
+   *
+   * @param cons the cons
+   */
+  public void onTextChanged(final Consumer<String> cons) {
+    this.textChangedConsumer.add(cons);
+  }
+
+  public void addRenderListener(final ComponentRenderListener listener) {
+    this.renderListeners.add(listener);
+  }
+
+  public void removeListener(final ComponentRenderListener listener) {
+    this.renderListeners.remove(listener);
+  }
+
+  public void addRenderedListener(final ComponentRenderedListener listener) {
+    this.renderedListeners.add(listener);
+  }
+
+  public void removeListener(final ComponentRenderedListener listener) {
+    this.renderedListeners.remove(listener);
+  }
+
+  /**
+   * Prepare the GuiComponent and all its child Components (Makes the GuiComponent visible and adds
+   * mouse listeners.). This is, for example, done right before switching to a new screen.
+   */
+  public void prepare() {
+    this.suspended = false;
+    this.visible = true;
+    Input.mouse().addMouseListener(this);
+    Input.mouse().onWheelMoved(this);
+    Input.mouse().addMouseMotionListener(this);
+    for (final GuiComponent component : getComponents()) {
+      component.prepare();
+    }
+  }
+
+  /**
+   * Note: If you override this and are modifying swing components, be sure you are in the AWT
+   * thread when you do so!
+   */
+  @Override
+  public void render(final Graphics2D g) {
+    if (isSuspended() || !isVisible()) {
+      return;
+    }
+
+    for (ComponentRenderListener listener : renderListeners) {
+      if (!listener.canRender(this)) {
+        return;
+      }
+    }
+
+    final ComponentRenderEvent event = new ComponentRenderEvent(g, this);
+    for (ComponentRenderListener listener : this.renderListeners) {
+      listener.rendering(event);
+    }
+
+    Shape clip = g.getClip();
+    g.clip(getShape());
+
+    if (!getCurrentAppearance().isTransparentBackground()) {
+      g.setPaint(getCurrentAppearance().getBackgroundPaint(getWidth(), getHeight()));
+      ShapeRenderer.render(g, getBoundingBox());
+    }
+
+    g.setColor(getCurrentAppearance().getForeColor());
+    g.setFont(getFont());
+
+    renderText(g);
+
+    g.setClip(clip);
+    if (getCurrentAppearance().getBorderColor() != null
+      && getCurrentAppearance().getBorderStyle() != null) {
+      g.setColor(getCurrentAppearance().getBorderColor());
+      ShapeRenderer.renderOutline(g, getBoundingBox(), getCurrentAppearance().getBorderStyle());
+    }
+    for (final GuiComponent component : getComponents()) {
+      if (!component.isVisible() || component.isSuspended()) {
+        continue;
+      }
+
+      component.render(g);
+    }
+
+    for (ComponentRenderListener listener : this.renderListeners) {
+      listener.rendered(event);
+    }
+
+    for (ComponentRenderedListener listener : this.renderedListeners) {
+      listener.rendered(event);
+    }
+
+    if (Game.config().debug().renderGuiComponentBoundingBoxes()) {
+      g.setColor(Color.RED);
+      ShapeRenderer.renderOutline(g, getBoundingBox());
+    }
+  }
+
+  @Override
+  public float[] getTweenValues(TweenType tweenType) {
+    switch (tweenType) {
+      case LOCATION_X -> {
+        return new float[]{(float) getX()};
+      }
+      case LOCATION_Y -> {
+        return new float[]{(float) getY()};
+      }
+      case LOCATION_XY -> {
+        return new float[]{(float) getX(), (float) getY()};
+      }
+      case SIZE_WIDTH -> {
+        return new float[]{(float) getWidth()};
+      }
+      case SIZE_HEIGHT -> {
+        return new float[]{(float) getHeight()};
+      }
+      case SIZE_BOTH -> {
+        return new float[]{(float) getWidth(), (float) getHeight()};
+      }
+      case ANGLE -> {
+        return new float[]{getTextAngle()};
+      }
+      case FONTSIZE -> {
+        return new float[]{getFont().getSize2D()};
+      }
+      case OPACITY -> {
+        Color bg1 = getCurrentAppearance().getBackgroundColor1();
+        Color bg2 = getCurrentAppearance().getBackgroundColor2();
+        Color fore = getCurrentAppearance().getForeColor();
+        Color shadow = getTextShadowColor();
+        Color border = getCurrentAppearance().getBorderColor();
+        return new float[]{
+          bg1 == null ? 0 : bg1.getAlpha(),
+          bg2 == null ? 0 : bg2.getAlpha(),
+          fore == null ? 0 : fore.getAlpha(),
+          shadow == null ? 0 : shadow.getAlpha(),
+          border == null ? 0 : border.getAlpha()
+        };
+      }
+      default -> {
+        return Tweenable.super.getTweenValues(tweenType);
+      }
+    }
+  }
+
+  @Override
+  public void setTweenValues(TweenType tweenType, float[] newValues) {
+    switch (tweenType) {
+      case LOCATION_X -> setX(newValues[0]);
+      case LOCATION_Y -> setY(newValues[0]);
+      case LOCATION_XY -> {
+        setX(newValues[0]);
+        setY(newValues[1]);
+      }
+      case SIZE_WIDTH -> setWidth(newValues[0]);
+      case SIZE_HEIGHT -> setHeight(newValues[0]);
+      case SIZE_BOTH -> {
+        setWidth(newValues[0]);
+        setHeight(newValues[1]);
+      }
+      case ANGLE -> setTextAngle(Math.round(newValues[0]));
+      case FONTSIZE -> setFontSize(newValues[0]);
+      case OPACITY -> {
+        Color bg1 = getCurrentAppearance().getBackgroundColor1();
+        Color bg2 = getCurrentAppearance().getBackgroundColor2();
+        Color fore = getCurrentAppearance().getForeColor();
+        Color border = getCurrentAppearance().getBorderColor();
+        getCurrentAppearance()
+          .setBackgroundColor1(
+            bg1 == null ? null : ColorHelper.getTransparentVariant(bg1, (int) newValues[0]));
+        getCurrentAppearance()
+          .setBackgroundColor2(
+            bg2 == null ? null : ColorHelper.getTransparentVariant(bg2, (int) newValues[1]));
+        getCurrentAppearance()
+          .setForeColor(
+            fore == null ? null : ColorHelper.getTransparentVariant(fore, (int) newValues[2]));
+        setTextShadowColor(
+          getTextShadowColor() == null
+            ? null
+            : ColorHelper.getTransparentVariant(getTextShadowColor(), (int) newValues[3]));
+        getCurrentAppearance()
+          .setBorderColor(
+            border == null
+              ? null
+              : ColorHelper.getTransparentVariant(border, (int) newValues[4]));
+      }
+      default -> Tweenable.super.setTweenValues(tweenType, newValues);
+    }
+  }
+
+  public RectangularShape getShape() {
+    float radius = getCurrentAppearance().getBorderRadius();
+    if (radius == 0f) {
+      return getBoundingBox();
+    }
+    return new RoundRectangle2D.Double(
+      getX(),
+      getY(),
+      getWidth(),
+      getHeight(),
+      getCurrentAppearance().getBorderRadius(),
+      getCurrentAppearance().getBorderRadius());
+  }
+
+  /**
+   * Sets the width and height of this GuiComponent.
+   *
+   * @param width  the width
+   * @param height the height
+   */
+  public void setDimension(final double width, final double height) {
+    setWidth(width);
+    setHeight(height);
+  }
+
+  /**
+   * Called when the game window resolution changes, e.g. after switching {@code DisplayMode} at runtime.
+   *
+   * <p>
+   * If {@link #isAutoScaling()} is {@code true} (the default) and this component was initialized
+   * with valid window dimensions, its position and size are recalculated from the stored relative
+   * fractions so the component scales proportionally with the window. When auto-scaling is disabled,
+   * the component retains its absolute pixel position and size.
+   * </p>
+   *
+   * <p>
+   * The event is always recursively forwarded to all child components regardless of the parent's
+   * auto-scaling setting.
+   * </p>
+   *
+   * <p>
+   * Override this method to implement custom re-layout logic that goes beyond proportional scaling.
+   * </p>
+   *
+   * @param resolution
+   *          The new window dimensions.
+   * @see #setAutoScaling(boolean)
+   * @see de.gurkenlabs.litiengine.GameWindow.ResolutionChangedListener
+   */
+  public void onResolutionChanged(Dimension resolution) {
+    if (autoScaling) {
+      if (hasRelativeLayout) {
+        // Recalculate absolute position/size from stored relative values.
+        // Set fields directly to avoid triggering child movement via setLocation.
+        this.location = new Point2D.Double(
+          relativeX * resolution.getWidth(),
+          relativeY * resolution.getHeight()
+        );
+        this.width = relativeWidth * resolution.getWidth();
+        this.height = relativeHeight * resolution.getHeight();
+        this.boundingBox = null;
+      } else {
+        // Fallback for components created before window was available (e.g. in tests):
+        // just resize to the full resolution and set relative layout for future calls.
+        setWidth(resolution.getWidth());
+        setHeight(resolution.getHeight());
+      }
+    }
+
+    for (final GuiComponent child : getComponents()) {
+      child.onResolutionChanged(resolution);
+    }
+  }
+
+  /**
+   * Recomputes the stored relative position and size of this component as fractions of the current
+   * game window dimensions. These values are used by {@link #onResolutionChanged(Dimension)} to
+   * proportionally rescale the component when the window is resized.
+   *
+   * <p>The method is a no-op when the game runs in no-GUI mode or the window has not been
+   * initialized yet (dimensions ≤ 0), so components created before the window is ready will
+   * compute their relative layout lazily on the first setter call that occurs after the window
+   * becomes available.</p>
+   */
+  private void updateRelativeLayout() {
+    if (!autoScaling) {
+      return;
+    }
+    if (!Game.isInNoGUIMode() && Game.window() != null
+      && Game.window().getWidth() > 0 && Game.window().getHeight() > 0) {
+      this.relativeX = getX() / Game.window().getWidth();
+      this.relativeY = getY() / Game.window().getHeight();
+      this.relativeWidth = getWidth() / Game.window().getWidth();
+      this.relativeHeight = getHeight() / Game.window().getHeight();
+      this.hasRelativeLayout = true;
+    }
+  }
+
+  /**
+   * Computes and stores the relative position and size of this component as fractions of the given
+   * reference resolution. After this call, {@link #onResolutionChanged(Dimension)} will
+   * proportionally rescale the component based on these stored fractions.
+   *
+   * @param referenceResolution the window dimensions to treat as the 100% baseline
+   */
+  void initRelativeLayout(Dimension referenceResolution) {
+    if (referenceResolution != null
+      && referenceResolution.getWidth() > 0 && referenceResolution.getHeight() > 0) {
+      this.relativeX = getX() / referenceResolution.getWidth();
+      this.relativeY = getY() / referenceResolution.getHeight();
+      this.relativeWidth = getWidth() / referenceResolution.getWidth();
+      this.relativeHeight = getHeight() / referenceResolution.getHeight();
+      this.hasRelativeLayout = true;
+    }
+  }
+
+  /**
+   * Sets the "enabled" property on this GuiComponent and its child components.
+   *
+   * @param enabled the new enabled property
+   */
+  public void setEnabled(final boolean enabled) {
+    this.enabled = enabled;
+    for (final GuiComponent comp : getComponents()) {
+      comp.setEnabled(isEnabled());
+    }
+  }
+
+  /**
+   * Enables or disables automatic proportional scaling of this component when the game window
+   * resolution changes.
+   *
+   * <p>When set to {@code false}, the component keeps its current absolute pixel position and size
+   * across resolution changes. The resolution change event is still propagated to child components,
+   * so children with auto-scaling enabled will still scale even if the parent does not.</p>
+   *
+   * <p>Auto-scaling is enabled by default.</p>
+   *
+   * @param autoScaling {@code true} to enable proportional auto-scaling; {@code false} to disable it
+   * @see #isAutoScaling()
+   * @see #onResolutionChanged(Dimension)
+   */
+  public void setAutoScaling(final boolean autoScaling) {
+    this.autoScaling = autoScaling;
+  }
+
+  /**
+   * Sets the font for this GuiComponent's text.
+   *
+   * @param font the new font
+   */
+  public void setFont(final Font font) {
+    this.font = font;
+  }
+
+  /**
+   * Sets the font size for this GuiComponent's text.
+   *
+   * @param size the new font size
+   */
+  public void setFontSize(final float size) {
+    if (this.font == null) {
+      return;
+    }
+    setFont(getFont().deriveFont(size));
+  }
+
+  /**
+   * Enable or disable forwarding mouse events by this GuiComponent.
+   *
+   * @param forwardMouseEvents the new forward mouse events
+   */
+  public void setForwardMouseEvents(final boolean forwardMouseEvents) {
+    this.forwardMouseEvents = forwardMouseEvents;
+  }
+
+  /**
+   * Sets the GuiComponent's height.
+   *
+   * @param height the new height
+   */
+  public void setHeight(final double height) {
+    this.height = height;
+    this.boundingBox = null; // trigger recreation in next boundingBox getter call
+    updateRelativeLayout();
+  }
+
+  /**
+   * Sets the "hovered" property on this GuiComponent.
+   *
+   * @param hovered the new hovered
+   */
+  public void setHovered(final boolean hovered) {
+    this.isHovered = hovered;
+  }
+
+  /**
+   * Sets the hover sound.
+   *
+   * @param hoverSound the new hover sound
+   */
+  public void setHoverSound(final Sound hoverSound) {
+    this.hoverSound = hoverSound;
+  }
+
+  /**
+   * Sets this GuiComponent's location.
+   *
+   * @param x the new x coordinate
+   * @param y the new y coordinate
+   */
+  public void setLocation(final double x, final double y) {
+    setLocation(new Point2D.Double(x, y));
+  }
+
+  /**
+   * Sets this GuiComponent's location.
+   *
+   * @param location the new location
+   */
+  public void setLocation(final Point2D location) {
+    final double deltaX = location.getX() - getX();
+    final double deltaY = location.getY() - getY();
+
+    this.location = location;
+    this.boundingBox = null; // trigger recreation in next boundingBox getter call
+    for (final GuiComponent component : getComponents()) {
+      component.setLocation(
+        new Point2D.Double(component.getX() + deltaX, component.getY() + deltaY));
+    }
+    updateRelativeLayout();
+  }
+
+  /**
+   * Sets this GuiComponent's name.
+   *
+   * @param name the new name
+   */
+  public void setName(final String name) {
+    this.name = name;
+  }
+
+  /**
+   * Sets the "selected" property on this GuiComponent.
+   *
+   * @param bool the new selected
+   */
+  public void setSelected(final boolean bool) {
+    this.isSelected = bool;
+  }
+
+  /**
+   * Sets the tag.
+   *
+   * @param tag the new tag
+   */
+  public void setTag(final Object tag) {
+    this.tag = tag;
+  }
+
+  /**
+   * Sets the text.
+   *
+   * @param text the new text
+   */
+  public void setText(final String text) {
+    this.text = text;
+    for (final Consumer<String> cons : this.textChangedConsumer) {
+      cons.accept(getText());
+    }
+  }
+
+  /**
+   * Sets the {@link RenderingHints#KEY_TEXT_ANTIALIASING} settings for the rendered text.
+   *
+   * @param antialiasing Either {@link RenderingHints#VALUE_TEXT_ANTIALIAS_ON} or
+   *                     {@link RenderingHints#VALUE_TEXT_ANTIALIAS_OFF}
+   */
+  public void setTextAntialiasing(boolean antialiasing) {
+    this.textAntialiasing = antialiasing;
+  }
+
+  public void setAutomaticLineBreaks(boolean automaticLineBreaks) {
+    this.automaticLineBreaks = automaticLineBreaks;
+  }
+
+  /**
+   * Sets the horizontal text alignment.
+   *
+   * @param textAlign the new text align
+   */
+  public void setTextAlign(final Align textAlign) {
+    this.textAlign = textAlign;
+  }
+
+  /**
+   * Sets the vertical text alignment.
+   *
+   * @param textValign the new text align
+   */
+  public void setTextValign(final Valign textValign) {
+    this.textValign = textValign;
+  }
+
+  /**
+   * Sets the text angle in degrees.
+   *
+   * @param textAngle the new text angle in degrees
+   */
+  public void setTextAngle(final int textAngle) {
+    this.textAngle = textAngle;
+  }
+
+  /**
+   * Enable or disable the shadow being drawn below the text
+   *
+   * @param drawTextShadow the boolean determining if a text shadow should be drawn
+   */
+  public void setTextShadow(final boolean drawTextShadow) {
+    this.textShadow = drawTextShadow;
+    for (final GuiComponent comp : getComponents()) {
+      comp.setTextShadow(drawTextShadow);
+    }
+  }
+
+  /**
+   * Sets the text X coordinate.
+   *
+   * @param x the new text X
+   */
+  public void setTextX(final double x) {
+    this.textX = x;
+  }
+
+  /**
+   * Sets the text Y coordinate.
+   *
+   * @param y the new text Y
+   */
+  public void setTextY(final double y) {
+    this.textY = y;
+  }
+
+  /**
+   * Sets the "visible" property on this GuiComponent.
+   *
+   * @param visible the new visible
+   */
+  public void setVisible(final boolean visible) {
+    this.visible = visible;
+    for (final GuiComponent component : getComponents()) {
+      component.setVisible(visible);
+    }
+  }
+
+  /**
+   * Sets the GuiComponent's width.
+   *
+   * @param width the new width
+   */
+  public void setWidth(final double width) {
+    this.width = width;
+    this.boundingBox = null; // trigger recreation in next boundingBox getter call
+    updateRelativeLayout();
+  }
+
+  /**
+   * Sets the GuiComponent's x coordinate.
+   *
+   * @param x the new x coordinate
+   */
+  public void setX(final double x) {
+    setLocation(x, getY());
+  }
+
+  /**
+   * Sets the GuiComponent's y coordinate.
+   *
+   * @param y the new y coordinate
+   */
+  public void setY(final double y) {
+    setLocation(getX(), y);
+  }
+
+  /**
+   * Suspend the GuiComponent and all its child Components (Makes the GuiComponent invisible and
+   * removes mouse listeners.).
+   */
+  public void suspend() {
+    Input.mouse().removeMouseListener(this);
+    Input.mouse().removeMouseWheelListener(this);
+    Input.mouse().removeMouseMotionListener(this);
+    this.suspended = true;
+    this.visible = false;
+    for (final GuiComponent childComp : getComponents()) {
+      childComp.suspend();
+    }
+  }
+
+  /**
+   * Toggle this GuiComponent's selection.
+   */
+  public void toggleSelection() {
+    setSelected(!isSelected());
+  }
+
+  /**
+   * Toggle this GuiComponent's suspension state. If it's suspended, prepare it. If it's prepared,
+   * suspend it.
+   */
+  public void toggleSuspension() {
+    if (!isSuspended()) {
+      suspend();
+    } else {
+      prepare();
+    }
+  }
+
+  public Appearance getCurrentAppearance() {
+    if (!isEnabled()) {
+      return getAppearanceDisabled();
+    }
+    return isHovered() ? getAppearanceHovered() : getAppearance();
+  }
+
+  /**
+   * Gets the click consumer list.
+   *
+   * @return the click consumer list
+   */
+  protected List<Consumer<ComponentMouseEvent>> getClickConsumer() {
+    return clickConsumer;
+  }
+
+  /**
+   * Gets the hover consumer list.
+   *
+   * @return the hover consumer list
+   */
+  protected List<Consumer<ComponentMouseEvent>> getHoverConsumer() {
+    return hoverConsumer;
+  }
+
+  /**
+   * Gets the mouse dragged consumer list.
+   *
+   * @return the mouse dragged consumer list
+   */
+  protected List<Consumer<ComponentMouseEvent>> getMouseDraggedConsumer() {
+    return mouseDraggedConsumer;
+  }
+
+  /**
+   * Gets the mouse enter consumer list.
+   *
+   * @return the mouse enter consumer list
+   */
+  protected List<Consumer<ComponentMouseEvent>> getMouseEnterConsumer() {
+    return mouseEnterConsumer;
+  }
+
+  /**
+   * Gets the mouse leave consumer list.
+   *
+   * @return the mouse leave consumer list
+   */
+  protected List<Consumer<ComponentMouseEvent>> getMouseLeaveConsumer() {
+    return mouseLeaveConsumer;
+  }
+
+  /**
+   * Gets the mouse moved consumer list.
+   *
+   * @return the mouse moved consumer list
+   */
+  protected List<Consumer<ComponentMouseEvent>> getMouseMovedConsumer() {
+    return mouseMovedConsumer;
+  }
+
+  /**
+   * Gets the mouse pressed consumer list.
+   *
+   * @return the mouse pressed consumer list
+   */
+  protected List<Consumer<ComponentMouseEvent>> getMousePressedConsumer() {
+    return mousePressedConsumer;
+  }
+
+  /**
+   * Gets the mouse released consumer list.
+   *
+   * @return the mouse released consumer list
+   */
+  protected List<Consumer<ComponentMouseEvent>> getMouseReleasedConsumer() {
+    return mouseReleasedConsumer;
+  }
+
+  /**
+   * Gets the mouse wheel consumer list.
+   *
+   * @return the mouse wheel consumer list
+   */
+  protected List<Consumer<ComponentMouseWheelEvent>> getMouseWheelConsumer() {
+    return mouseWheelConsumer;
+  }
+
+  /**
+   * Initialize child components.
+   */
+  protected void initializeComponents() {
+    // nothing to do in the base class
+  }
+
+  /**
+   * Check if a Mouse event should be forwarded.
+   *
+   * @param e the mouse event
+   * @return true, if the Mouse event should be forwarded
+   */
+  protected boolean mouseEventShouldBeForwarded(final MouseEvent e) {
+    return isForwardMouseEvents()
+      && isVisible()
+      && isEnabled()
+      && !isSuspended()
+      && e != null
+      && getBoundingBox().contains(e.getPoint());
+  }
+
+  /**
+   * Render this GuiComponent's text.
+   *
+   * @param g the {@code Graphics2D} object used for drawing
+   */
+  private void renderText(final Graphics2D g) {
+    if (getText() == null || getText().isEmpty()) {
+      return;
+    }
+
+    final FontMetrics fm = g.getFontMetrics();
+
+    double textWidth = fm.stringWidth(getTextToRender(g));
+    double textHeight = (double) fm.getAscent() + fm.getDescent();
+
+    double xCoord =
+      getTextAlign() != null
+        ? getX() + getTextAlign().getLocation(getWidth(), textWidth, true)
+        : getTextX();
+    double yCoord =
+      getTextValign() != null
+        ? getY() + getTextValign().getLocation(getHeight(), textHeight, true)
+        : getTextY();
+    if (getTextAngle() == 0) {
+      if (hasTextShadow()) {
+        TextRenderer.renderWithOutline(
+          g,
+          getTextToRender(g),
+          getX(),
+          getY(),
+          getWidth(),
+          getHeight(),
+          getTextShadowColor(),
+          getTextShadowRadius(),
+          getTextAlign(),
+          getTextValign(),
+          hasTextAntialiasing());
+      } else {
+        TextRenderer.renderWithLinebreaks(
+          g,
+          getTextToRender(g),
+          getTextAlign(),
+          getTextValign(),
+          getX(),
+          getY(),
+          getWidth(),
+          getHeight(),
+          hasTextAntialiasing());
+      }
+    } else if (getTextAngle() == 90) {
+      TextRenderer.renderRotated(
+        g,
+        getTextToRender(g),
+        xCoord,
+        yCoord - fm.stringWidth(getTextToRender(g)),
+        getTextAngle(),
+        hasTextAntialiasing());
+    } else {
+      TextRenderer.renderRotated(
+        g,
+        getTextToRender(g),
+        xCoord,
+        yCoord,
+        getTextAngle(),
+        hasTextAntialiasing());
+    }
+  }
+}

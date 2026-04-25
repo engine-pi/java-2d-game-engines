@@ -1,0 +1,14 @@
+plugins {
+  id "java-library"
+
+  id "encoding-defaults"
+  id "licensing-defaults"
+  id "testing-defaults"
+}
+
+dependencies {
+  api libs.mockito.core
+  api libs.junit.jupiter.api
+  api libs.junit.jupiter.params
+  runtimeOnly libs.junit.jupiter.engine
+}

@@ -1,0 +1,32 @@
+pluginManagement {
+  repositories {
+    gradlePluginPortal()
+  }
+}
+
+plugins {
+  id('org.ajoberstar.reckon.settings') version '2.0.0'
+}
+
+dependencyResolutionManagement {
+  repositories {
+    mavenCentral()
+    //    mavenLocal()
+    //    maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
+  }
+}
+
+include(
+  "litiengine",
+  "utiliti",
+  "shared"
+)
+
+rootProject.name = "litiengine-sdk"
+
+reckon {
+  defaultInferredScope = 'minor'
+  snapshots()
+  scopeCalc = calcScopeFromProp().or(calcScopeFromCommitMessages())
+  stageCalc = calcStageFromProp()
+}

@@ -1,0 +1,21 @@
+plugins {
+  id "java-library"
+
+  alias libs.plugins.gradle.maven.publish
+
+  id "encoding-defaults"
+  id "licensing-defaults"
+  id "publishing-defaults"
+  id "testing-defaults"
+}
+
+dependencies {
+  implementation libs.input4j
+  implementation libs.bundles.soundlibs
+  implementation libs.javax.activation
+  api libs.xml.api
+  runtimeOnly libs.bundles.xml.runtime
+  testImplementation project(":shared")
+  testImplementation libs.junit.jupiter
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
