@@ -1,0 +1,104 @@
+#
+# FXGL - JavaFX Game Library. The MIT License (MIT).
+# Copyright (c) AlmasB (almaslvl@gmail.com).
+# See LICENSE for details.
+#
+
+#
+# Dialog text (as translated by Google)
+#
+
+dialog.exitGame = Spiel beenden?
+dialog.yes = JA
+dialog.no = NEIN
+dialog.ok = OK
+dialog.cancel = ABBRECHEN
+
+#
+# Menu text (as translated by Zach)
+#
+
+menu.language = SPRACHE
+menu.continue = FORTFAHREN
+menu.resume = FORTSETZEN
+menu.newGame = NEUES SPIEL
+menu.save = SPEICHERN
+menu.load = LADEN
+menu.extra = EXTRA
+menu.online = ONLINE
+menu.video = VIDEO
+menu.audio = AUDIO
+menu.credits = CREDITS
+menu.options = OPTIONEN
+menu.logout = ABMELDEN
+menu.exit = BEENDEN
+menu.mainMenu = HAUPTMENÜ
+menu.restore = WIEDERHERSTELLEN
+menu.gameplay = SPIEL
+menu.controls = STEUERUNG
+menu.trophies = TROPHÄEN
+menu.feedback = FEEDBACK
+menu.back = ZURÜCK
+menu.delete = LÖSCHEN
+menu.difficulty = SCHWIERIGKEITSGRAD
+menu.playtime = SPIELZEIT
+menu.music.volume = Musik-Lautstärke
+menu.sound.volume = Effekt-Lautstärke
+menu.fullscreen = Vollbild
+menu.fixRatio = Bildformat anpassen
+menu.settingsRestore = Einstellungen auf Standardwerte zurücksetzen
+menu.exitMainMenu = Zum Hauptmenü gehen?
+menu.logOut = Abmelden?
+menu.unsavedProgress = Nicht gespeicherte Änderungen gehen verloren!
+menu.chooseFeedback = Wähle Deine Feedback-Methode aus!
+menu.pressAnyKey = Drücke beliebige Taste
+menu.loading = Laden
+# Not sure about the meaning of this:
+menu.loadSave = Laden/Speichern
+menu.loadingSaveFiles = Gespeicherte Dateien laden
+menu.loadingLast = Letzte Sicherungsdatei laden
+menu.deleteSave = Sicherungsdatei löschen
+menu.deleting = Wird gelöscht
+menu.overwrite = Sicherungsdatei überschreiben
+menu.enterSaveName = Name der Sicherungsdatei eingeben
+menu.savingData = Speichere Daten
+
+#
+# Multiplayer text (as translated by Zach)
+#
+
+multiplayer.new = NEU
+multiplayer.select = AUSWÄHLEN
+multiplayer.options = Mehrspieler-Optionen
+multiplayer.connect = Verbinden...
+multiplayer.connecting = Verbindung zum Spiel herstellen
+multiplayer.host = Host
+multiplayer.hosting = Spiel bereitstellen
+multiplayer.enterIp = Server-IP eingeben
+
+#
+# Profile text (as translated by Zach)
+#
+
+profile.profile = Profil
+profile.selectOrCreate = Profil auswählen oder neu erstellen
+profile.loadingProfile = Profil laden
+profile.loadingProfiles = Lade Profile
+profile.deletingProfile = Profil löschen
+profile.corrupted = Profil ist beschädigt
+profile.new = Neues Profil
+
+#
+# Development text (as translated by Zach)
+#
+
+dev.screenshotSaved = Bildschirmfoto gespeichert
+dev.screenshotFailed = Bildschirmfoto fehlgeschlagen
+
+#
+# Achievement text (as translated by Zach)
+#
+
+achievement.achievement = Erfolg
+achievement.progress = Fortschritt
+achievement.receive = Du warst erfolgreich!

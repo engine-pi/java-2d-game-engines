@@ -1,0 +1,129 @@
+{
+  "uniqueID" : 11,
+  "nodes" : {
+    "0" : {
+      "type" : "START",
+      "text" : "Hello, $playerName."
+    },
+    "2" : {
+      "type" : "END",
+      "text" : "Oh, it's you again, $type. How have you been?"
+    },
+    "3" : {
+      "type" : "FUNCTION",
+      "text" : "hasMet = true\ntype = Adventurer"
+    },
+    "4" : {
+      "type" : "BRANCH",
+      "text" : "hasMet"
+    },
+    "7" : {
+      "type" : "FUNCTION",
+      "text" : "hasMet = true\ntype = Stranger"
+    },
+    "8" : {
+      "type" : "FUNCTION",
+      "text" : "hasMet = true\ntype = Warrior"
+    },
+    "9" : {
+      "type" : "END",
+      "text" : "Bye!"
+    },
+    "10" : {
+      "type" : "FUNCTION",
+      "text" : "customFunction 5\nanotherFunction 3 4.5 Hello_World"
+    }
+  },
+  "choiceNodes" : {
+    "6" : {
+      "type" : "CHOICE",
+      "text" : "I have never met you. Who are you?",
+      "options" : {
+        "0" : "Adventurer",
+        "1" : "Stranger",
+        "2" : "Warrior"
+      },
+      "conditions" : {
+        "0" : "",
+        "1" : "",
+        "2" : ""
+      }
+    }
+  },
+  "edges" : [ {
+    "sourceID" : 3,
+    "targetID" : 9
+  }, {
+    "sourceID" : 7,
+    "targetID" : 9
+  }, {
+    "sourceID" : 8,
+    "targetID" : 9
+  }, {
+    "sourceID" : 0,
+    "targetID" : 10
+  }, {
+    "sourceID" : 10,
+    "targetID" : 4
+  } ],
+  "choiceEdges" : [ {
+    "sourceID" : 4,
+    "optionID" : 1,
+    "targetID" : 6
+  }, {
+    "sourceID" : 6,
+    "optionID" : 0,
+    "targetID" : 3
+  }, {
+    "sourceID" : 4,
+    "optionID" : 0,
+    "targetID" : 2
+  }, {
+    "sourceID" : 6,
+    "optionID" : 1,
+    "targetID" : 7
+  }, {
+    "sourceID" : 6,
+    "optionID" : 2,
+    "targetID" : 8
+  } ],
+  "version" : 1,
+  "uiMetadata" : {
+    "0" : {
+      "x" : -560.0,
+      "y" : 160.0
+    },
+    "2" : {
+      "x" : 760.0,
+      "y" : 0.0
+    },
+    "3" : {
+      "x" : 1160.0,
+      "y" : 200.0
+    },
+    "4" : {
+      "x" : 240.0,
+      "y" : 120.0
+    },
+    "6" : {
+      "x" : 720.0,
+      "y" : 240.0
+    },
+    "7" : {
+      "x" : 1160.0,
+      "y" : 320.0
+    },
+    "8" : {
+      "x" : 1160.0,
+      "y" : 440.0
+    },
+    "9" : {
+      "x" : 1600.0,
+      "y" : 320.0
+    },
+    "10" : {
+      "x" : -160.0,
+      "y" : 160.0
+    }
+  }
+}
